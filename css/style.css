@@ -5,16 +5,15 @@
 	font-style: normal;
 }
 
+@font-face {
+	font-family: 'PS2P-FONT';
+	src: url('../font/PressStart2P-vaV7.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
 body {
-	background-color: blue;
-}
-
-h1 {
-	color: cornflowerblue;
-}
-
-.clicked {
-	color: tomato;
+	background-color: black;
 }
 
 .PacPong_font {
@@ -24,7 +23,12 @@ h1 {
         1px -1px 0 #FF0000,
         -1px 1px 0 #FF0000,
         1px 1px 0 #FF0000;
-	text-align: center;
+	/* text-align: center; */
+}
+
+.PS2P_font {
+	font-family: "PS2P-FONT", Arial, Helvetica, sans-serif;
+	color: white;
 }
 
 .jumbotron {
@@ -33,6 +37,3 @@ h1 {
 	border-color: yellow;
 }
 
-#buffer {
-	padding: 2%;
-}

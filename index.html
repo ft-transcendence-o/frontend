@@ -8,9 +8,8 @@
 	<title>PacPong</title>
 	<style>
 
-		img {
+		.backimg {
 			position:absolute;
-			/* width:100%; */
 			height:100%;
 			left: 0px;
 			top: 0px;
@@ -19,25 +18,48 @@
 			z-index: -1;
 			margin: 0 auto;
 		}
+
     </style>
 </head>
 <body>
-	<div class="container" id="buffer">
-	</div>
-	<div class="container-fluid">
-		<div class="d-flex justify-content-center align-items-center full-screen">
-			<div class="jumbotron jumbotron-fluid justify-content-center align-items-center">
-				<div class="container">
-					<img src="./image/background.png" alt="background">
-					<h1 class="PacPong_font">
-						<span style="color:#14FF00">PA</span><span style="color:#FED940">C</span>
-						<span style="color:#14FF00">PON</span><span style="color:#FED940">G</span>
-					</h1>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="container"></div>
-	<script src="./bootstrap-5.3.3-dist/js/bootstrap.min.js"></script>
+	<!-- background image -->
+	<img class="backimg" src="./image/background.png" alt="">
+	
+	<div class="container-fluid d-flex flex-column align-items-center">
+
+		<div style="height: 200px;"></div>
+
+		<!-- title -->
+        <div class="row">
+            <div class="col-12">
+                <h1 style="font-size: 150px;" class="display-1 PacPong_font">
+                    <span style="color:#14FF00">PA</span><span style="color:#FED940">C</span>
+                    <span style="color:#14FF00">PON</span><span style="color:#FED940">G</span>
+                </h1>
+            </div>
+        </div>
+
+		<!-- ghost -->
+        <div class="row">
+            <div class="col-12">
+                <img src="./image/ghost_red.png" alt="Red Ghost">
+                <img src="./image/ghost_blue.png" alt="Blue Ghost">
+                <img src="./image/ghost_orange.png" alt="Orange Ghost">
+                <img src="./image/ghost_pink.png" alt="Pink Ghost">
+            </div>
+        </div>
+
+		<!-- log in -->
+		<div class="row">
+            <div class="col-12">
+				<span style="font-size: 70px;" class="PS2P_font">LOG-IN</span>
+            </div>
+        </div>
+
+		<div class="dummy"></div>
+
+    </div>
+
+    <script src="./bootstrap-5.3.3-dist/js/bootstrap.min.js"></script>
 </body>
 </html>
