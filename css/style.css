@@ -13,7 +13,7 @@
 }
 
 body {
-	background-color: black;
+	background-color: blue;
 }
 
 .PacPong_font {
@@ -37,3 +37,11 @@ body {
 	border-color: yellow;
 }
 
+.PS2P_font.hover{
+	color: #14FF00;
+	text-shadow:
+        -5px -5px 0 #ffffff,  
+        5px -5px 0 #ffffff,
+        -5px 5px 0 #ffffff,
+        5px 5px 0 #ffffff;
+}
