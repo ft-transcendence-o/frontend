@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="./bootstrap-5.3.3-dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="css/style.css">
+	<title>PacPong</title>
+	<style>
+
+		.backimg {
+			position:absolute;
+			left: 0px;
+			top: 0px;
+			right:0px;
+			bottom:0px;
+			z-index: -1;
+			margin: 0 auto;
+		}
+
+    </style>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+	<script src="./javascript/QRcode.js"></script>
+</head>
+<body>
+	<!-- background image -->
+	
+	<div class="container-fluid d-flex flex-column align-items-center">
+		
+		<img class="backimg" src="./image/background_2.png" alt="">
+
+
+
+		<!-- QR Code -->
+		<div id="qrcode" style="position:absolute; top: 171px; z-index: 1;">
+		</div>
+
+		<!-- Next Button -->
+		<button type="button" style=" z-index: 4; margin-top: 640px; font-size: 50px; width: 230px; height: 139px;" class="btn btn-outline-primary PS2P_font">NEXT </button>
+
+		
+
+		<!-- footer -->
+		<div class="row" style="position:absolute; padding-top:824px; z-index: 3;">
+			<div class="col-12">
+				<p class="m-0 text-center text-white PS2P_font" style="padding-bottom: 34px; font-size: 30px;">SCAN THE QR-CODE</p>
+				<p class="m-0 text-center text-white PS2P_font" style="padding-bottom: 0px; font-size: 30px;">VIA GOOGLE OTP/AUTHENTICATOR</p>
+			</div>
+		</div>
+	
+		
+    </div>
+
+	
+
+
+
+    <script src="./bootstrap-5.3.3-dist/js/bootstrap.min.js"></script>
+</body>
+</html>
+

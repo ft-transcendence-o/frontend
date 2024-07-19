@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="./bootstrap-5.3.3-dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="css/style.css">
+	<title>PacPong</title>
+	<!-- Style CSS -->
+	<link rel="stylesheet" href="./css/otpStyle.css">
+	<!-- Demo CSS (No need to include it into your project) -->
+	<link rel="stylesheet" href="./css/demo.css">
+	<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css'>
+	<style>
+
+		.backimg {
+			position:absolute;
+			left: 0px;
+			top: 0px;
+			right:0px;
+			bottom:0px;
+			z-index: -1;
+			margin: 0 auto;
+		}
+
+    </style>
+	<!-- <script src="./javascript/home.js"></script> -->
+</head>
+<body>
+	<!-- background image -->
+	
+	<div class="container-fluid d-flex flex-column align-items-center">
+		
+		<img class="backimg" src="./image/background_2.png" alt="">
+
+
+		<!-- Start DEMO HTML (Use the following code into your project)-->
+		<!-- <body class="container-fluid bg-body-tertiary d-block"> -->
+	<div class="row justify-content-center">
+		<div class="col-12">
+		<div class="card bg-black" style="z-index: 4; margin-top: 262px;">
+			<div class="card-body p-5 text-center">
+
+			<div class="otp-field mb-4">
+				<input type="number" class="PS2P_font" style="width:150px; height:300px; border-color: #14FF00; border-width: 10px; background-color:black; color:white; font-size: 100px;"  />
+				<input type="number" class="PS2P_font" style="width:150px; height:300px; border-color: #14FF00; border-width: 10px; background-color:black; color:white; font-size: 100px;" disabled />
+				<input type="number" class="PS2P_font" style="width:150px; height:300px; border-color: #14FF00; border-width: 10px; background-color:black; color:white; font-size: 100px;" disabled />
+				<input type="number" class="PS2P_font" style="width:150px; height:300px; border-color: #14FF00; border-width: 10px; background-color:black; color:white; font-size: 100px;" disabled />
+				<input type="number" class="PS2P_font" style="width:150px; height:300px; border-color: #14FF00; border-width: 10px; background-color:black; color:white; font-size: 100px;" disabled />
+				<input type="number" class="PS2P_font" style="width:150px; height:300px; border-color: #14FF00; border-width: 10px; background-color:black; color:white; font-size: 100px;" disabled />
+			</div>
+
+			<button type="button" class="btn btn-primary">
+				<span class="PS2P_font">
+					VERIFY
+				</span>
+			</button>
+
+			<!-- invalid input -->
+			<div id="invalid_input"></div>
+
+			</div>
+		</div>
+		</div>
+	</div>
+
+		<!-- footer -->
+		<div class="row" style="position:absolute; padding-top:824px; z-index: 3;">
+			<div class="col-12">
+				<p class="m-0 text-center text-white PS2P_font" style="padding-bottom: 34px; font-size: 30px;">ENTER 6 DIGITS</p>
+				<p class="m-0 text-center text-white PS2P_font" style="padding-bottom: 0px; font-size: 30px;">FROM GOOGLE OTP/AUTHENTICATOR</p>
+			</div>
+		</div>
+	</div>
+	<!-- </body> -->
+
+		
+
+	
+    <script src="./bootstrap-5.3.3-dist/js/bootstrap.min.js"></script>
+	<!-- Script JS -->
+	<script type="module" src="./javascript/OTP.js"></script>
+	<!--$%analytics%$-->
+</body>
+</html>
