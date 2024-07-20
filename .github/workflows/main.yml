@@ -21,7 +21,7 @@ jobs:
           port: ${{ secrets.REMOTE_SSH_PORT }}
           script: |
             cd /home/ubuntu/transcen/nginx/frontend
-            git pull https://${{ secrets.GIT_USER }}:${{ secrets.GIT_PASSWORD }}@github.com/ft-transcendence-o/backend.git
+            git pull https://${{ secrets.GIT_USER }}:${{ secrets.GIT_PASSWORD }}@github.com/ft-transcendence-o/frontend.git
             cd /home/ubuntu/transcen
             sudo docker compose down
             sudo docker compose up --build -d
