@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
 
         // authorization code를 백엔드에 전송하고 백엔드로부터 응답 받기
-        const response = await fetch("https://52.78.146.67/user-management/token", {
+        const response = await fetch("https://52.78.146.67/api/user-management/token", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
