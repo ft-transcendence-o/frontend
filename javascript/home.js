@@ -40,10 +40,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         const response = await fetch("https://52.78.146.67/user-management/token", {
             method: "POST",
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
             },
             // body: data
-            body: {"code": code}
+            body: JSON.stringify({"code": code})
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data['jwt']);
+            // console.log(data.)
+            const decodedToken = decodeJWTManually(data['jwt']);
+            console.log(decodedToken);
+        })
+          .catch(error => {
+            console.error('Error:', error);
         });
         
         // 백엔드로부터 받은 응답을 json으로 열어보기
