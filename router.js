@@ -42,5 +42,6 @@ const router = async () => {
         const view = new match.route.view();
 
         document.querySelector('#app').innerHTML = await view.getHtml();
+        await view.init();
     }
 };

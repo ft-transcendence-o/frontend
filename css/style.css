@@ -16,6 +16,16 @@ body {
 	background-color: blue;
 }
 
+.backimg {
+	position:absolute;
+	left: 0px;
+	top: 0px;
+	right:0px;
+	bottom:0px;
+	z-index: -1;
+	margin: 0 auto;
+}
+
 .PacPong_font {
 	font-family: "PAC-FONT", Arial, Helvetica, sans-serif;
 	text-shadow:
@@ -31,14 +41,40 @@ body {
 	color: white;
 }
 
-.jumbotron {
-	padding: 0.8%;
-	border: solid;
-	border-color: yellow;
+.blue_outline {
+	color: white;
+	border-width: 14px;
+	border-style: solid;
+	border-image: url("./image/border_image_blue.png");
+	border-image-slice: 16 fill;
+}
+
+.green_outline {
+	color: #18ff02;
+	border-width: 14px;
+	border-style: solid;
+	border-image: url("./image/border_image_green.png");
+	border-image-slice: 16 fill;
 }
 
 .PS2P_font.hover{
 	color: #14FF00;
+	text-shadow:
+        -5px -5px 0 #ffffff,  
+        5px -5px 0 #ffffff,
+        -5px 5px 0 #ffffff,
+        5px 5px 0 #ffffff;
+}
+
+.green_hover{
+	color: #14FF00;
+}
+
+.red_hover{
+	color: #ff0000;
+}
+
+.white_stroke{
 	text-shadow:
         -5px -5px 0 #ffffff,  
         5px -5px 0 #ffffff,

@@ -6,86 +6,10 @@
 	<link href="./bootstrap-5.3.3-dist/css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="css/style.css">
 	<title>PacPong</title>
-	<style>
-
-		.backimg {
-			position:absolute;
-			left: 0px;
-			top: 0px;
-			right:0px;
-			bottom:0px;
-			z-index: -1;
-			margin: 0 auto;
-		}
-
-    </style>
-	<script type="module" src="./javascript/home.js"></script>
 </head>
 <body>
 	<script type="module" src="./router.js"></script>
-	<nav>
-        <a href="/" class="nav-link" data-link>Home</a>
-        <a href="/example1" class="nav-link" data-link>example1</a>
-        <a href="/example2" class="nav-link" data-link>example2</a>
-    </nav>
 	<div id="app"></div>
-
-	<!-- background image -->
-	
-	<div class="container-fluid d-flex flex-column align-items-center">
-		
-		<img class="backimg" src="./image/background.png" alt="">
-
-		<!-- title -->
-        <div style="position:absolute; padding-top: 205px; z-index: 1;" class="row">
-            <div class="col-12" style="text-align: center; border: solid; border-color: #A259FF; padding: 6px 5px; border-width: 5px;">
-                <h1 style="width: 1200px; height: auto; padding: 36px 65px; border: solid; border-color: #FED940; border-width: 3px; font-size: 150px; margin-bottom: 0px;" class="display-1 PacPong_font">
-                    <span style="color:#14FF00">Pa</span><span style="color:#FED940">c</span>
-                    <span style="color:#14FF00">Pon</span><span style="color:#FED940">g</span>
-                </h1>
-            </div>
-        </div>
-
-		<!-- ghost -->
-		<div class="row" style="position:absolute; padding-top:534px; z-index: 2;">
-			<!-- <div class="col-12" style="padding-left: 31%;"> -->
-			<div class="col-12">
-				<img style="padding-left: 20px; width: 144px; height: auto; padding-right: 20px;" src="./image/ghost_red.png" alt="Red Ghost">
-				<img style="padding-left: 20px; width: 144px; height: auto; padding-right: 20px;" src="./image/ghost_blue.png" alt="Blue Ghost">
-				<img style="padding-left: 20px; width: 144px; height: auto; padding-right: 20px;" src="./image/ghost_orange.png" alt="Orange Ghost">
-				<img style="padding-left: 20px; width: 144px; height: auto; padding-right: 20px;" src="./image/ghost_pink.png" alt="Pink Ghost">
-			</div>
-		</div>
-		<!-- log in -->
-		<div style="position:absolute; padding-top: 708px; z-index: 3;" class="row">
-			<div class="col-12 login" style="cursor: pointer;">
-				<!-- <button style="background-color: rgba(0, 0, 0, 0); border: 0;"> -->
-				<img src="../image/pacman.png" style="transform: scaleX(-1); width: 100px; height: 107.18px;" alt="pacman">
-				<span style="font-family: Arial, Helvetica, sans-serif; font-size: 70px; vertical-align: middle;" class="PS2P_font">►</span>
-				<span style="padding-right: 160px; font-size: 70px; vertical-align: middle;" class="PS2P_font">LOG-IN</span>
-			<!-- </button> -->
-			</div>
-		</div>
-
-		<!-- QR Code -->
-		
-
-		<!-- footer -->
-		<div class="row" style="position:absolute; padding-top:890px; z-index: 2;">
-			<div class="col-12">
-				<p class="m-0 text-center text-white PS2P_font" style="padding-bottom: 44px; font-size: 30px;">© 2024 42SEOUL MFG. CO.</p>
-			</div>
-		</div>
-	
-		
-    </div>
-
-	<!-- QR Code -->
-	<div id="qrcode"></div>
-
-	
-
-
 
     <script src="./bootstrap-5.3.3-dist/js/bootstrap.min.js"></script>
 </body>
