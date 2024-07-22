@@ -1,5 +1,15 @@
 import AbstractView from "./AbstractView.js";
 
+function decodeJWTManually(token) {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    return JSON.parse(jsonPayload);
+}
+
 export default class extends AbstractView {
     constructor() {
         super();
@@ -71,7 +81,7 @@ export default class extends AbstractView {
             event.preventDefault(); // 기본 동작 방지
             // 사용자를 42 인증 페이지로 리다이렉트
             // query parameter(?다음) 부분을 환경변수로 대체해야 한다.
-            window.location.href = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-0abe518907df9bbc76014c0d71310e3b0ed196727cec3f8d4e741103871a186d&redirect_uri=https%3A%2F%2F52.78.146.67&response_type=code";
+            window.location.href = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-13da844ab09c30f81a4aac6f7f77bd34bfa89523fd00822876ca6c9ab86ac14f&redirect_uri=http%3A%2F%2F127.0.0.1%3A5500&response_type=code";
         }
         
 
@@ -99,45 +109,66 @@ export default class extends AbstractView {
                 // 여기서 백엔드로 코드를 보내 액세스 토큰을 얻는 로직을 구현할 수 있습니다.
         
                 // 데이터 준비
-                const data = new URLSearchParams({
-                    grant_type: 'authorization_code',
-                    client_id: 'u-s4t2ud-c8ed34a18722d3b06d337af57bfdb0d1508556b71f1df037d060f2d1a31e3314',
-                    client_secret: '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',
-                    code: code,
-                    redirect_uri: 'https://52.78.146.67'
-                });
+                // const data = new URLSearchParams({
+                //     grant_type: 'authorization_code',
+                //     client_id: 'u-s4t2ud-13da844ab09c30f81a4aac6f7f77bd34bfa89523fd00822876ca6c9ab86ac14f',
+                //     client_secret: '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',
+                //     code: code,
+                // });
         
                 // authorization code를 백엔드에 전송하고 백엔드로부터 응답 받기
-                const response = await fetch("https://52.78.146.67/api/user-management/token", {
+                const response = await fetch("http://10.19.218.225:8000/user-management/token", {
                     method: "POST",
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     // body: data
                     body: JSON.stringify({"code": code})
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        console.log("error occur")
-                        return
-                    }
-        
-                })  // <- 에러 지점 추정
-                .then(data => {
-                    console.log(data['jwt']);
-                    // console.log(data.)
-                    const decodedToken = decodeJWTManually(data['jwt']);
-                    console.log(decodedToken);
-                })
-                .catch(error => {
-                    console.error('Error:', error);
                 });
+                if (response.ok) {
+                    const jsonResponse = await response.json();
+                    console.log("success");
+                    console.log(response);
+                    console.log(jsonResponse);
+                    console.log(jsonResponse['jwt']); //await으로 해결
+                    const decodedToken = decodeJWTManually(jsonResponse['jwt']); //여기
+                    console.log(decodedToken);
+
+                }
+                else {
+                    console.log("error");
+                }
+                // .then(response => {
+                //     if (!response.ok) {
+                //         console.log(response);
+                //         console.dir(response);
+                //         console.log("error occur");
+                //         return
+                //     }
+                //     else {
+                //         const jsonResponse = response.json();
+                //         console.log("success");
+                //         console.log(response);
+                //         console.log(jsonResponse);
+                //         console.log(jsonResponse['jwt']); //이게 undefined 
+                //         const decodedToken = decodeJWTManually(jsonResponse['jwt']);
+                //         console.log(decodedToken);
+                //     }
+        
+                // })  // <- 에러 지점 추정
+                // .then(response => {
+                //     // console.log(response.json());
+                //     // // console.log(data.)
+                //     // const decodedToken = decodeJWTManually(response.json()['jwt']);
+                //     // console.log(decodedToken);
+                // })
+                // .catch(error => {
+                //     console.error('Error:', error);
+                // });
                 
                 // 백엔드로부터 받은 응답을 json으로 열어보기
-                console.log("after fetch");
                 // const result = await response.;
                 console.log(response);
-                console.dir(response);
         
                 // uri 이미 받았음
                 // 분기
@@ -146,11 +177,11 @@ export default class extends AbstractView {
                 // 라우팅 된 페이지의 init에서 로컬스토리지에서 qr uri를 가져오기
                 // 그리고 init에서 qr그리는 util 함수를 호출
         
-                if (result && result.otpauthUri) {
-                    generateQRcode(result.otpauthUri);
-                    // generateQRCode(result.otpauthUri);
-                    console.log("hi~");
-                }
+                // if (result && result.otpauthUri) {
+                //     generateQRcode(result.otpauthUri);
+                //     // generateQRCode(result.otpauthUri);
+                //     console.log("hi~");
+                // }
         
         
         
