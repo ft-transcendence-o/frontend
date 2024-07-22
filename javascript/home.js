@@ -33,32 +33,52 @@ document.addEventListener("DOMContentLoaded", async () => {
             client_id: 'u-s4t2ud-c8ed34a18722d3b06d337af57bfdb0d1508556b71f1df037d060f2d1a31e3314',
             client_secret: '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',
             code: code,
-            redirect_uri: 'https://127.0.0.1:5500'
+            redirect_uri: 'https://52.78.146.67'
         });
 
         // authorization code를 백엔드에 전송하고 백엔드로부터 응답 받기
-        const response = await fetch("http://52.78.146.67/user-management/token", {
+        const response = await fetch("https://52.78.146.67/api/user-management/token", {
             method: "POST",
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
             },
-            body: data
+            // body: data
+            body: JSON.stringify({"code": code})
+        })
+        .then(response => {
+            if (!response.ok) {
+                console.log("error occur")
+                return
+            }
+
+        })  // <- 에러 지점 추정
+        .then(data => {
+            console.log(data['jwt']);
+            // console.log(data.)
+            const decodedToken = decodeJWTManually(data['jwt']);
+            console.log(decodedToken);
+        })
+        .catch(error => {
+            console.error('Error:', error);
         });
         
         // 백엔드로부터 받은 응답을 json으로 열어보기
-        const result = await response.json();
-        console.log(result);
+        console.log("after fetch");
+        // const result = await response.;
+        console.log(response);
+        console.dir(response);
 
         // uri 이미 받았음
         // 분기
-        // qr uri -> 로컬 스토리지
-        // 라우트 호출
+        // qr uri -> 로컬 스토리지 -> home.js
+        // 라우트 호출 -> home.js에서 수행하는데 route라는 함수는 다른 파일에 있음 import해와야함
         // 라우팅 된 페이지의 init에서 로컬스토리지에서 qr uri를 가져오기
         // 그리고 init에서 qr그리는 util 함수를 호출
 
         if (result && result.otpauthUri) {
-            QRmodule.generateQRcode(result.otpauthUri);
+            generateQRcode(result.otpauthUri);
             // generateQRCode(result.otpauthUri);
+            console.log("hi~");
         }
 
 
