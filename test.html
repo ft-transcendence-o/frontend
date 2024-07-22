@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+
+    .blue_outline {
+        color: white;
+        border-width: 14px;
+        border-style: solid;
+        border-image: url("./image/border_image_blue.png");
+        border-image-slice: 16 fill;
+    }
+
+    .green_outline {
+        color: #18ff02;
+        border-width: 14px;
+        border-style: solid;
+        border-image: url("./image/border_image_green.png");
+        border-image-slice: 16 fill;
+    }
+
+    </style>
+</head>
+<body style="background-color: black;">
+    <div class="blue_outline">hi</div>
+    <div style="text-align: center; width: 300px; height: 200px; position: absolute; " class="blue_outline">hi</div>
+    <div style="text-align: center; width: 50px; height: 50px; position: absolute; top: 400px; left: 800px;" class="blue_outline">hi</div>
+
+    <script>
+        // 이미지 미리 로드
+        const preloadImages = (sources) => {
+            sources.forEach((src) => {
+                const img = new Image();
+                img.src = src;
+            });
+        };
+
+        // 미리 로드할 이미지 경로
+        const imagesToPreload = [
+            "./image/border_image_blue.png",
+            "./image/border_image_green.png"
+        ];
+
+        preloadImages(imagesToPreload);
+
+        const myDives = document.querySelectorAll("div");
+
+        console.log(myDives);
+
+        myDives.forEach((myDiv) => {
+
+            myDiv.addEventListener("mouseenter", (event) => {
+                myDiv.classList.remove("blue_outline");
+                myDiv.classList.add("green_outline");
+            });
+
+            myDiv.addEventListener("mouseleave", (event) => {
+                myDiv.classList.add("blue_outline");
+                myDiv.classList.remove("green_outline");
+            });
+
+        })
+
+    </script>
+</body>
+</html>

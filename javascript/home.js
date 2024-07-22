@@ -1,4 +1,4 @@
-import { generateQRcode } from "./QRcode.js"
+// import { generateQRCode } from "./QRcode.js"
 // import * as QRmodule from "./QRcode.js" // 안 될 가능성 있음
 
 function login_click(event) {
