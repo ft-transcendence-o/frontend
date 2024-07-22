@@ -42,10 +42,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: data
+            // body: data
+            body: {"code": code}
         });
         
         // 백엔드로부터 받은 응답을 json으로 열어보기
+        console.log("after fetch");
         const result = await response.json();
         console.log(result);
 
