@@ -59,8 +59,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         // 백엔드로부터 받은 응답을 json으로 열어보기
         console.log("after fetch");
         // const result = await response.;
-        console.log(result);
-        console.dir(result);
+        console.log(response);
+        console.dir(response);
 
         // uri 이미 받았음
         // 분기
