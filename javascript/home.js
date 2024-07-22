@@ -45,7 +45,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             // body: data
             body: JSON.stringify({"code": code})
         })
-        .then(response => response.json())  // <- 에러 지점 추정
+        .then(response => {
+            if (!response.ok) {
+                console.log("error occur")
+                return
+            }
+
+        })  // <- 에러 지점 추정
         .then(data => {
             console.log(data['jwt']);
             // console.log(data.)
