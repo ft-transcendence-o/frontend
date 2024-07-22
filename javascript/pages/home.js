@@ -1,4 +1,5 @@
 import AbstractView from "./AbstractView.js";
+import { navigateTo } from "../../router.js";
 
 function decodeJWTManually(token) {
     const base64Url = token.split('.')[1];
@@ -84,7 +85,6 @@ export default class extends AbstractView {
             window.location.href = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-13da844ab09c30f81a4aac6f7f77bd34bfa89523fd00822876ca6c9ab86ac14f&redirect_uri=http%3A%2F%2F127.0.0.1%3A5500&response_type=code";
         }
         
-
             const login_button = document.querySelector(".login");
             const login_arrow = login_button.querySelector("span");
             const login_text = login_button.querySelector("span:last-child");
@@ -108,14 +108,6 @@ export default class extends AbstractView {
                 console.log("Received authorization code:", code);
                 // 여기서 백엔드로 코드를 보내 액세스 토큰을 얻는 로직을 구현할 수 있습니다.
         
-                // 데이터 준비
-                // const data = new URLSearchParams({
-                //     grant_type: 'authorization_code',
-                //     client_id: 'u-s4t2ud-13da844ab09c30f81a4aac6f7f77bd34bfa89523fd00822876ca6c9ab86ac14f',
-                //     client_secret: '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',
-                //     code: code,
-                // });
-        
                 // authorization code를 백엔드에 전송하고 백엔드로부터 응답 받기
                 const response = await fetch("http://10.19.218.225:8000/user-management/token", {
                     method: "POST",
@@ -131,45 +123,29 @@ export default class extends AbstractView {
                     console.log(response);
                     console.log(jsonResponse);
                     console.log(jsonResponse['jwt']); //await으로 해결
-                    const decodedToken = decodeJWTManually(jsonResponse['jwt']); //여기
-                    console.log(decodedToken);
+                    // const decodedToken = decodeJWTManually(jsonResponse['jwt']); //여기
+                    // console.log(decodedToken);
+
+                    localStorage.setItem('jwt', jsonResponse['jwt']);
+                    console.log("JWT saved to local storage");
+
+                    if (jsonResponse['is_verified'] === false) {
+                        navigateTo('/QRcode');
+                    } else if (jsonResponse['passed_2fa'] === false) {
+                        navigateTo('/OTP');
+                    }
 
                 }
                 else {
                     console.log("error");
                 }
-                // .then(response => {
-                //     if (!response.ok) {
-                //         console.log(response);
-                //         console.dir(response);
-                //         console.log("error occur");
-                //         return
-                //     }
-                //     else {
-                //         const jsonResponse = response.json();
-                //         console.log("success");
-                //         console.log(response);
-                //         console.log(jsonResponse);
-                //         console.log(jsonResponse['jwt']); //이게 undefined 
-                //         const decodedToken = decodeJWTManually(jsonResponse['jwt']);
-                //         console.log(decodedToken);
-                //     }
+
+
         
-                // })  // <- 에러 지점 추정
-                // .then(response => {
-                //     // console.log(response.json());
-                //     // // console.log(data.)
-                //     // const decodedToken = decodeJWTManually(response.json()['jwt']);
-                //     // console.log(decodedToken);
-                // })
-                // .catch(error => {
-                //     console.error('Error:', error);
-                // });
+                // is_verified(false) : QR페이지
+                // passed_2fa(false) : OTP페이지
+                // passed_2fa(true) : main페이지
                 
-                // 백엔드로부터 받은 응답을 json으로 열어보기
-                // const result = await response.;
-                console.log(response);
-        
                 // uri 이미 받았음
                 // 분기
                 // qr uri -> 로컬 스토리지 -> home.js
@@ -177,21 +153,6 @@ export default class extends AbstractView {
                 // 라우팅 된 페이지의 init에서 로컬스토리지에서 qr uri를 가져오기
                 // 그리고 init에서 qr그리는 util 함수를 호출
         
-                // if (result && result.otpauthUri) {
-                //     generateQRcode(result.otpauthUri);
-                //     // generateQRCode(result.otpauthUri);
-                //     console.log("hi~");
-                // }
-        
-        
-        
-                // await fetch("http://52.78.146.67/user-management/token", {
-                //     method: "POST",
-                //     body: {"code": code}
-                // })
-                // .then(response => {
-                //     console.log(response.json());
-                // })
             }
     }
 }
