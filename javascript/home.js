@@ -1,5 +1,5 @@
-// import { generateQRCode } from "./QRcode.js"
-import * as QRmodule from "./QRcode.js" // 안 될 가능성 있음
+import { generateQRcode } from './QRcode.js'
+// import * as QRmodule from "./QRcode.js" // 안 될 가능성 있음
 
 function login_click(event) {
     event.preventDefault(); // 기본 동작 방지
@@ -51,14 +51,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // uri 이미 받았음
         // 분기
-        // qr uri -> 로컬 스토리지
-        // 라우트 호출
+        // qr uri -> 로컬 스토리지 -> home.js
+        // 라우트 호출 -> home.js에서 수행하는데 route라는 함수는 다른 파일에 있음 import해와야함
         // 라우팅 된 페이지의 init에서 로컬스토리지에서 qr uri를 가져오기
         // 그리고 init에서 qr그리는 util 함수를 호출
 
         if (result && result.otpauthUri) {
-            QRmodule.generateQRcode(result.otpauthUri);
+            generateQRcode(result.otpauthUri);
             // generateQRCode(result.otpauthUri);
+            console.log("hi~");
         }
 
 
