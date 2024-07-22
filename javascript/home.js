@@ -1,4 +1,4 @@
-import { generateQRcode } from './QRcode.js'
+import { generateQRcode } from "./QRcode.js"
 // import * as QRmodule from "./QRcode.js" // 안 될 가능성 있음
 
 function login_click(event) {
@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             client_id: 'u-s4t2ud-c8ed34a18722d3b06d337af57bfdb0d1508556b71f1df037d060f2d1a31e3314',
             client_secret: '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',
             code: code,
-            redirect_uri: 'https://127.0.0.1:5500'
+            redirect_uri: 'https://52.78.146.67'
         });
 
         // authorization code를 백엔드에 전송하고 백엔드로부터 응답 받기
