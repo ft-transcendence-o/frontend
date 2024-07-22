@@ -45,7 +45,7 @@ body {
 	color: white;
 	border-width: 14px;
 	border-style: solid;
-	border-image: url("./image/border_image_blue.png");
+	border-image: url("../image/border_image_blue.png");
 	border-image-slice: 16 fill;
 }
 
@@ -53,7 +53,7 @@ body {
 	color: #18ff02;
 	border-width: 14px;
 	border-style: solid;
-	border-image: url("./image/border_image_green.png");
+	border-image: url("../image/border_image_green.png");
 	border-image-slice: 16 fill;
 }
 
@@ -74,10 +74,18 @@ body {
 	color: #ff0000;
 }
 
-.white_stroke{
+.white_stroke_5px{
 	text-shadow:
         -5px -5px 0 #ffffff,  
         5px -5px 0 #ffffff,
         -5px 5px 0 #ffffff,
         5px 5px 0 #ffffff;
+}
+
+.white_stroke_3px{
+	text-shadow:
+        -3px -3px 0 #ffffff,  
+        3px -3px 0 #ffffff,
+        -3px 3px 0 #ffffff,
+        3px 3px 0 #ffffff;
 }

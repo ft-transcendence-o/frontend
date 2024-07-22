@@ -81,13 +81,13 @@ export default class extends AbstractView {
             login_button.addEventListener("click", login_click);
             login_button.addEventListener("mouseenter", (event) => {
                 login_text.classList.add("green_hover");
-                login_text.classList.add("white_stroke");
+                login_text.classList.add("white_stroke_5px");
                 login_arrow.classList.add("red_hover");
                 console.log("hovering");
             });
             login_button.addEventListener("mouseleave", (event) => {
                 login_text.classList.remove("green_hover");
-                login_text.classList.remove("white_stroke");
+                login_text.classList.remove("white_stroke_5px");
                 login_arrow.classList.remove("red_hover");
                 console.log("hover out");
             });
