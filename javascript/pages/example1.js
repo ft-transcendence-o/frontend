@@ -12,4 +12,10 @@ export default class extends AbstractView {
     async getHtml() {
         return `<h1>Example1 Page</h1><p>Welcome to the Example1 Page!</p>`;
     }
+
+    async init() {
+        document.addEventListener("click", () => {
+            console.log("example1");
+        })
+    }
 }
