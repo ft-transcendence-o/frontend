@@ -45,21 +45,22 @@ document.addEventListener("DOMContentLoaded", async () => {
             // body: data
             body: JSON.stringify({"code": code})
         })
-        .then(response => response.json())
+        .then(response => response.json())  // <- 에러 지점 추정
         .then(data => {
             console.log(data['jwt']);
             // console.log(data.)
             const decodedToken = decodeJWTManually(data['jwt']);
             console.log(decodedToken);
         })
-          .catch(error => {
+        .catch(error => {
             console.error('Error:', error);
         });
         
         // 백엔드로부터 받은 응답을 json으로 열어보기
         console.log("after fetch");
-        const result = await response.json();
+        // const result = await response.;
         console.log(result);
+        console.dir(result);
 
         // uri 이미 받았음
         // 분기
