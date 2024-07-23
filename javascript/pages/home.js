@@ -107,7 +107,7 @@ export default class extends AbstractView {
             if (code) {
                 console.log("Received authorization code:", code);
                 // 여기서 백엔드로 코드를 보내 액세스 토큰을 얻는 로직을 구현할 수 있습니다.
-        
+                // 뺑글이 후보2
                 // authorization code를 백엔드에 전송하고 백엔드로부터 응답 받기
                 const response = await fetch("http://10.19.218.225:8000/user-management/token", {
                     method: "POST",
@@ -130,6 +130,7 @@ export default class extends AbstractView {
                     console.log("JWT saved to local storage");
 
                     if (jsonResponse['is_verified'] === false) {
+                        // 뺑글이 후보1
                         navigateTo('/QRcode');
                     } else if (jsonResponse['passed_2fa'] === false) {
                         navigateTo('/OTP');

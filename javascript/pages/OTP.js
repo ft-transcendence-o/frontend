@@ -3,7 +3,7 @@ import AbstractView from "./AbstractView.js";
 export default class extends AbstractView {
     constructor() {
         super();
-        this.setTitle("Example1");
+        this.setTitle("OTP");
     }
 
     /**
@@ -76,9 +76,7 @@ export default class extends AbstractView {
 		event.preventDefault();
 		console.log("addEventListener called");
 
-		const pastedValue = (event.clipboardData || window.clipboardData).getData(
-			"text"
-		); //입력된 값을 저장하는 변수
+		const pastedValue = (event.clipboardData || window.clipboardData).getData("text"); //입력된 값을 저장하는 변수
 		copiedvalue = pastedValue;
 		const otpLength = inputs.length;
 
@@ -96,55 +94,77 @@ export default class extends AbstractView {
 
 		inputs.forEach((input, index1) => {
 		input.addEventListener("keyup", (e) => {
-			let currentInput = input;
-			let nextInput = input.nextElementSibling;
-			let prevInput = input.previousElementSibling;
+		let currentInput = input;
+		let nextInput = input.nextElementSibling;
+		let prevInput = input.previousElementSibling;
 
-			invalid_input.innerHTML = '';
-			if (currentInput.value.length > 1) {
-			currentInput.value = "";
-			return;
+		invalid_input.innerHTML = '';
+		if (currentInput.value.length > 1) {
+		currentInput.value = "";
+		return;
+		}
+
+		if (
+		nextInput &&
+		nextInput.hasAttribute("disabled") &&
+		currentInput.value !== ""
+		) {
+		nextInput.removeAttribute("disabled");
+		nextInput.focus();
+		}
+
+		if (e.key === "Backspace") {
+		inputs.forEach((input, index2) => {
+			if (index1 <= index2 && prevInput) {
+			input.setAttribute("disabled", true);
+			input.value = "";
+			prevInput.focus();
 			}
+		});
+		}
 
-			if (
-			nextInput &&
-			nextInput.hasAttribute("disabled") &&
-			currentInput.value !== ""
-			) {
-			nextInput.removeAttribute("disabled");
-			nextInput.focus();
-			}
+		button.classList.remove("active");
+		button.setAttribute("disabled", "disabled");
 
-			if (e.key === "Backspace") {
-			inputs.forEach((input, index2) => {
-				if (index1 <= index2 && prevInput) {
-				input.setAttribute("disabled", true);
-				input.value = "";
-				prevInput.focus();
-				}
-			});
-			}
+		const inputsNo = inputs.length;
+		if (!inputs[inputsNo - 1].disabled && inputs[inputsNo - 1].value !== "") {
 
-			button.classList.remove("active");
-			button.setAttribute("disabled", "disabled");
+		// 아래 버튼 제거 가능성 90%
+		button.classList.add("active");
+		button.removeAttribute("disabled");
 
-			const inputsNo = inputs.length;
-			if (!inputs[inputsNo - 1].disabled && inputs[inputsNo - 1].value !== "") {
-			button.classList.add("active");
-			button.removeAttribute("disabled");
+		// Clear all inputs and reset the form
+		//여기서 백엔드에 보내는 api호출해야함
+		let OTPNumber = "";
+		for (let i = 0; i < 6; i++){
+			OTPNumber += inputs[i].toString();
+		}
+		console.log(OTPNumber);
 
-			// Clear all inputs and reset the form
+		const response = await fetch("http://10.19.218.225:8000/user-management/otp/verify", {
+			method: "POST",
+			headers: {
+				"Authorization": `Bearer ${localStorage.getItem('jwt')}`,
+			},
+			// body: data
+			body: JSON.stringify({"input_password": OTPNumber})
+		});
+
+		if (response.ok){
+
+		}
+		else {
 			invalid_input.innerHTML = '<p class="PS2P_font" style="color: red; z-index:4">INVALID INPUT "INSERT COIN"</p>';
 			const otpLength = inputs.length;
 			for (let i = 0; i < otpLength; i++) {
-			inputs[i].value = "";
-			inputs[i].setAttribute("disabled", "disabled");
+				inputs[i].value = "";
+				inputs[i].setAttribute("disabled", "disabled");
 			}
 			inputs[0].removeAttribute("disabled");
 			inputs[0].focus();
-			}
+		}
+		}
 		});
 		});
-
-	}
+	} // async
 }
