@@ -64,107 +64,106 @@ export default class extends AbstractView {
 	<!--$%analytics%$-->`;
     }
 
-    async init() {
-        const inputs = document.querySelectorAll(".otp-field > input");
+	async init() {
+		const inputs = document.querySelectorAll(".otp-field > input");
 		const button = document.querySelector(".btn");
 		const invalid_input = document.querySelector("#invalid_input");
-
+	
 		window.addEventListener("load", () => inputs[0].focus());
 		button.setAttribute("disabled", "disabled");
-
+	
 		inputs[0].addEventListener("paste", function (event) {
-		event.preventDefault();
-		console.log("addEventListener called");
-
-		const pastedValue = (event.clipboardData || window.clipboardData).getData("text"); //입력된 값을 저장하는 변수
-		copiedvalue = pastedValue;
-		const otpLength = inputs.length;
-
-		for (let i = 0; i < otpLength; i++) {
-			if (i < pastedValue.length) {
-			inputs[i].value = pastedValue[i];
-			inputs[i].removeAttribute("disabled");
-			inputs[i].focus;
-			} else {
-			inputs[i].value = ""; // Clear any remaining inputs
-			inputs[i].focus;
-			}
-		}
-		});
-
-		inputs.forEach((input, index1) => {
-		input.addEventListener("keyup", (e) => {
-		let currentInput = input;
-		let nextInput = input.nextElementSibling;
-		let prevInput = input.previousElementSibling;
-
-		invalid_input.innerHTML = '';
-		if (currentInput.value.length > 1) {
-		currentInput.value = "";
-		return;
-		}
-
-		if (
-		nextInput &&
-		nextInput.hasAttribute("disabled") &&
-		currentInput.value !== ""
-		) {
-		nextInput.removeAttribute("disabled");
-		nextInput.focus();
-		}
-
-		if (e.key === "Backspace") {
-		inputs.forEach((input, index2) => {
-			if (index1 <= index2 && prevInput) {
-			input.setAttribute("disabled", true);
-			input.value = "";
-			prevInput.focus();
-			}
-		});
-		}
-
-		button.classList.remove("active");
-		button.setAttribute("disabled", "disabled");
-
-		const inputsNo = inputs.length;
-		if (!inputs[inputsNo - 1].disabled && inputs[inputsNo - 1].value !== "") {
-
-		// 아래 버튼 제거 가능성 90%
-		button.classList.add("active");
-		button.removeAttribute("disabled");
-
-		// Clear all inputs and reset the form
-		//여기서 백엔드에 보내는 api호출해야함
-		let OTPNumber = "";
-		for (let i = 0; i < 6; i++){
-			OTPNumber += inputs[i].toString();
-		}
-		console.log(OTPNumber);
-
-		const response = await fetch("http://10.19.218.225:8000/user-management/otp/verify", {
-			method: "POST",
-			headers: {
-				"Authorization": `Bearer ${localStorage.getItem('jwt')}`,
-			},
-			// body: data
-			body: JSON.stringify({"input_password": OTPNumber})
-		});
-
-		if (response.ok){
-
-		}
-		else {
-			invalid_input.innerHTML = '<p class="PS2P_font" style="color: red; z-index:4">INVALID INPUT "INSERT COIN"</p>';
+			event.preventDefault();
+			console.log("addEventListener called");
+	
+			const pastedValue = (event.clipboardData || window.clipboardData).getData("text"); //입력된 값을 저장하는 변수
+			copiedvalue = pastedValue;
 			const otpLength = inputs.length;
+	
 			for (let i = 0; i < otpLength; i++) {
-				inputs[i].value = "";
-				inputs[i].setAttribute("disabled", "disabled");
+				if (i < pastedValue.length) {
+					inputs[i].value = pastedValue[i];
+					inputs[i].removeAttribute("disabled");
+					inputs[i].focus();
+				} else {
+					inputs[i].value = ""; // Clear any remaining inputs
+					inputs[i].focus();
+				}
 			}
-			inputs[0].removeAttribute("disabled");
-			inputs[0].focus();
-		}
-		}
 		});
+	
+		inputs.forEach((input, index1) => {
+			input.addEventListener("keyup", async (e) => {
+				let currentInput = input;
+				let nextInput = input.nextElementSibling;
+				let prevInput = input.previousElementSibling;
+	
+				invalid_input.innerHTML = '';
+				if (currentInput.value.length > 1) {
+					currentInput.value = "";
+					return;
+				}
+	
+				if (nextInput && nextInput.hasAttribute("disabled") && currentInput.value !== "") {
+					nextInput.removeAttribute("disabled");
+					nextInput.focus();
+				}
+	
+				if (e.key === "Backspace") {
+					inputs.forEach((input, index2) => {
+						if (index1 <= index2 && prevInput) {
+							input.setAttribute("disabled", true);
+							input.value = "";
+							prevInput.focus();
+						}
+					});
+				}
+	
+				button.classList.remove("active");
+				button.setAttribute("disabled", "disabled");
+	
+				const inputsNo = inputs.length;
+				if (!inputs[inputsNo - 1].disabled && inputs[inputsNo - 1].value !== "") {
+	
+					// 아래 버튼 제거 가능성 90%
+					button.classList.add("active");
+					button.removeAttribute("disabled");
+	
+					// Clear all inputs and reset the form
+					// 여기서 백엔드에 보내는 api호출
+					let OTPNumber = "";
+					for (let i = 0; i < 6; i++) {
+						OTPNumber += inputs[i].value.toString();
+					}
+					console.log(OTPNumber);
+	
+					const response = await fetch("http://10.19.218.225:8000/user-management/otp/verify", {
+						method: "POST",
+						headers: {
+							"Authorization": `Bearer ${localStorage.getItem('jwt')}`,
+						},
+						body: JSON.stringify({ "input_password": OTPNumber })
+					});
+
+
+					console.log(response);
+					console.log(response.json());
+					if (response.ok) {
+						// Handle successful response
+					} else {
+
+						
+						invalid_input.innerHTML = `<p class="PS2P_font" style="color: red; z-index:4">INVALID INPUT "INSERT COIN"</p>`;
+						const otpLength = inputs.length;
+						for (let i = 0; i < otpLength; i++) {
+							inputs[i].value = "";
+							inputs[i].setAttribute("disabled", "disabled");
+						}
+						inputs[0].removeAttribute("disabled");
+						inputs[0].focus();
+					}
+				}
+			});
 		});
 	} // async
-}
+}	
