@@ -41,6 +41,25 @@ body {
 	color: white;
 }
 
+.btn.btn-primary {
+	background-color: transparent;
+	border: none;
+	font-weight: inherit;
+	line-height: inherit;
+	transition: none;
+	font-size: inherit;
+}
+.btn:hover.btn-primary {
+	background-color: transparent;
+	border: none;
+	font-weight: inherit;
+	line-height: inherit;
+	transition: none;
+	font-size: inherit;
+	color: #14FF00;
+	
+}
+
 .blue_outline {
 	color: white;
 	border-width: 14px;
@@ -88,4 +107,14 @@ body {
         3px -3px 0 #ffffff,
         -3px 3px 0 #ffffff,
         3px 3px 0 #ffffff;
+}
+
+.white_stroke_2_5px{
+	text-shadow:
+        -2.5px -2.5px 0 #ffffff,  
+        2.5px -2.5px 0 #ffffff,
+        -2.5px 2.5px 0 #ffffff,
+		2.5px 2.5px 0 #ffffff,
+		-2.5px 0px 0 #ffffff,
+        2.5px 0px 0 #ffffff;
 }
