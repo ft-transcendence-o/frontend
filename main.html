@@ -11,23 +11,22 @@
     <div class="container-fluid d-flex flex-column align-items-center">
 		<div style="background-color: black; position: absolute; width: 1440px; height: 1024px;">
 
-			<!-- navbar -->
-			<nav class="navbar navbar-expand-lg" style="position: relative; z-index: 2; margin-left: 80px; margin-top: 30px;">
-				<p class="navbar-brand PS2P_font" style="margin: 0px; font-size: 30px;" href="#">INTRA_ID</p>
-				
-				<div class="collapse navbar-collapse" id="navbarSupportedContent" style="font-size: 30px;">
-					<ul class="navbar-nav mr-auto">
-					<li class="nav-item active" style="margin-left: 170px;">
-						<a class="nav-link PS2P_font" href="#">>MATCH-RECORD</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link PS2P_font" href="#">>LANGUAGE</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link PS2P_font" href="#">>LOGOUT</a>
-					</li>
-				</div>
-			</nav>
+			<!-- nav -->
+			<ul class="nav justify-content-end PS2P_font" style="position: relative; z-index: 2; font-size: 30px; margin-top: 50px;">
+				<li>
+					<p style="margin-top: 7px;">INTRA_ID</p>
+				</li>
+				<li style="margin-left: 80px; margin-right: 10px;">
+					<a class="btn btn-primary" href="#">>MATCH-RECORD</a>
+				</li>
+				<li style="margin-left: 10px; margin-right: 10px;">
+					<a class="btn btn-primary" href="#">>LANGUAGE</a>
+				</li>
+				<li style="margin-left: 10px; margin-right: 40px;">
+					<a class="btn btn-primary" href="#">>LOGOUT</a>
+				</li>
+			</ul>
+
 			<!-- backgound outline -->
 			<div class="blue_outline" style="background-color: black; position: absolute; width: 1408px; height: 992px; top: 16px; left: 16px; z-index: 1;"></div>
 
@@ -82,7 +81,8 @@
 			</div>
 		</div>
     </div>
-    
+
+	<!-- 버튼들 렌더 class 추가 및 이벤트 리스너 추가 -->
 
     <script src="./bootstrap-5.3.3-dist/js/bootstrap.min.js"></script>
 </body>
