@@ -1,14 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href="./bootstrap-5.3.3-dist/css/bootstrap.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="css/style.css">
-	<title>Match Record</title>
-</head>
-<body>
-    <div class="container-fluid d-flex flex-column align-items-center">
+import AbstractView from "./AbstractView.js";
+import { navigateTo } from "../../router.js";
+
+export default class extends AbstractView {
+    constructor() {
+        super();
+        this.setTitle("Example1");
+    }
+
+    /**
+     * @returns app div에 그려낼 해당 view의 html을 반환합니다.
+     */
+    async getHtml() {
+        return `
+        <div class="container-fluid d-flex flex-column align-items-center">
 		<div style="background-color: black; position: absolute; width: 1440px; height: 1024px;">
 
 			<!-- backgound outline -->
@@ -74,8 +78,10 @@
 
 		</div>
     </div>
+    `;
+    }
 
-	<script>
+    async init() {
         const response = await fetch("http://10.19.218.225:8000/game-management/game?page=2", {
             method: "GET",
             headers: {
@@ -242,7 +248,5 @@
                 // 
 			});
 		});
-	</script>
-    <script src="./bootstrap-5.3.3-dist/js/bootstrap.min.js"></script>
-</body>
-</html>
+    }
+}
