@@ -180,19 +180,19 @@
             <nav class="PS2P_font justify-content-center" style="position: relative; z-index: 2; display: grid; margin: 120px 0px;">
                 <ul class="pagination">
                     <li class="page-item">
-                        <a class="page-link" href="#"><</a>
+                        <a class="page-link" href="backward"><</a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link active" href="#">1</a>
+                        <a class="page-link active" href="/1">1</a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="#">2</a>
+                        <a class="page-link" href="/2">2</a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="#">3</a>
+                        <a class="page-link" href="/3">3</a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="#">></a>
+                        <a class="page-link" href="forward">></a>
                     </li>
                 </ul>
             </nav>
@@ -202,6 +202,49 @@
 
 	<script>
 		// 클릭 가능한 요소들에 이벤트 리스너를 등록한다
+        const Top_Buttons = document.querySelector("#top_item").querySelectorAll("a");
+
+		Top_Buttons.forEach((Button) => {
+
+			Button.addEventListener("click", (event) => {
+				event.preventDefault();
+				console.log(event.target.href);
+				// 라우팅 이벤트 추가
+			});
+
+			Button.addEventListener("mouseenter", (event) => {
+				Button.classList.remove("blue_outline");
+				Button.classList.add("green_outline");
+				Button.classList.add("white_stroke_2_5px");
+			});
+
+			Button.addEventListener("mouseleave", (event) => {
+				Button.classList.add("blue_outline");
+				Button.classList.remove("green_outline");
+				Button.classList.remove("white_stroke_2_5px");
+			});
+		});
+
+        const Page_Buttons = document.querySelectorAll(".page-link");
+
+        console.log(Page_Buttons);
+
+		Page_Buttons.forEach((Button) => {
+
+			Button.addEventListener("click", (event) => {
+				event.preventDefault();
+				console.log(event.target.href);
+				// 라우팅 이벤트 추가
+			});
+
+			Button.addEventListener("mouseenter", (event) => {
+				// 
+			});
+
+			Button.addEventListener("mouseleave", (event) => {
+                // 
+			});
+		});
 
 	</script>
     <script src="./bootstrap-5.3.3-dist/js/bootstrap.min.js"></script>
