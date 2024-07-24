@@ -1,3 +1,4 @@
+import { navigateTo } from "../../router.js";
 import AbstractView from "./AbstractView.js";
 
 export default class extends AbstractView {
@@ -31,11 +32,6 @@ export default class extends AbstractView {
 				<input type="number" class="PS2P_font" style="width:150px; height:300px; border-color: #14FF00; border-width: 10px; background-color:black; color:white; font-size: 100px;" disabled />
 			</div>
 
-			<button type="button" class="btn btn-primary">
-				<span class="PS2P_font">
-					VERIFY
-				</span>
-			</button>
 
 			<!-- invalid input -->
 			<div id="invalid_input"></div>
@@ -66,11 +62,11 @@ export default class extends AbstractView {
 
 	async init() {
 		const inputs = document.querySelectorAll(".otp-field > input");
-		const button = document.querySelector(".btn");
+		// const button = document.querySelector(".btn");
 		const invalid_input = document.querySelector("#invalid_input");
 	
 		window.addEventListener("load", () => inputs[0].focus());
-		button.setAttribute("disabled", "disabled");
+		// button.setAttribute("disabled", "disabled");
 	
 		inputs[0].addEventListener("paste", function (event) {
 			event.preventDefault();
@@ -119,15 +115,15 @@ export default class extends AbstractView {
 					});
 				}
 	
-				button.classList.remove("active");
-				button.setAttribute("disabled", "disabled");
+				// button.classList.remove("active");
+				// button.setAttribute("disabled", "disabled");
 	
 				const inputsNo = inputs.length;
 				if (!inputs[inputsNo - 1].disabled && inputs[inputsNo - 1].value !== "") {
 	
-					// 아래 버튼 제거 가능성 90%
-					button.classList.add("active");
-					button.removeAttribute("disabled");
+					// 아래 버튼 제거
+					// button.classList.add("active");
+					// button.removeAttribute("disabled");
 	
 					// Clear all inputs and reset the form
 					// 여기서 백엔드에 보내는 api호출
@@ -136,7 +132,7 @@ export default class extends AbstractView {
 						OTPNumber += inputs[i].value.toString();
 					}
 					console.log(OTPNumber);
-	
+					console.log(localStorage.getItem('jwt'));
 					const response = await fetch("http://10.19.218.225:8000/user-management/otp/verify", {
 						method: "POST",
 						headers: {
@@ -145,15 +141,25 @@ export default class extends AbstractView {
 						body: JSON.stringify({ "input_password": OTPNumber })
 					});
 
-
 					console.log(response);
-					console.log(response.json());
+					// console.log(response.json());
 					if (response.ok) {
-						// Handle successful response
+						navigateTo('/main');
 					} else {
+						const jsonResponse = await response.json();
+						// const json_split = jsonResponse['error'].split(' ');
+						//{ 'error': "2"}
 
-						
-						invalid_input.innerHTML = `<p class="PS2P_font" style="color: red; z-index:4">INVALID INPUT "INSERT COIN"</p>`;
+						if (response.status === 400) { // n번 틀렸어
+							const attempts_number = jsonResponse['remain_attempts'];
+							invalid_input.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 20px; z-index:4">Incorrect password. Remaining attempts: ${attempts_number}</p>`;
+						}
+						else if (response.status === 403) { // 잠겼습니다(15분)
+							invalid_input.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 20px; z-index:4">Account is locked for 15 minutes.<br>try later</p>`;
+						}
+						else {	// 401, 500 에러
+							navigateTo('/');
+						}
 						const otpLength = inputs.length;
 						for (let i = 0; i < otpLength; i++) {
 							inputs[i].value = "";

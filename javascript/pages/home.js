@@ -59,7 +59,10 @@ export default class extends AbstractView {
 			</div>
 		</div>
 
-		<!-- QR Code -->
+		<!-- spinner -->
+        <div id="spinner" class="spinner-border text-primary" style="display: none; width: 30rem; height: 30rem;" role="status" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+            <span class="sr-only">Loading...</span>
+        </div>
 		
 
 		<!-- footer -->
@@ -106,54 +109,42 @@ export default class extends AbstractView {
             const code = urlParams.get("code");
             if (code) {
                 console.log("Received authorization code:", code);
+                const spinner = document.getElementById("spinner");
+                spinner.style.display = "block"; // 뺑글이 범위 시작
                 // 여기서 백엔드로 코드를 보내 액세스 토큰을 얻는 로직을 구현할 수 있습니다.
-                // 뺑글이 후보2
                 // authorization code를 백엔드에 전송하고 백엔드로부터 응답 받기
-                const response = await fetch("http://10.19.218.225:8000/user-management/token", {
-                    method: "POST",
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    // body: data
-                    body: JSON.stringify({"code": code})
-                });
-                if (response.ok) {
-                    const jsonResponse = await response.json();
-                    console.log("success");
-                    console.log(response);
-                    console.log(jsonResponse);
-                    console.log(jsonResponse['jwt']); //await으로 해결
-                    // const decodedToken = decodeJWTManually(jsonResponse['jwt']); //여기
-                    // console.log(decodedToken);
-
-                    localStorage.setItem('jwt', jsonResponse['jwt']);
-                    console.log("JWT saved to local storage");
-
-                    if (jsonResponse['is_verified'] === false) {
-                        // 뺑글이 후보1
-                        navigateTo('/QRcode');
-                    } else if (jsonResponse['passed_2fa'] === false) {
-                        navigateTo('/OTP');
+                try {
+                    const response = await fetch("http://10.19.218.225:8000/user-management/token", {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({"code": code})
+                    });
+                    if (response.ok) {
+                        const jsonResponse = await response.json();
+                        console.log("success");
+                        console.log(response);
+                        console.log(jsonResponse);
+                        console.log(jsonResponse['jwt']); //await으로 해결
+    
+                        localStorage.setItem('jwt', jsonResponse['jwt']);
+                        console.log("JWT saved to local storage");
+    
+                        if (jsonResponse['is_verified'] === false) {
+                            navigateTo('/QRcode');
+                        } else if (jsonResponse['passed_2fa'] === false) {
+                            navigateTo('/OTP');
+                        }
+                    else {
+                        console.log("error");
                     }
-
+                    }
+                } catch (error) {
+                    console.log("Fetch error:", error);
+                } finally {
+                    spinner.style.display = "none"; // 뺑글이 범위 끝
                 }
-                else {
-                    console.log("error");
-                }
-
-
-        
-                // is_verified(false) : QR페이지
-                // passed_2fa(false) : OTP페이지
-                // passed_2fa(true) : main페이지
-                
-                // uri 이미 받았음
-                // 분기
-                // qr uri -> 로컬 스토리지 -> home.js
-                // 라우트 호출 -> home.js에서 수행하는데 route라는 함수는 다른 파일에 있음 import해와야함
-                // 라우팅 된 페이지의 init에서 로컬스토리지에서 qr uri를 가져오기
-                // 그리고 init에서 qr그리는 util 함수를 호출
-        
             }
     }
 }

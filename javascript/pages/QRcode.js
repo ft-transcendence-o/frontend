@@ -25,7 +25,7 @@ export default class extends AbstractView {
 			</div>
 	
 			<!-- Next Button -->
-			<button type="button" style=" z-index: 4; margin-top: 640px; font-size: 50px; width: 230px; height: 139px;" class="btn btn-outline-primary PS2P_font">NEXT </button>
+			<button type="button" style=" z-index: 4; margin-top: 640px; font-size: 50px; width: 230px; height: 139px;" class="btn btn-outline-primary PS2P_font">NEXT</button>
 	
 	
 			<!-- footer -->
@@ -62,13 +62,12 @@ export default class extends AbstractView {
 				colorLight: "#000000", // QR 코드의 배경색
 				correctLevel: QRCode.CorrectLevel.H // 오류 수정 수준
 			});
-		
 		console.log("generated");
+		};
 
+		console.log(localStorage.getItem('jwt'));
 		// qr uri -> local storage에서 불러오기
 		// generateQRcode(불러온 uri)
-		};
-		console.log(localStorage.getItem('jwt'));
 		const response = await fetch("http://10.19.218.225:8000/user-management/otp/qrcode", {
                     method: "GET",
                     headers: {
