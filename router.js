@@ -30,7 +30,7 @@ export const router = async () => {
         { path: "/example1", view: example1 },
         { path: "/example2", view: example2 },
         { path: "/QRcode", view: QRcode },
-        { path: "/OTP" , view: OTP }
+        { path: "/OTP" , view: OTP },
         { path: "/main", view: main },
     ];
 
