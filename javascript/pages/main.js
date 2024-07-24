@@ -1,4 +1,5 @@
 import AbstractView from "./AbstractView.js";
+import { navigateTo } from "../../router.js";
 
 export default class extends AbstractView {
     constructor() {
@@ -26,7 +27,7 @@ export default class extends AbstractView {
 				<!-- nav menu buttons -->
 				<ul class="nav justify-content-end">
 					<li>
-						<a class="btn btn-primary" href="/MATCH-RECORD">>MATCH-RECORD</a>
+						<a class="btn btn-primary" href="/match_record">>MATCH-RECORD</a>
 					</li>
 					<li style="margin-left: 20px;">
 						<a class="btn btn-primary" href="/LANGUAGE">>LANGUAGE</a>
@@ -126,7 +127,11 @@ export default class extends AbstractView {
 			Button.addEventListener("click", (event) => {
 				event.preventDefault();
 				console.log(event.target.href);
+
 				// 라우팅 이벤트 추가
+				if (event.target.href == "http://127.0.0.1:5500/match_record") {
+					navigateTo("/match_record");
+				}
 			});
 
 			Button.addEventListener("mouseenter", (event) => {
