@@ -21,7 +21,7 @@ export default class extends AbstractView {
 			<div id="top_item" class="PS2P_font" style="position: relative; z-index: 2; margin-top: 50px; font-size: 30px; margin-top: 50px;">
 
 				<!-- Intra ID -->
-				<span id="user_name" class="PS2P_font" style="position: absolute; z-index: 3; font-size: 30px; margin-top: 7px; margin-left: 70px;">INTRA_ID</span>
+				<span id="user_name" class="PS2P_font" style="position: absolute; z-index: 3; font-size: 30px; margin-top: 4px; margin-left: 70px;">INTRA_ID</span>
 				
 				<!-- nav menu buttons -->
 				<ul class="nav justify-content-end">
@@ -145,6 +145,26 @@ export default class extends AbstractView {
 		// backend api를 통해 유저의 이름을 받아와서 요소에 집어넣는다
 		const User_Name_Holder = document.querySelector("#top_item").querySelector("#user_name");
 
-		// User_Name_Holder.innerHTML = "TEST_ID";
+        const response = await fetch("http://10.19.218.225:8000/user-management/info", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem('jwt')}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        if (response.ok) {
+            const jsonResponse = await response.json();
+            console.log("success");
+            console.log(response);
+            console.log(jsonResponse);
+            console.log(jsonResponse['login']); //await으로 해결
+            User_Name_Holder.innerHTML = jsonResponse['login'];
+        } else {
+            const jsonResponse = await response.json();
+            console.log("Fail");
+            console.log(response);
+            console.log(jsonResponse);
+        }
+
     }
 }
