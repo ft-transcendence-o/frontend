@@ -82,7 +82,7 @@ export default class extends AbstractView {
     }
 
     async init() {
-        const response = await fetch("http://10.19.218.225:8000/game-management/game?page=2", {
+        const response = await fetch("http://10.19.218.225:8000/game-management/game?page=1", {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${localStorage.getItem('jwt')}`,
