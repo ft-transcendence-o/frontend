@@ -1,6 +1,9 @@
+// Javascript 파일 import 
 import home from "./javascript/pages/home.js"
 import example1 from "./javascript/pages/example1.js"
 import example2 from "./javascript/pages/example2.js"
+import QRcode from "./javascript/pages/QRcode.js"
+import OTP from "./javascript/pages/OTP.js";
 import main from "./javascript/pages/main.js"
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -16,16 +19,18 @@ document.addEventListener('DOMContentLoaded', () => {
     router();
 })
 
-const navigateTo = (url) => {
+export const navigateTo = (url) => {
     history.pushState(null, null, url);
     router();
 }
 
-const router = async () => {
+export const router = async () => {
     const routes = [
         { path: "/", view: home },
         { path: "/example1", view: example1 },
         { path: "/example2", view: example2 },
+        { path: "/QRcode", view: QRcode },
+        { path: "/OTP" , view: OTP }
         { path: "/main", view: main },
     ];
 
@@ -42,8 +47,9 @@ const router = async () => {
         document.querySelector('#app').innerHTML = `<h1>404</h1>`
     } else {
         const view = new match.route.view();
-
         document.querySelector('#app').innerHTML = await view.getHtml();
         await view.init();
     }
+
+    console.log("hi1");
 };
