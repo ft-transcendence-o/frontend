@@ -1,6 +1,7 @@
 import home from "./javascript/pages/home.js"
 import example1 from "./javascript/pages/example1.js"
 import example2 from "./javascript/pages/example2.js"
+import main from "./javascript/pages/main.js"
 
 document.addEventListener('DOMContentLoaded', () => {
     document.body.addEventListener('click', (event) => {
@@ -25,6 +26,7 @@ const router = async () => {
         { path: "/", view: home },
         { path: "/example1", view: example1 },
         { path: "/example2", view: example2 },
+        { path: "/main", view: main },
     ];
 
     const potentialMatches = routes.map((route) => {
