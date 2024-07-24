@@ -1,25 +1,25 @@
 .spinner-container {
     display: flex;
-    width: 100rem;
-    height: 100rem;
-    top: 150px;
     align-items: center;
+    justify-content: center;
     flex-direction: column;
     position: absolute; 
-    margin-top: 500px;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* 50% 검정색 */
     z-index: 4;
 }
 
 .spinner-custom {
-    width: 30rem;
-    height: 30rem;
-    border-width: 10rem;
-    border-color: #14FF00 transparent;
-    border-style: solid;
+    width: 10rem;
+    height: 10rem;
+    border: 10rem solid #14FF00;
+    border-top: 1rem solid transparent;
     border-radius: 50%;
     animation: spin 1s linear infinite;
+    z-index: 5;
 }
 
 .spinner-message {

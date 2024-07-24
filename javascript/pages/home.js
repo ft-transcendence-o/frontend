@@ -60,10 +60,10 @@ export default class extends AbstractView {
 		</div>
 
 		<!-- spinner -->
-        <div id="spinner" class="spinner-border text-primary" style="display: none; width: 30rem; height: 30rem;" role="status" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-            <span class="sr-only">Loading...</span>
+        <div id="spinner" class="spinner-container" style="display: none;">
+            <div class="custom-spinner"></div>
+            <div class="spinner-message">Generating QR code...</div>
         </div>
-		
 
 		<!-- footer -->
 		<div class="row" style="position:absolute; padding-top:890px; z-index: 2;">
@@ -104,13 +104,18 @@ export default class extends AbstractView {
                 login_arrow.classList.remove("red_hover");
                 console.log("hover out");
             });
+            // 로컬스토리지에 JWT 유무 확인
+            if (localStorage.getItem('jwt')) {
+                navigateTo('/main');
+            }
+            
             // URL에서 코드 파라미터 확인
             const urlParams = new URLSearchParams(window.location.search);
             const code = urlParams.get("code");
             if (code) {
                 console.log("Received authorization code:", code);
                 const spinner = document.getElementById("spinner");
-                spinner.style.display = "block"; // 뺑글이 범위 시작
+                spinner.style.display = "flex"; // 뺑글이 범위 시작
                 // 여기서 백엔드로 코드를 보내 액세스 토큰을 얻는 로직을 구현할 수 있습니다.
                 // authorization code를 백엔드에 전송하고 백엔드로부터 응답 받기
                 try {
@@ -131,14 +136,15 @@ export default class extends AbstractView {
                         localStorage.setItem('jwt', jsonResponse['jwt']);
                         console.log("JWT saved to local storage");
     
-                        if (jsonResponse['is_verified'] === false) {
+                        if (jsonResponse['show_otp_qr'] === false) {
                             navigateTo('/QRcode');
-                        } else if (jsonResponse['passed_2fa'] === false) {
+                        } else if (jsonResponse['otp_verified'] === false) {
                             navigateTo('/OTP');
+                        } else {
+                            navigateTo('/main');
                         }
-                    else {
+                    } else {
                         console.log("error");
-                    }
                     }
                 } catch (error) {
                     console.log("Fetch error:", error);

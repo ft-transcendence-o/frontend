@@ -1,3 +1,4 @@
+import { navigateTo } from "../../router.js";
 import AbstractView from "./AbstractView.js";
 
 export default class extends AbstractView {
@@ -127,6 +128,14 @@ export default class extends AbstractView {
 				event.preventDefault();
 				console.log(event.target.href);
 				// 라우팅 이벤트 추가
+
+				if (event.target.href === "http://127.0.0.1:5500/LOGOUT") {
+					//로그아웃 작업
+					// 로그아웃 시  local storage에서 JWT 삭제 후 API 쏘기 그러면 백에서 true false로 응답한다 -> 따라서 OTP 페이지로 이동하게 된다.
+					console.log("LOGOUT IN");
+					localStorage.removeItem('jwt');
+					navigateTo('/');
+				}
 			});
 
 			Button.addEventListener("mouseenter", (event) => {

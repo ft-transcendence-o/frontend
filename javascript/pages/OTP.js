@@ -146,15 +146,16 @@ export default class extends AbstractView {
 					if (response.ok) {
 						navigateTo('/main');
 					} else {
-						const jsonResponse = await response.json();
 						// const json_split = jsonResponse['error'].split(' ');
 						//{ 'error': "2"}
-
+						
 						if (response.status === 400) { // n번 틀렸어
+							const jsonResponse = await response.json();
 							const attempts_number = jsonResponse['remain_attempts'];
 							invalid_input.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 20px; z-index:4">Incorrect password. Remaining attempts: ${attempts_number}</p>`;
 						}
 						else if (response.status === 403) { // 잠겼습니다(15분)
+							// const jsonResponse = await response.json();
 							invalid_input.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 20px; z-index:4">Account is locked for 15 minutes.<br>try later</p>`;
 						}
 						else {	// 401, 500 에러
