@@ -29,124 +29,170 @@
 			</div>
 
 			<!-- tables -->
-            <table class="table PS2P_font" style="position: relative; z-index: 1; font-size: 20px; margin-left: 120px; margin-top: 80px;">
-                <thead>
-                    <th scope="col" style="background-color: transparent; color: white; border: none; padding: 15px 0px; padding-bottom: 25px; width: 240px;">PLAYER A</th>
-                    <th scope="col" style="background-color: transparent; color: white; border: none; padding: 15px 0px; padding-bottom: 25px; width: 250px">PLAYER B</th>
-                    <th scope="col" style="background-color: transparent; color: white; border: none; padding: 15px 0px; padding-bottom: 25px; width: 240px">SCORE</th>
-                    <th scope="col" style="background-color: transparent; color: white; border: none; padding: 15px 0px; padding-bottom: 25px; width: 260px">MODE</th>
-                    <th scope="col" style="background-color: transparent; color: white; border: none; padding: 15px 0px; padding-bottom: 25px;">DATE</th>
-                </thead>
-                <tbody>
-                    <!-- PLAYER A -->
-                    <!-- PLAYER B -->
-                    <!-- SCORE -->
-                    <!-- MODE -->
-                    <!-- DATE -->
+            <!-- table의 아이템이 줄면 table도 함께 줄어든다 -->
+            <!-- 같은 그리드 크기를 유지하기위해 div로 한번 감싸준다 -->
+            <div style="height: 470px;">
+                <table class="table PS2P_font" style="position: relative; z-index: 1; font-size: 20px; margin: 0px 0px; margin-left: 120px; margin-top: 80px;">
+                    <thead>
+                        <th scope="col" style="background-color: transparent; color: white; border: none; padding: 15px 0px; padding-bottom: 25px; width: 240px;">PLAYER A</th>
+                        <th scope="col" style="background-color: transparent; color: white; border: none; padding: 15px 0px; padding-bottom: 25px; width: 250px">PLAYER B</th>
+                        <th scope="col" style="background-color: transparent; color: white; border: none; padding: 15px 0px; padding-bottom: 25px; width: 240px">SCORE</th>
+                        <th scope="col" style="background-color: transparent; color: white; border: none; padding: 15px 0px; padding-bottom: 25px; width: 260px">MODE</th>
+                        <th scope="col" style="background-color: transparent; color: white; border: none; padding: 15px 0px; padding-bottom: 25px;">DATE</th>
+                    </thead>
+                    <tbody>
+                        <!-- PLAYER A -->
+                        <!-- PLAYER B -->
+                        <!-- SCORE -->
+                        <!-- MODE -->
+                        <!-- DATE -->
+    
+                        <!-- Dummy Data -->
+                        <tr>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">1UP</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2UP</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px; display: flex;">
+                                <span style="display: inline-block; width: 40px; text-align: right;">10</span>
+                                <span>:</span>
+                                <span style="display: inline-block; width: 40px; text-align: left;">7</span>
+                            </td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">1 ON 1</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2024.JUL.8</td>
+                        </tr>
+    
+                        <tr>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">1UP</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2UP</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px; display: flex;">
+                                <span style="display: inline-block; width: 40px; text-align: right;">4</span>
+                                <span>:</span>
+                                <span style="display: inline-block; width: 40px; text-align: left;">10</span>
+                            </td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">1 ON 1</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2024.JUL.8</td>
+                        </tr>
+    
+                        <tr>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">BALL</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">EMINEM</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px; display: flex;">
+                                <span style="display: inline-block; width: 40px; text-align: right;">10</span>
+                                <span>:</span>
+                                <span style="display: inline-block; width: 40px; text-align: left;">9</span>
+                            </td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">TOURNAMENT</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2024.JUL.8</td>
+                        </tr>
+    
+                        <tr>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">CHEETAH</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">BEAR</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px; display: flex;">
+                                <span style="display: inline-block; width: 40px; text-align: right;">10</span>
+                                <span>:</span>
+                                <span style="display: inline-block; width: 40px; text-align: left;">3</span>
+                            </td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">TOURNAMENT</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2024.JUL.8</td>
+                        </tr>
+    
+                        <tr>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">1UP</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2UP</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px; display: flex;">
+                                <span style="display: inline-block; width: 40px; text-align: right;">10</span>
+                                <span>:</span>
+                                <span style="display: inline-block; width: 40px; text-align: left;">5</span>
+                            </td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">1 ON 1</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2024.JUL.8</td>
+                        </tr>
+    
+                        <tr>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">1UP</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2UP</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px; display: flex;">
+                                <span style="display: inline-block; width: 40px; text-align: right;">7</span>
+                                <span>:</span>
+                                <span style="display: inline-block; width: 40px; text-align: left;">10</span>
+                            </td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">1 ON 1</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2024.JUL.8</td>
+                        </tr>
+    
+                        <tr>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">BOOKWORM</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">FLOWER</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px; display: flex;">
+                                <span style="display: inline-block; width: 40px; text-align: right;">10</span>
+                                <span>:</span>
+                                <span style="display: inline-block; width: 40px; text-align: left;">9</span>
+                            </td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">TOURNAMENT</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2024.JUL.8</td>
+                        </tr>
+    
+                        <tr>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">JAMES</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">WATSON</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px; display: flex;">
+                                <span style="display: inline-block; width: 40px; text-align: right;">10</span>
+                                <span>:</span>
+                                <span style="display: inline-block; width: 40px; text-align: left;">8</span>
+                            </td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">TOURNAMENT</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2024.JUL.8</td>
+                        </tr>
+    
+                        <tr>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">T</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">PIE</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px; display: flex;">
+                                <span style="display: inline-block; width: 40px; text-align: right;">9</span>
+                                <span>:</span>
+                                <span style="display: inline-block; width: 40px; text-align: left;">10</span>
+                            </td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">TOURNAMENT</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2023.JUL.8</td>
+                        </tr>
+    
+                        <tr>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">SPLASH</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">LOVE</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px; display: flex;">
+                                <span style="display: inline-block; width: 40px; text-align: right;">10</span>
+                                <span>:</span>
+                                <span style="display: inline-block; width: 40px; text-align: left;">2</span>
+                            </td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">TOURNAMENT</td>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2023.JUL.8</td>
+                        </tr>
 
-                    <!-- Dummy Data -->
-                    <tr>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">1UP</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2UP</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">10:7 </td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">1 ON 1</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2024.JUL.8</td>
-                    </tr>
-
-                    <tr>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">1UP</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2UP</td>
-                        <!-- <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">4:10</td> -->
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">
-                            <span style="display: inline-block; width: 120px; text-align: center;">4:10</span>
-                        </td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">1 ON 1</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2024.JUL.8</td>
-                    </tr>
-
-                    <tr>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">BALL</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">EMINEM</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">10:9</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">TOURNAMENT</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2024.JUL.8</td>
-                    </tr>
-
-                    <tr>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">CHEETAH</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">BEAR</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">10:3</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">TOURNAMENT</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2024.JUL.8</td>
-                    </tr>
-
-                    <tr>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">1UP</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2UP</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">10:5</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">1 ON 1</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2024.JUL.8</td>
-                    </tr>
-
-                    <tr>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">1UP</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2UP</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">7:10</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">1 ON 1</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2024.JUL.8</td>
-                    </tr>
-
-                    <tr>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">BOOKWORM</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">FLOWER</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">10:9</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">TOURNAMENT</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2024.JUL.8</td>
-                    </tr>
-
-                    <tr>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">JAMES</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">WATSON</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">10:8</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">TOURNAMENT</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2024.JUL.8</td>
-                    </tr>
-
-                    <tr>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">T</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">PIE</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">9:10</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">TOURNAMENT</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2023.JUL.8</td>
-                    </tr>
-
-                    <tr>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">SPLASH</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">LOVE</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">10:2</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">TOURNAMENT</td>
-                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">2023.JUL.8</td>
-                    </tr>
-                </tbody>
-            </table>
+                        <!-- <tr>
+                            <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">There are no data</td>
+                        </tr> -->
+                    </tbody>
+                </table>
+            </div>
+            
 
             <!-- 페이지 버튼 -->
-            <nav class="PS2P_font justify-content-center" style="position: relative; z-index: 2;">
+            <nav class="PS2P_font justify-content-center" style="position: relative; z-index: 2; display: grid; margin: 120px 0px;">
                 <ul class="pagination">
                     <li class="page-item">
-                        <a class="page-link" href="#" style="background-color: transparent; border: none; color: white; font-size: 30px;"><</a>
+                        <a class="page-link" href="#"><</a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="#" style="background-color: transparent; border: none; color: white; font-size: 30px;">1</a>
+                        <a class="page-link active" href="#">1</a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="#" style="background-color: transparent; border: none; color: white; font-size: 30px;">2</a>
+                        <a class="page-link" href="#">2</a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="#" style="background-color: transparent; border: none; color: white; font-size: 30px;">3</a>
+                        <a class="page-link" href="#">3</a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="#" style="background-color: transparent; border: none; color: white; font-size: 30px;">></a>
+                        <a class="page-link" href="#">></a>
                     </li>
                 </ul>
             </nav>
