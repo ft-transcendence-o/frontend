@@ -4,7 +4,7 @@ import { navigateTo } from "../../router.js";
 export default class extends AbstractView {
     constructor() {
         super();
-        this.setTitle("Example1");
+        this.setTitle("Match Record");
     }
 
     /**
