@@ -33,7 +33,7 @@ export default class extends AbstractView {
 						<a class="btn btn-primary" href="/LANGUAGE">>LANGUAGE</a>
 					</li>
 					<li style="margin-left: 20px; margin-right: 40px;">
-						<a class="btn btn-primary" href="/LOGOUT">>LOGOUT</a>
+						<a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#logoutModal">>LOGOUT</a>
 					</li>
 				</ul>
 
@@ -91,6 +91,25 @@ export default class extends AbstractView {
 			</div>
 		</div>
     </div>
+
+	<!-- Logout Modal -->
+    <div class="modal fade custom-modal" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header custom-modal-header">
+					<h5 class="modal-title custom-modal-title" id="logoutModalLabel">OH, YOU ARE LEAVING...</h5>
+					<button type="button" class="btn-close custom-btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body custom-modal-body">
+					ARE YOU SURE?
+				</div>
+				<div class="modal-footer custom-modal-footer">
+					<button type="button" class="btn custom-btn" data-bs-dismiss="modal">NO, JUST KIDDING</button>
+					<button type="button" class="btn custom-btn" id="confirmLogout">YES, LOG ME OUT</button>
+				</div>
+			</div>
+		</div>
+	</div>
     `;
     }
 
@@ -135,6 +154,7 @@ export default class extends AbstractView {
 					console.log("LOGOUT IN");
 					localStorage.removeItem('jwt');
 					navigateTo('/');
+					// 백엔드에 api 쏴야한다.
 				}
 			});
 
@@ -150,6 +170,15 @@ export default class extends AbstractView {
 				Button.classList.remove("white_stroke_2_5px");
 			});
 		});
+
+		// Handle logout confirmation
+    	document.getElementById("confirmLogout").addEventListener("click", () => {
+        	localStorage.removeItem('jwt');
+			navigateTo('/');
+			// Close the modal
+			const logoutModal = bootstrap.Modal.getInstance(document.getElementById('logoutModal'));
+			logoutModal.hide();
+    	});
 
 		// backend api를 통해 유저의 이름을 받아와서 요소에 집어넣는다
 		const User_Name_Holder = document.querySelector("#top_item").querySelector("#user_name");

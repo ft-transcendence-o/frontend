@@ -25,7 +25,7 @@ export default class extends AbstractView {
 			</div>
 	
 			<!-- Next Button -->
-			<button type="button" style=" z-index: 4; margin-top: 640px; font-size: 50px; width: 230px; height: 139px;" class="btn btn-outline-primary PS2P_font">NEXT</button>
+			<button type="button" style="background-color: black; z-index: 4; margin-top: 640px; font-size: 50px; width: 280px; height: 139px;" class="blue_outline PS2P_font">NEXT</button>
 	
 	
 			<!-- footer -->

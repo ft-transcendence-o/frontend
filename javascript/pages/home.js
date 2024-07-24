@@ -59,11 +59,12 @@ export default class extends AbstractView {
 			</div>
 		</div>
 
-		<!-- spinner -->
+        <!-- spinner -->
         <div id="spinner" class="spinner-container" style="display: none;">
-            <div class="custom-spinner"></div>
-            <div class="spinner-message">Generating QR code...</div>
+            <img src="../image/pacman.png" alt="Loading..." class="custom-spinner" />
+            <div class="spinner-message PS2P_font">Loading...</div>
         </div>
+        
 
 		<!-- footer -->
 		<div class="row" style="position:absolute; padding-top:890px; z-index: 2;">
