@@ -163,6 +163,6 @@ body {
 .page-link.disabled {
 	background-color: transparent;
 	border: none;
-	color: rgba(255, 255, 255, 0.257);
+	color: transparent;
 	font-size: 30px;
 }
