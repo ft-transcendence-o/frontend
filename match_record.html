@@ -57,23 +57,17 @@
 
             <!-- 페이지 버튼 -->
             <nav class="PS2P_font justify-content-center" style="position: relative; z-index: 2; display: grid; margin: 120px 0px;">
-                <ul class="pagination">
+                <div class="pagination">
                     <li class="page-item">
-                        <a class="page-link" href="backward"><</a>
+                        <a id="record_backward_button" class="page-link disabled" href="backward"><</a>
                     </li>
+                    <div id="page_button_body" class="pagination">
+                        <!-- page idx buttons -->
+                    </div>
                     <li class="page-item">
-                        <a class="page-link active" href="/1">1</a>
+                        <a id="record_forward_button" class="page-link disabled" href="forward">></a>
                     </li>
-                    <li class="page-item">
-                        <a class="page-link" href="/2">2</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="/3">3</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="forward">></a>
-                    </li>
-                </ul>
+                </div>
             </nav>
 
 		</div>
@@ -81,29 +75,137 @@
 
 	<script>
         // 요청 할 페이지를 localStorage에서 관리하는식으로 시도
-        const response = await fetch(`http://10.19.218.225:8000/game-management/game?page=${localStorage.getItem("record_page")}`, {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${localStorage.getItem('jwt')}`,
-                'Content-Type': 'application/json',
-            },
-        });
-        if (response.ok) {
+        // const response = await fetch(`http://10.19.218.225:8000/game-management/game?page=${localStorage.getItem("record_page")}`, {
+        //     method: "GET",
+        //     headers: {
+        //         "Authorization": `Bearer ${localStorage.getItem('jwt')}`,
+        //         'Content-Type': 'application/json',
+        //     },
+        // });
+        // if (response.ok) {
+        if (true) {
             // 대전기록들을 table에 채워넣는다
-            const jsonResponse = await response.json();
+            // const jsonResponse = await response.json();
+            // dummy data
+            const jsonResponse = JSON.parse(`{
+                "games": [
+                    {
+                        "id": 11,
+                        "player1": "3up",
+                        "player2": "1up",
+                        "score": "21-17",
+                        "mode": "TOURNAMENT",
+                        "tournament_id": 3,
+                        "created_at": "2024-07-18T02:10:46.923045+00:00"
+                    },
+                    {
+                        "id": 10,
+                        "player1": "3up",
+                        "player2": "4up",
+                        "score": "21-15",
+                        "mode": "TOURNAMENT",
+                        "tournament_id": 3,
+                        "created_at": "2024-07-18T02:10:46.922369+00:00"
+                    },
+                    {
+                        "id": 9,
+                        "player1": "1up",
+                        "player2": "2up",
+                        "score": "21-18",
+                        "mode": "TOURNAMENT",
+                        "tournament_id": 3,
+                        "created_at": "2024-07-18T02:10:46.919940+00:00"
+                    },
+                    {
+                        "id": 8,
+                        "player1": "3up",
+                        "player2": "1up",
+                        "score": "21-17",
+                        "mode": "TOURNAMENT",
+                        "tournament_id": 2,
+                        "created_at": "2024-07-18T02:10:46.358945+00:00"
+                    },
+                    {
+                        "id": 7,
+                        "player1": "3up",
+                        "player2": "4up",
+                        "score": "21-15",
+                        "mode": "TOURNAMENT",
+                        "tournament_id": 2,
+                        "created_at": "2024-07-18T02:10:46.357656+00:00"
+                    },
+                    {
+                        "id": 6,
+                        "player1": "1up",
+                        "player2": "2up",
+                        "score": "21-18",
+                        "mode": "TOURNAMENT",
+                        "tournament_id": 2,
+                        "created_at": "2024-07-18T02:10:46.348009+00:00"
+                    },
+                    {
+                        "id": 5,
+                        "player1": "3up",
+                        "player2": "1up",
+                        "score": "21-17",
+                        "mode": "TOURNAMENT",
+                        "tournament_id": 1,
+                        "created_at": "2024-07-18T02:10:45.383303+00:00"
+                    },
+                    {
+                        "id": 4,
+                        "player1": "3up",
+                        "player2": "4up",
+                        "score": "21-15",
+                        "mode": "TOURNAMENT",
+                        "tournament_id": 1,
+                        "created_at": "2024-07-18T02:10:45.382520+00:00"
+                    },
+                    {
+                        "id": 3,
+                        "player1": "1up",
+                        "player2": "2up",
+                        "score": "21-18",
+                        "mode": "TOURNAMENT",
+                        "tournament_id": 1,
+                        "created_at": "2024-07-18T02:10:45.378902+00:00"
+                    },
+                    {
+                        "id": 2,
+                        "player1": "junssong1",
+                        "player2": "junssong2",
+                        "score": "1:2",
+                        "mode": "1vs1",
+                        "tournament_id": null,
+                        "created_at": "2024-07-18T02:07:17.050690+00:00"
+                    }
+                ],
+                "page": {
+                    "current": 8,
+                    "has_next": true,
+                    "has_previous": false,
+                    "total_pages": 10,
+                    "total_items": 11
+                }
+            }`);
             const games = jsonResponse['games'];
             const page = jsonResponse['page']; 
             console.log("success");
-            console.log(response);
+            // console.log(response);
             console.log(jsonResponse);
             console.log("Games:", games.length, games)
             console.log("Page:", page)
 
-            if (games.length > 0)
+            if (games.length == 0)
             {
-                document.querySelector("#no_data_msg").remove;
+                document.querySelector("#no_data_msg").style.display = "block";
+            }
+            else
+            {
+                document.querySelector("#no_data_msg").style.display = "none";
 
                 const record_table_body = document.querySelector("#record_table_body");
+                let records = "";
 
                 games.forEach((game) => {
                     // 점수 파싱
@@ -197,16 +299,103 @@
                     </tr>
                     `;
 
-                    record_table_body.innerHTML += record;
+                    records += record;
                 })
+                record_table_body.innerHTML = records;
             }
+            
+            // "page": {
+            //     "current": 1,
+            //     "has_next": true,
+            //     "has_previous": false,
+            //     "total_pages": 2,
+            //     "total_items": 11
+            // }
             // 페이지 수에 따라 페이지 버튼을 만들어준다
-            // 기본적으로 1페이지 버튼은 반드시 존재한다
-        } else {
-            const jsonResponse = await response.json();
-            console.log("Fail");
-            console.log(response);
-            console.log(jsonResponse);
+            {
+                const page_button_body = document.querySelector("#page_button_body");
+                let page_buttons = "";
+
+                {
+                // 페이지 버튼을 무조건적으로 5씩 잘라서 보여줄것인지
+                // 현재 페이지 기준으로 상대적으로 5개씩 보여줄것인지
+
+                // total_pages: 12
+                // 1 2 3 4 5 / 6 7 8 9 10 / 11 12
+                // 
+                // current: 1
+                // div: 0
+                // mod: 1
+                // 
+                // current: 3
+                // div: 0
+                // mod: 3
+                // 
+                // current: 5
+                // div: 1
+                // mod: 0
+                // 
+                // current: 6
+                // div: 1
+                // mod: 1
+                // 
+                // current: 11
+                // div: 2
+                // mod: 1
+                // 
+                // current: 12
+                // div: 2
+                // mod: 2
+                }
+
+                // div * 5 + mod
+                // current를 기준으로 5개를 어떻게 잘라내는가?
+                // current를 기준으로 표시할 버튼의 범위를 구한다
+                // 범위가 total_page를 넘어서면 클리핑한다
+                // 범위에 따라서 backward forward 버튼을 추가한다
+                // 아이템에 따른 정렬을 생각해보면 backward forward 는 미리 추가해놓고
+                // 상황에따라 표시 및 이벤트리스너 등록을 하는게 더 좋을지도..
+                let button_idx_start = Math.floor((page['current'] - 1) / 5) * 5 + 1;
+                let button_idx_end = button_idx_start + 4;
+                if (button_idx_end > page['total_pages'])
+                {
+                    button_idx_end = page['total_pages'];
+                }
+
+                if (button_idx_start > 5)
+                {
+                    document.querySelector("#record_backward_button").classList.remove("disabled");
+                }
+                if (button_idx_end != page['total_pages'])
+                {
+                    document.querySelector("#record_forward_button").classList.remove("disabled");
+                }
+
+                // idx_start ~ idx_end 까지 backward, forward 사이에 버튼 추가
+                while (button_idx_start <= button_idx_end)
+                {
+                    let is_active = "";
+                    if (button_idx_start === page['current'])
+                    {
+                        is_active += " active";
+                    }
+                    const page_button = `
+                        <li class="page-item">
+                            <a class="page-link${is_active}" href="/${button_idx_start}">${button_idx_start}</a>
+                        </li>
+                    `
+                    page_buttons += page_button;
+                    button_idx_start++;
+                }
+                page_button_body.innerHTML = page_buttons;
+            }
+
+        // } else {
+        //     const jsonResponse = await response.json();
+        //     console.log("Fail");
+        //     console.log(response);
+        //     console.log(jsonResponse);
+        // }
         }
 
 		// 클릭 가능한 요소들에 이벤트 리스너를 등록한다
@@ -245,20 +434,65 @@
 
 		Page_Buttons.forEach((Button) => {
 
-        Button.addEventListener("click", (event) => {
-            event.preventDefault();
-            console.log(event.target.href);
-            // 라우팅 이벤트 추가
-        });
+            Button.addEventListener("click", (event) => {
+                event.preventDefault();
+                console.log(event.target.href);
 
-        Button.addEventListener("mouseenter", (event) => {
-            // 
-        });
+                // 라우팅 이벤트 추가
 
-        Button.addEventListener("mouseleave", (event) => {
-            // 
+                // page button 처리
+                const button_href = event.target.href.split(baseUrl)[1];
+                const page_num = Number(button_href);
+                
+                // 숫자가 아닌경우 예외처리
+                if (page_num === NaN)
+                {
+                    if (button_href === "backward")
+                    {
+                        page_num = page['current'] - 1;
+                    }
+                    else if (button_href === "forward")
+                    {
+                        page_num = page['current'] + 1;
+                    }
+                    else
+                    {
+                        console.log("href error");
+                    }
+                }
+                else
+                {
+                    // 페이지의 범위가 db의 범위를 벗어났다면? (개발자도구로 값을 변경시켰다면...)
+                    // db에 저장되어있는 페이지값을 참고하여 보정한다
+                    if (page_num < 1)
+                    {
+                        page_num = 1;
+                    }
+                    else if (page_num > page['total_pages'])
+                    {
+                        page_num = page['total_pages'];
+                    }
+                }
+                
+                // 버튼에서 담고있는 페이지 값으로 localStorage의 값을 변경
+                localStorage.setItem("record_page", page_num);
+
+                // 1. 현재 페이지를 다시 라우팅한다
+                navigateTo("/match_record");
+
+                // 2. 테이블의 아이템 문자열을 반환하는 함수를 만들고 테이블의 innerHtml을 변경한다, 버튼도 동적으로 다시 만들어준다
+                    // 테이블 아이템과 버튼을 만들어내는 함수들을 만들어야 한다
+                //
+            });
+
+            Button.addEventListener("mouseenter", (event) => {
+                // 
+            });
+
+            Button.addEventListener("mouseleave", (event) => {
+                // 
+            });
         });
-    });
 	</script>
     <script src="./bootstrap-5.3.3-dist/js/bootstrap.min.js"></script>
 </body>
