@@ -102,9 +102,7 @@
             if (games.length > 0)
             {
                 document.querySelector("#no_data_msg").remove;
-            }
-            else
-            {
+
                 const record_table_body = document.querySelector("#record_table_body");
 
                 games.forEach((game) => {
@@ -240,26 +238,27 @@
             });
         });
 
+        const baseUrl = "http://127.0.0.1:5500/";
         const Page_Buttons = document.querySelectorAll(".page-link");
 
         console.log(Page_Buttons);
 
 		Page_Buttons.forEach((Button) => {
 
-			Button.addEventListener("click", (event) => {
-				event.preventDefault();
-				console.log(event.target.href);
-				// 라우팅 이벤트 추가
-			});
+        Button.addEventListener("click", (event) => {
+            event.preventDefault();
+            console.log(event.target.href);
+            // 라우팅 이벤트 추가
+        });
 
-			Button.addEventListener("mouseenter", (event) => {
-				// 
-			});
+        Button.addEventListener("mouseenter", (event) => {
+            // 
+        });
 
-			Button.addEventListener("mouseleave", (event) => {
-                // 
-			});
-		});
+        Button.addEventListener("mouseleave", (event) => {
+            // 
+        });
+    });
 	</script>
     <script src="./bootstrap-5.3.3-dist/js/bootstrap.min.js"></script>
 </body>

@@ -108,9 +108,7 @@ export default class extends AbstractView {
             if (games.length > 0)
             {
                 document.querySelector("#no_data_msg").remove;
-            }
-            else
-            {
+
                 const record_table_body = document.querySelector("#record_table_body");
 
                 games.forEach((game) => {
