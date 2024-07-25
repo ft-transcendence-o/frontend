@@ -52,8 +52,12 @@ export default class extends AbstractView {
                         <!-- DATE -->
                     </tbody>
                 </table>
+
+                <!-- table에 아이템이 아무것도 없을 떄 보여줄 메세지 -->
+                <div id="no_data_msg" class="PS2P_font" style="position: relative; z-index: 3; color: white; top: 240px; text-align: center;">
+                    There are no match data yet
+                </div>
             </div>
-            
 
             <!-- 페이지 버튼 -->
             <nav class="PS2P_font justify-content-center" style="position: relative; z-index: 2; display: grid; margin: 120px 0px;">
@@ -82,7 +86,8 @@ export default class extends AbstractView {
     }
 
     async init() {
-        const response = await fetch("http://10.19.218.225:8000/game-management/game?page=1", {
+        // 요청 할 페이지를 localStorage에서 관리하는식으로 시도
+        const response = await fetch(`http://10.19.218.225:8000/game-management/game?page=${localStorage.getItem("record_page")}`, {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${localStorage.getItem('jwt')}`,
@@ -100,103 +105,111 @@ export default class extends AbstractView {
             console.log("Games:", games.length, games)
             console.log("Page:", page)
 
-            const record_table_body = document.querySelector("#record_table_body");
+            if (games.length > 0)
+            {
+                document.querySelector("#no_data_msg").remove;
+            }
+            else
+            {
+                const record_table_body = document.querySelector("#record_table_body");
 
-            games.forEach((game) => {
-                // 점수 파싱
-                let scoreParse;
-                if (game['mode'] === "1vs1")
-                {
-                    scoreParse = game['score'].split(':');
-                }
-                else
-                {
-                    scoreParse = game['score'].split('-');
-                }
-
-                // 날짜 파싱
-                const dateParse = game['created_at'].split('T')[0];
-                let dateDisplay = '';
-                dateDisplay += dateParse.split('-')[0];
-                dateDisplay += ".";
-
-                const month = dateParse.split('-')[1];
-                {
-                    if (month === "01")
+                games.forEach((game) => {
+                    // 점수 파싱
+                    let scoreParse;
+                    // 점수의 저장형태는 추후 논의에 따라 변할 수 있음
+                    if (game['mode'] === "1vs1")
                     {
-                        dateDisplay += "JAN"
-                    }
-                    else if (month === "02")
-                    {
-                        dateDisplay += "FEB"
-                    }
-                    else if (month === "03")
-                    {
-                        dateDisplay += "MAR"
-                    }
-                    else if (month === "04")
-                    {
-                        dateDisplay += "APR"
-                    }
-                    else if (month === "05")
-                    {
-                        dateDisplay += "MAY"
-                    }
-                    else if (month === "06")
-                    {
-                        dateDisplay += "JUN"
-                    }
-                    else if (month === "07")
-                    {
-                        dateDisplay += "JUL"
-                    }
-                    else if (month === "08")
-                    {
-                        dateDisplay += "AUG"
-                    }
-                    else if (month === "09")
-                    {
-                        dateDisplay += "SEP"
-                    }
-                    else if (month === "10")
-                    {
-                        dateDisplay += "OCT"
-                    }
-                    else if (month === "11")
-                    {
-                        dateDisplay += "NOV"
-                    }
-                    else if (month === "12")
-                    {
-                        dateDisplay += "DEC"
+                        scoreParse = game['score'].split(':');
                     }
                     else
                     {
-                        dateDisplay += "err"
+                        scoreParse = game['score'].split('-');
                     }
-                }
 
-                dateDisplay += ".";
-                dateDisplay += dateParse.split('-')[2];
+                    // 날짜 파싱
+                    const dateParse = game['created_at'].split('T')[0];
+                    let dateDisplay = '';
+                    dateDisplay += dateParse.split('-')[0];
+                    dateDisplay += ".";
 
-                const record = `
-                <tr>
-                    <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">${game['player1']}</td>
-                    <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">${game['player2']}</td>
-                    <td style="background-color: transparent; color: white; border: none; padding: 5px 0px; display: flex;">
-                        <span style="display: inline-block; width: 40px; text-align: right;">${scoreParse[0]}</span>
-                        <span>:</span>
-                        <span style="display: inline-block; width: 40px; text-align: left;">${scoreParse[1]}</span>
-                    </td>
-                    <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">${game['mode']}</td>
-                    <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">${dateDisplay}</td>
-                </tr>
-                `;
+                    const month = dateParse.split('-')[1];
+                    {
+                        if (month === "01")
+                        {
+                            dateDisplay += "JAN"
+                        }
+                        else if (month === "02")
+                        {
+                            dateDisplay += "FEB"
+                        }
+                        else if (month === "03")
+                        {
+                            dateDisplay += "MAR"
+                        }
+                        else if (month === "04")
+                        {
+                            dateDisplay += "APR"
+                        }
+                        else if (month === "05")
+                        {
+                            dateDisplay += "MAY"
+                        }
+                        else if (month === "06")
+                        {
+                            dateDisplay += "JUN"
+                        }
+                        else if (month === "07")
+                        {
+                            dateDisplay += "JUL"
+                        }
+                        else if (month === "08")
+                        {
+                            dateDisplay += "AUG"
+                        }
+                        else if (month === "09")
+                        {
+                            dateDisplay += "SEP"
+                        }
+                        else if (month === "10")
+                        {
+                            dateDisplay += "OCT"
+                        }
+                        else if (month === "11")
+                        {
+                            dateDisplay += "NOV"
+                        }
+                        else if (month === "12")
+                        {
+                            dateDisplay += "DEC"
+                        }
+                        else
+                        {
+                            dateDisplay += "err"
+                        }
+                    }
 
-                record_table_body.innerHTML += record;
-            }) 
+                    dateDisplay += ".";
+                    dateDisplay += dateParse.split('-')[2];
 
+                    const record = `
+                    <tr>
+                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">${game['player1']}</td>
+                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">${game['player2']}</td>
+                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px; display: flex;">
+                            <span style="display: inline-block; width: 40px; text-align: right;">${scoreParse[0]}</span>
+                            <span>:</span>
+                            <span style="display: inline-block; width: 40px; text-align: left;">${scoreParse[1]}</span>
+                        </td>
+                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">${game['mode']}</td>
+                        <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">${dateDisplay}</td>
+                    </tr>
+                    `;
+
+                    record_table_body.innerHTML += record;
+                })
+            }
             // 페이지 수에 따라 페이지 버튼을 만들어준다
+            // 기본적으로 1페이지 버튼은 반드시 존재한다
         } else {
             const jsonResponse = await response.json();
             console.log("Fail");
@@ -209,24 +222,29 @@ export default class extends AbstractView {
 
 		Top_Buttons.forEach((Button) => {
 
-			Button.addEventListener("click", (event) => {
-				event.preventDefault();
-				console.log(event.target.href);
-				// 라우팅 이벤트 추가
-			});
+            Button.addEventListener("click", (event) => {
+                event.preventDefault();
+                console.log(event.target.href);
 
-			Button.addEventListener("mouseenter", (event) => {
-				Button.classList.remove("blue_outline");
-				Button.classList.add("green_outline");
-				Button.classList.add("white_stroke_2_5px");
-			});
+                // 라우팅 이벤트 추가
+                // 비동기 이슈?
+                if (event.target.href === "http://127.0.0.1:5500/main") {
+                    navigateTo("/main");
+                }
+            });
 
-			Button.addEventListener("mouseleave", (event) => {
-				Button.classList.add("blue_outline");
-				Button.classList.remove("green_outline");
-				Button.classList.remove("white_stroke_2_5px");
-			});
-		});
+            Button.addEventListener("mouseenter", (event) => {
+                Button.classList.remove("blue_outline");
+                Button.classList.add("green_outline");
+                Button.classList.add("white_stroke_2_5px");
+            });
+
+            Button.addEventListener("mouseleave", (event) => {
+                Button.classList.add("blue_outline");
+                Button.classList.remove("green_outline");
+                Button.classList.remove("white_stroke_2_5px");
+            });
+        });
 
         const Page_Buttons = document.querySelectorAll(".page-link");
 
