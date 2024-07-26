@@ -24,56 +24,58 @@ export default class extends AbstractView {
         return `
         <!-- background image -->
 	
-	<div class="container-fluid d-flex flex-column align-items-center">
-		
-		<img class="backimg" src="./image/background.png" alt="">
+        <div class="container-fluid d-flex flex-column align-items-center">
+		<div style="background-color: black; position: absolute; width: 1440px; height: 1024px;">
 
-		<!-- title -->
-        <div style="position:absolute; padding-top: 205px; z-index: 1;" class="row">
-            <div class="col-12" style="text-align: center; border: solid; border-color: #A259FF; padding: 6px 5px; border-width: 5px;">
-                <h1 style="width: 1200px; height: auto; padding: 36px 65px; border: solid; border-color: #FED940; border-width: 3px; font-size: 150px; margin-bottom: 0px;" class="display-1 PacPong_font">
-                    <span style="color:#14FF00">Pa</span><span style="color:#FED940">c</span>
-                    <span style="color:#14FF00">Pon</span><span style="color:#FED940">g</span>
-                </h1>
+			<!-- blue outline background -->
+			<div class="blue_outline" style="background-color: black; position: absolute; width: 1408px; height: 992px; top: 16px; left: 16px; z-index: 1;"></div>
+
+            <!-- title -->
+            <div style="position:absolute; padding-top: 205px; z-index: 1;" class="row justify-content-center w-100">
+                <div class="col-12 d-flex justify-content-center" style="width: 1300; height: 300px; border: solid; border-color: #A259FF; padding: 6px 5px; border-width: 5px;">
+                    <!-- 안쪽 박스 -->
+                    <h1 style="width: 1200px; height: 281; padding: 36px 30px; border: solid; border-color: #FED940; border-width: 3px; font-size: 150px; margin-bottom: 0px;" class="display-1 PacPong_font">
+                        <span style="color:#14FF00">Pa</span><span style="color:#FED940">c</span>
+                        <span style="color:#14FF00">Pon</span><span style="color:#FED940">g</span>
+                    </h1>
+                </div>
             </div>
-        </div>
 
-		<!-- ghost -->
-		<div class="row" style="position:absolute; padding-top:534px; z-index: 2;">
-			<!-- <div class="col-12" style="padding-left: 31%;"> -->
-			<div class="col-12">
-				<img style="padding-left: 20px; width: 144px; height: auto; padding-right: 20px;" src="./image/ghost_red.png" alt="Red Ghost">
-				<img style="padding-left: 20px; width: 144px; height: auto; padding-right: 20px;" src="./image/ghost_blue.png" alt="Blue Ghost">
-				<img style="padding-left: 20px; width: 144px; height: auto; padding-right: 20px;" src="./image/ghost_orange.png" alt="Orange Ghost">
-				<img style="padding-left: 20px; width: 144px; height: auto; padding-right: 20px;" src="./image/ghost_pink.png" alt="Pink Ghost">
-			</div>
-		</div>
-		<!-- log in -->
-		<div style="position:absolute; padding-top: 708px; z-index: 3;" class="row">
-			<div class="col-12 login" style="cursor: pointer;">
-				<!-- <button style="background-color: rgba(0, 0, 0, 0); border: 0;"> -->
-				<img src="../image/pacman.png" style="transform: scaleX(-1); width: 100px; height: 107.18px;" alt="pacman">
-				<span style="font-family: Arial, Helvetica, sans-serif; font-size: 70px; vertical-align: middle;" class="PS2P_font">►</span>
-				<span style="padding-right: 160px; font-size: 70px; vertical-align: middle;" class="PS2P_font">LOG-IN</span>
-			<!-- </button> -->
-			</div>
-		</div>
+            <!-- ghost -->
+            <div class="row justify-content-center w-100" style="position:absolute; padding-top:534px; z-index: 2;">
+                <!-- <div class="col-12" style="padding-left: 31%;"> -->
+                <div class="col-12 d-flex justify-content-center">
+                    <img style="padding-left: 20px; width: 100px; height: auto; padding-right: 20px;" src="./image/ghost_red.gif" alt="Red Ghost">
+                    <img style="padding-left: 20px; width: 100px; height: auto; padding-right: 20px;" src="./image/ghost_blue.gif" alt="Blue Ghost">
+                    <img style="padding-left: 20px; width: 100px; height: auto; padding-right: 20px;" src="./image/ghost_orange.gif" alt="Orange Ghost">
+                    <img style="padding-left: 20px; width: 100px; height: auto; padding-right: 20px;" src="./image/ghost_pink.gif" alt="Pink Ghost">
+                </div>
+            </div>
+            <!-- log in -->
+            <div style="position:absolute; padding-top: 708px; z-index: 3;" class="row justify-content-center w-100">
+                <div class="col-12 d-flex justify-content-center login" style="cursor: pointer;">
+                    <!-- <button style="background-color: rgba(0, 0, 0, 0); border: 0;"> -->
+                    <img src="../image/pacman.png" style="transform: scaleX(-1); width: 100px; height: 107.18px;" alt="pacman">
+                    <span style="font-family: Arial, Helvetica, sans-serif; font-size: 70px; vertical-align: middle;" class="PS2P_font">►</span>
+                    <span style="padding-right: 160px; font-size: 70px; vertical-align: middle;" class="PS2P_font">LOG-IN</span>
+                <!-- </button> -->
+                </div>
+            </div>
 
-        <!-- spinner -->
-        <div id="spinner" class="spinner-container" style="display: none;">
-            <img src="../image/pacman.png" alt="Loading..." class="custom-spinner" />
-            <div class="spinner-message PS2P_font">Loading...</div>
-        </div>
-        
+            <!-- spinner -->
+            <div id="spinner" class="spinner-container" style="display: none;">
+                <img src="../image/pacman.png" alt="Loading..." class="custom-spinner" />
+                <div class="spinner-message PS2P_font">Loading...</div>
+            </div>
+            
 
-		<!-- footer -->
-		<div class="row" style="position:absolute; padding-top:890px; z-index: 2;">
-			<div class="col-12">
-				<p class="m-0 text-center text-white PS2P_font" style="padding-bottom: 44px; font-size: 30px;">© 2024 42SEOUL MFG. CO.</p>
-			</div>
-		</div>
+            <!-- footer -->
+            <div class="row justify-content-center w-100" style="position:absolute; padding-top:890px; z-index: 2;">
+                <div class="col-12 d-flex justify-content-center">
+                    <p class="m-0 text-center text-white PS2P_font" style="padding-bottom: 44px; font-size: 30px;">© 2024 42SEOUL MFG. CO.</p>
+                </div>
+            </div>
 	
-		
     </div>
 
 	<!-- QR Code -->
@@ -88,7 +90,7 @@ export default class extends AbstractView {
             // query parameter(?다음) 부분을 환경변수로 대체해야 한다.
             window.location.href = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-13da844ab09c30f81a4aac6f7f77bd34bfa89523fd00822876ca6c9ab86ac14f&redirect_uri=http%3A%2F%2F127.0.0.1%3A5500&response_type=code";
         }
-        
+            
             const login_button = document.querySelector(".login");
             const login_arrow = login_button.querySelector("span");
             const login_text = login_button.querySelector("span:last-child");
@@ -120,7 +122,7 @@ export default class extends AbstractView {
                 // 여기서 백엔드로 코드를 보내 액세스 토큰을 얻는 로직을 구현할 수 있습니다.
                 // authorization code를 백엔드에 전송하고 백엔드로부터 응답 받기
                 try {
-                    const response = await fetch("http://10.19.218.225:8000/user-management/token", {
+                    const response = await fetch("http://localhost:8000/user-management/token", {
                         method: "POST",
                         headers: {
                             'Content-Type': 'application/json',

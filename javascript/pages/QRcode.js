@@ -68,7 +68,7 @@ export default class extends AbstractView {
 		console.log(localStorage.getItem('jwt'));
 		// qr uri -> local storage에서 불러오기
 		// generateQRcode(불러온 uri)
-		const response = await fetch("http://10.19.218.225:8000/user-management/otp/qrcode", {
+		const response = await fetch("http://localhost:8000/user-management/otp/qrcode", {
                     method: "GET",
                     headers: {
 						'Authorization': `Bearer ${localStorage.getItem('jwt')}`,

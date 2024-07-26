@@ -67,14 +67,14 @@ export default class extends AbstractView {
 					<div style="padding-top: 35px; padding-bottom: 30px;">
 						<!-- first row ghosts -->
 						<div style="padding-bottom: 30px;">
-							<img src="./image/ghost_red.png" alt="" style="width: 100px; height: 97.8px;">
-							<img src="./image/ghost_blue.png" alt="" style="width: 100px; height: 97.8px; margin-left: 12px;">
+							<img src="./image/ghost_red.gif" alt="" style="width: 100px; height: 97.8px;">
+							<img src="./image/ghost_blue.gif" alt="" style="width: 100px; height: 97.8px; margin-left: 12px;">
 						</div>
 
 						<!-- second row ghosts -->
 						<div>
-							<img src="./image/ghost_orange.png" alt="" style="width: 100px; height: 97.8px;">
-							<img src="./image/ghost_pink.png" alt="" style="width: 100px; height: 97.8px; margin-left: 12px;">
+							<img src="./image/ghost_orange.gif" alt="" style="width: 100px; height: 97.8px;">
+							<img src="./image/ghost_pink.gif" alt="" style="width: 100px; height: 97.8px; margin-left: 12px;">
 						</div>
 					</div>
 
@@ -93,19 +93,22 @@ export default class extends AbstractView {
     </div>
 
 	<!-- Logout Modal -->
-    <div class="modal fade custom-modal" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+	<div class="modal fade PS2P_font custom-modal" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header custom-modal-header">
-					<h5 class="modal-title custom-modal-title" id="logoutModalLabel">OH, YOU ARE LEAVING...</h5>
+			<div class="modal-content blue_outline">
+				<div class="modal-header custom-modal-header" style="border: none;">
+					<div class="modal-title custom-modal-title" id="logoutModalLabel">OH, <br><br> YOU ARE LEAVING...</div>
 					<button type="button" class="btn-close custom-btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
-				<div class="modal-body custom-modal-body">
+				<div class="modal-body custom-modal-body" style="font-size: 30px;" style="border: none;">
 					ARE YOU SURE?
 				</div>
-				<div class="modal-footer custom-modal-footer">
-					<button type="button" class="btn custom-btn" data-bs-dismiss="modal">NO, JUST KIDDING</button>
-					<button type="button" class="btn custom-btn" id="confirmLogout">YES, LOG ME OUT</button>
+				<div class="modal-footer custom-modal-footer" style="border: none;">
+
+					<button type="button" class="custom-btn-left blue_outline PS2P_font" style="margin: 20px 20px; width: 425px; height: 162px; font-size: 30px" data-bs-dismiss="modal">NO,<br> JUST KIDDING</button>
+
+					<button type="button" id="confirmLogout" class=" custom-btn-right blue_outline PS2P_font" style="margin: 20px 20px; width: 425px; height: 162px; font-size: 30px" data-bs-dismiss="modal">YES,<br> LOG ME OUT</button>
+
 				</div>
 			</div>
 		</div>
@@ -124,6 +127,11 @@ export default class extends AbstractView {
 				event.preventDefault();
 				console.log(Button.dataset.href);
 				// 라우팅 이벤트 추가
+
+				if (Button.dataset.href === "/TOURNAMENT")
+				{
+					navigateTo("/nickname");
+				}
 			});
 
 			Button.addEventListener("mouseenter", (event) => {
@@ -146,16 +154,6 @@ export default class extends AbstractView {
 			Button.addEventListener("click", (event) => {
 				event.preventDefault();
 				console.log(event.target.href);
-				// 라우팅 이벤트 추가
-
-				if (event.target.href === "http://127.0.0.1:5500/LOGOUT") {
-					//로그아웃 작업
-					// 로그아웃 시  local storage에서 JWT 삭제 후 API 쏘기 그러면 백에서 true false로 응답한다 -> 따라서 OTP 페이지로 이동하게 된다.
-					console.log("LOGOUT IN");
-					localStorage.removeItem('jwt');
-					navigateTo('/');
-					// 백엔드에 api 쏴야한다.
-				}
 			});
 
 			Button.addEventListener("mouseenter", (event) => {
@@ -172,13 +170,31 @@ export default class extends AbstractView {
 		});
 
 		// Handle logout confirmation
-    	document.getElementById("confirmLogout").addEventListener("click", () => {
-        	localStorage.removeItem('jwt');
-			navigateTo('/');
-			// Close the modal
-			const logoutModal = bootstrap.Modal.getInstance(document.getElementById('logoutModal'));
-			logoutModal.hide();
-    	});
+		document.getElementById("confirmLogout").addEventListener("click", async () => {
+			try {
+				const response = await fetch("http://localhost:8000/user-management/token", {
+					method: "DELETE",
+					headers: {
+						"Authorization": `Bearer ${localStorage.getItem('jwt')}`
+					},
+				});
+				if (response.ok) {
+					const jsonResponse = await response.json();
+					console.log("success");
+					console.log(response);
+					console.log(jsonResponse);
+					localStorage.removeItem('jwt');
+					// Close the modal
+					const logoutModal = bootstrap.Modal.getInstance(document.getElementById('logoutModal'));
+					logoutModal.hide();
+					navigateTo('/');		
+				} else {
+					console.log("error");
+				}
+			} catch (error) {
+				console.log("Fetch error:", error);
+			}
+		});
 
 		// backend api를 통해 유저의 이름을 받아와서 요소에 집어넣는다
 		const User_Name_Holder = document.querySelector("#top_item").querySelector("#user_name");

@@ -1,11 +1,11 @@
 .custom-modal .modal-dialog {
-    max-width: 800px;  /* Adjust this value to change the modal width */
+    max-width: 1200px;  /* Adjust this value to change the modal width */
 }
 
 .custom-modal .modal-content {
     background-color: black;
     color: #14FF00;
-    border: 5px solid #14FF00;
+    /* border: 5px solid #14FF00; */
 }
 
 .custom-modal-header,

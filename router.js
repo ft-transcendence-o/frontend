@@ -3,8 +3,9 @@ import home from "./javascript/pages/home.js"
 import example1 from "./javascript/pages/example1.js"
 import example2 from "./javascript/pages/example2.js"
 import QRcode from "./javascript/pages/QRcode.js"
-import OTP from "./javascript/pages/OTP.js";
+import OTP from "./javascript/pages/OTP.js"
 import main from "./javascript/pages/main.js"
+import nickname from "./javascript/pages/nickname.js"
 
 document.addEventListener('DOMContentLoaded', () => {
     document.body.addEventListener('click', (event) => {
@@ -32,6 +33,7 @@ export const router = async () => {
         { path: "/QRcode", view: QRcode },
         { path: "/OTP" , view: OTP },
         { path: "/main", view: main },
+        { path: "/nickname", view: nickname }
     ];
 
     const potentialMatches = routes.map((route) => {
