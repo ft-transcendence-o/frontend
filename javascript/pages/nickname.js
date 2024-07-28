@@ -12,49 +12,60 @@ export default class extends AbstractView {
      */
     async getHtml() {
         return `
-    <div class="container-fluid d-flex flex-column align-items-center">
+    <div class="container-fluid d-flex flex-column align-items-center" style="width: 1440px; height: 1024px; padding: 0;">
 		<div style="background-color: black; position: absolute; width: 1440px; height: 1024px;">
 
 			<!-- backgound outline -->
-			<div class="blue_outline" style="background-color: black; position: absolute; width: 1408px; height: 992px; top: 16px; left: 16px; z-index: 1;"></div>
+			<div class="blue_outline" style="background-color: black; position: absolute; width: 1405px; height: 984px; top: 20px; z-index: 1;"></div>
 			
 			<!-- top item -->
-			<div id="main_button" class="PS2P_font" style="position: relative; z-index: 2; margin-top: 50px; font-size: 30px; margin-top: 50px;">
-				
-				<!-- >MAIN 버튼 -->
-				<ul class="nav justify-content-end">
-					<li style="margin-left: 20px; margin-right: 40px;">
-						<a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#logoutModal">>MAIN</a>
-					</li>
-				</ul>
-			</div>
+            <div id="main_button" class="PS2P_font" style="position: absolute; top: 63px; right: 50px; font-size: 30px; z-index: 2">
+                
+                <!-- >MAIN(ESC) 버튼 -->
+                <ul class="nav justify-content-end" style="margin: 0; padding: 0;">
+                    <li style="margin: 0; padding: 0;">
+                        <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#logoutModal" style="margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center;">
+                            <span style="font-size: 30px; line-height: 30px;">>MAIN</span>
+                            <span style="font-size: 20px; line-height: 20px;">(ESC)</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 상단 안내문 -->
+        <div class="PS2P_font" style="position: relative; z-index: 3; margin-top: 136px; font-size: 30px; color: white; text-align: center;">
+            ENTER A NICKNAME FOR EACH PLAYER
         </div>
 
         <!-- 닉네임 input fields -->
-        <div class="nickname-container" style="position: relative; z-index: 3; margin-top: 150px; font-size: 30px;">
+        <div class="PS2P_font nickname-container" style="position: relative; z-index: 4; margin-top: 99px; margin-right: 170px; font-size: 30px;">
             <div class="nickname-input d-flex align-items-center mb-3">
-                <img src="./image/ghost_blue.gif" alt="1UP" class="me-3">
-                <input type="text" value="Nickname1" class="form-control" style="width: 300px; height: 40px; border: 3px solid green; color: white; background-color: black; padding-left: 10px; font-size: 24px;">
+                <span style="color: white; margin-right: 58px;">1UP</span>
+                <img src="./image/ghost_blue.gif" style="width: 100px; height: auto; margin-right:32px;" alt="1UP">
+                <input type="text" class="PS2P_font" style="width:600px; height:100px; border: solid; border-color: #14FF00; border-width: 10px; background-color:black; color:white; font-size: 30px; outline: none; padding-left: 20px;" />
             </div>
             <div class="nickname-input d-flex align-items-center mb-3">
-                <img src="./image/ghost_red.gif" alt="2UP" class="me-3">
-                <input type="text" value="Nickname2" class="form-control" style="width: 300px; height: 40px; border: 3px solid green; color: white; background-color: black; padding-left: 10px; font-size: 24px;">
+                <span style="color: white; margin-right: 58px;">2UP</span>
+                <img src="./image/ghost_red.gif" style="width: 100px; height: auto; margin-right: 32px;" alt="2UP">
+                <input type="text" class="PS2P_font" style="width:600px; height:100px; border: solid; border-color: #14FF00; border-width: 10px; background-color:black; color:white; font-size: 30px; outline: none; padding-left: 20px;" />
             </div>
             <div class="nickname-input d-flex align-items-center mb-3">
-                <img src="./image/ghost_pink.gif" alt="3UP" class="me-3">
-                <input type="text" value="Nickname3" class="form-control" style="width: 300px; height: 40px; border: 3px solid green; color: white; background-color: black; padding-left: 10px; font-size: 24px;">
+                <span style="color: white; margin-right: 58px;">3UP</span>
+                <img src="./image/ghost_pink.gif" style="width: 100px; height: auto; margin-right:32px;" alt="3UP">
+                <input type="text" class="PS2P_font" style="width:600px; height:100px; border: solid; border-color: #14FF00; border-width: 10px; background-color:black; color:white; font-size: 30px; outline: none; padding-left: 20px;" />
             </div>
-            <div class="nickname-input d-flex align-items-center mb-3">
-                <img src="./image/ghost_orange.gif" alt="4UP" class="me-3">
-                <input type="text" value="Nickname4" class="form-control" style="width: 300px; height: 40px; border: 3px solid green; color: white; background-color: black; padding-left: 10px; font-size: 24px;">
+            <div class="nickname-input d-flex align-items-center">
+                <span style="color: white; margin-right: 58px;">4UP</span>
+                <img src="./image/ghost_orange.gif" style="width: 100px; height: auto; margin-right:32px;" alt="4UP">
+                <input type="text" class="PS2P_font" style="width:600px; height:100px; border: solid; border-color: #14FF00; border-width: 10px; background-color:black; color:white; font-size: 30px; outline: none; padding-left: 20px;" />
             </div>
         </div>
 
         <!-- 레디 Button -->
-        <button type="button" id="ready_button" style="background-color: black; z-index: 4; margin-top: 0px; width: 232px; height: 131px;" class="blue_outline PS2P_font">
-            <span style="font-size: 30px;">READY!</span>
-            <br>
-            <span style="font-size: 20px;">(ENTER)</span>
+        <button type="button" style="background-color: black; z-index: 5; margin-top: 34px; width: 232px; height: 131px;" class="blue_outline PS2P_font">
+            <span style="font-size: 30px; line-height: 30px;">READY!</span>
+            <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
         </button>
 
     </div>

@@ -169,7 +169,7 @@ export default class extends AbstractView {
 			});
 		});
 
-		// Handle logout confirmation
+		// 로그아웃 Modal
 		document.getElementById("confirmLogout").addEventListener("click", async () => {
 			try {
 				const response = await fetch("http://localhost:8000/user-management/token", {
