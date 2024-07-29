@@ -68,7 +68,7 @@ class pongGame {
             0.1,
             1000
         );
-        camera1.position.set(0, 20, 100);
+        camera1.position.set(0, 0, 100);
         camera1.lookAt(0, 0, 0);
         this._camera1 = camera1;
 
@@ -78,7 +78,7 @@ class pongGame {
             0.1,
             1000
         );
-        camera2.position.set(0, 20, -100);
+        camera2.position.set(0, 0, -100);
         camera2.lookAt(0, 0, 0);
         this._camera2 = camera2;
     }
@@ -164,10 +164,6 @@ class pongGame {
             // new THREE.Plane(new THREE.Vector3(0, 0, 1), this._stadium.geometry.parameters.depth / 2),  // Front
             // new THREE.Plane(new THREE.Vector3(0, 0, -1), this._stadium.geometry.parameters.depth / 2)  // Back
         ];
-
-        //stadium BoundingBox
-        // this._stadium.geometry.computeBoundingBox();
-        // this._stadium.boundingBox = new THREE.Box3().setFromObject(this._stadium);
 
         //Mesh: 경기장 테두리
         const stadiumEdges = new THREE.EdgesGeometry(stadiumGeometry); //geometry의 테두리를 추출하는 함수
@@ -256,41 +252,62 @@ class pongGame {
         const panel2Box = new THREE.Box3().setFromObject(this._panel2);
         const ballBox = new THREE.Box3().setFromObject(this._ball);
 
-        if (panel1Box.intersectsBox(ballBox) && this._flag == true) {
-            this._flag = false;
-            console.log('panel1 충돌 발생');
-            // 구체 중심과 PlaneMesh의 경계 상자 내에서의 최소 거리 계산
-            const sphereCenter = this._ball.position.clone();
-            const closestPoint = new THREE.Vector3();
-            panel1Box.clampPoint(sphereCenter, closestPoint);
-            const distance = closestPoint.distanceTo(sphereCenter);
+        const collisionPoint1 = this.getCollisionPointWithPlane(this._panel1Plane);
+        const collisionPoint2 = this.getCollisionPointWithPlane(this._panel2Plane);
 
-            this._angularVec.sub(this._panel1Vec.multiplyScalar(0.01));
-            this.updateVector(this._panel1Plane);
+        if (collisionPoint1){
+            if (panel1Box.intersectsBox(ballBox) && this._flag == true) {
+                this._flag = false;
+                console.log('panel1 충돌 발생');
+                // 구체 중심과 PlaneMesh의 경계 상자 내에서의 최소 거리 계산
+                const sphereCenter = this._ball.position.clone();
+                const closestPoint = new THREE.Vector3();
+                panel1Box.clampPoint(sphereCenter, closestPoint);
+                const distance = closestPoint.distanceTo(sphereCenter);
 
-            this._ball.position.copy(closestPoint);
-            this._ball.position.add(this._panel1Plane.normal.clone().multiplyScalar(2));
-    
-            console.log('충돌 지점:', closestPoint);
-            console.log('구체 중심과 충돌 지점 간의 거리:', distance);
-        }
-        else if (panel2Box.intersectsBox(ballBox) && this._flag == false) {
-            this._flag = true;
-            console.log('panel2 충돌 발생');
+                this._ball.position.copy(closestPoint);
+                this._ball.position.add(this._panel1Plane.normal.clone().multiplyScalar(2));
+
+                this._angularVec.sub(this._panel1Vec.multiplyScalar(0.01));
+                this.updateVector(this._panel1Plane);
+                console.log('충돌 지점:', closestPoint);
+                console.log('구체 중심과 충돌 지점 간의 거리:', distance);
+            }
+            else {
+                console.log("player2 win");
+                this._ball.position.x = 0;
+                this._ball.position.y = 0;
+                this._ball.position.z = 0;
+            }
             
-            const sphereCenter = this._ball.position.clone();
-            const closestPoint = new THREE.Vector3();
-            panel2Box.clampPoint(sphereCenter, closestPoint);
-            const distance = closestPoint.distanceTo(sphereCenter);
+        }
+        else if (collisionPoint2){
+            if (panel2Box.intersectsBox(ballBox) && this._flag == false) {
+                this._flag = true;
+                console.log('panel2 충돌 발생');
+                
+                const sphereCenter = this._ball.position.clone();
+                const closestPoint = new THREE.Vector3();
+                panel2Box.clampPoint(sphereCenter, closestPoint);
+                const distance = closestPoint.distanceTo(sphereCenter);
 
-            this._angularVec.sub(this._panel2Vec.multiplyScalar(0.01));
-            this.updateVector(this._panel2Plane);
+                this._ball.position.copy(closestPoint);
+                this._ball.position.add(this._panel2Plane.normal.clone().multiplyScalar(2)); //충돌시 반지름만큼 좌표를 더해준다
+            
+                this._angularVec.sub(this._panel2Vec.multiplyScalar(0.01));
+                this.updateVector(this._panel2Plane);
 
-            this._ball.position.copy(closestPoint);
-            this._ball.position.add(this._panel2Plane.normal.clone().multiplyScalar(2)); //충돌시 반지름만큼 좌표를 더해준다
-    
-            console.log('충돌 지점:', closestPoint);
-            console.log('구체 중심과 충돌 지점 간의 거리:', distance);
+        
+                console.log('충돌 지점:', closestPoint);
+                console.log('구체 중심과 충돌 지점 간의 거리:', distance);
+            }
+            else {
+                console.log("player1 win");
+                console.log("point: ", this._ball.position);
+                this._ball.position.x = 0;
+                this._ball.position.y = 0;
+                this._ball.position.z = 0;
+            }
         }
     }
 
@@ -383,18 +400,6 @@ class pongGame {
                     break; // 충돌이 발생하면 반복문을 중지합니다.
                 }
                 this.collisionWithPanel();
-                if (this._ball.position.z >= 50){
-                    console.log("player1 win");
-                    this._ball.position.x = 0;
-                    this._ball.position.y = 0;
-                    this._ball.position.z = 0;
-                }
-                else if (this._ball.position.z <= - 50){
-                    console.log("player2 win");
-                    this._ball.position.x = 0;
-                    this._ball.position.y = 0;
-                    this._ball.position.z = 0;
-                }
             }
             this.updatePanel();
             this._perspectiveLineEdges.position.z = this._ball.position.z;
@@ -420,7 +425,7 @@ class pongGame {
             this._panel1Vec.y = -0.6;
         }
         if (this._keyState['KeyA']) {
-            this._panel1.position.x -= 0.6;s
+            this._panel1.position.x -= 0.6;
             this._panel2Vec.x = -0.6;
         }
         if (this._keyState['KeyD']) {
