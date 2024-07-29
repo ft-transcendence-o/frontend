@@ -51,12 +51,12 @@ class pongGame {
         requestAnimationFrame(this.render.bind(this));
 
         //게임에 사용할 변수들
-        this._vec = new THREE.Vector3(0, 0, 3); //공의 방향벡터 //0.5일때 터짐
+        this._vec = new THREE.Vector3(0, 0, 2); //공의 방향벡터 //0.5일때 터짐
         this._angularVec = new THREE.Vector3(0, 0, 0); //공의 각속도 회전 벡터
         this._flag = true; //공이 player1의 방향인지 player2의 방향인지 여부
         this._keyState = {}; // 키보드 입력 상태를 추적하는 변수
         this._panel1Vec = new THREE.Vector3(0, 0, 0);
-        this._panel2Vec = new THREE.Vector3(0, 0, 1);
+        this._panel2Vec = new THREE.Vector3(0, 0, 0);
     }
 
     _setupCamera() {
@@ -248,65 +248,55 @@ class pongGame {
     }
 
     collisionWithPanel() { //TODO: 문제발생지점
-        const panel1Box = new THREE.Box3().setFromObject(this._panel1);
-        const panel2Box = new THREE.Box3().setFromObject(this._panel2);
-        const ballBox = new THREE.Box3().setFromObject(this._ball);
-
         const collisionPoint1 = this.getCollisionPointWithPlane(this._panel1Plane);
         const collisionPoint2 = this.getCollisionPointWithPlane(this._panel2Plane);
 
         if (collisionPoint1){
-            if (panel1Box.intersectsBox(ballBox) && this._flag == true) {
+            if (Math.abs(collisionPoint1.x  - this._panel1.position.x) < 4 && Math.abs(collisionPoint1.y - this._panel1.position.y) < 4 && this._flag == true) {
                 this._flag = false;
                 console.log('panel1 충돌 발생');
                 // 구체 중심과 PlaneMesh의 경계 상자 내에서의 최소 거리 계산
-                const sphereCenter = this._ball.position.clone();
-                const closestPoint = new THREE.Vector3();
-                panel1Box.clampPoint(sphereCenter, closestPoint);
-                const distance = closestPoint.distanceTo(sphereCenter);
 
-                this._ball.position.copy(closestPoint);
+                this._ball.position.copy(collisionPoint1);
                 this._ball.position.add(this._panel1Plane.normal.clone().multiplyScalar(2));
 
                 this._angularVec.sub(this._panel1Vec.multiplyScalar(0.01));
                 this.updateVector(this._panel1Plane);
-                console.log('충돌 지점:', closestPoint);
-                console.log('구체 중심과 충돌 지점 간의 거리:', distance);
+                this._vec.x *= 1.1;
+                this._vec.y *= 1.1;
+                // this._vec.add(this._vec.clone)
+                console.log('충돌 지점:', collisionPoint1);
+                // console.log('구체 중심과 충돌 지점 간의 거리:', distance);
             }
             else {
                 console.log("player2 win");
                 this._ball.position.x = 0;
                 this._ball.position.y = 0;
                 this._ball.position.z = 0;
+                console.log("ball vec:", this._vec);
             }
             
         }
         else if (collisionPoint2){
-            if (panel2Box.intersectsBox(ballBox) && this._flag == false) {
+            if (Math.abs(collisionPoint2.x  - this._panel2.position.x) < 4 && Math.abs(collisionPoint2.y - this._panel2.position.y) < 4 && this._flag == false) {
                 this._flag = true;
                 console.log('panel2 충돌 발생');
-                
-                const sphereCenter = this._ball.position.clone();
-                const closestPoint = new THREE.Vector3();
-                panel2Box.clampPoint(sphereCenter, closestPoint);
-                const distance = closestPoint.distanceTo(sphereCenter);
 
-                this._ball.position.copy(closestPoint);
+                this._ball.position.copy(collisionPoint2);
                 this._ball.position.add(this._panel2Plane.normal.clone().multiplyScalar(2)); //충돌시 반지름만큼 좌표를 더해준다
             
                 this._angularVec.sub(this._panel2Vec.multiplyScalar(0.01));
                 this.updateVector(this._panel2Plane);
 
-        
-                console.log('충돌 지점:', closestPoint);
-                console.log('구체 중심과 충돌 지점 간의 거리:', distance);
+                console.log('충돌 지점:', collisionPoint2);
+                // console.log('구체 중심과 충돌 지점 간의 거리:', distance);
             }
-            else {
+            else { //여기로 빠진다
                 console.log("player1 win");
-                console.log("point: ", this._ball.position);
                 this._ball.position.x = 0;
                 this._ball.position.y = 0;
                 this._ball.position.z = 0;
+                console.log("ball vec:", this._vec);
             }
         }
     }
@@ -326,15 +316,14 @@ class pongGame {
 
     updateAngularVelocity(plane, radius) {
         const n = plane.normal.clone();
-        const v = this._vec.clone();
         const w = this._angularVec.clone();
 
         // 충격 모멘트 계산 (τ = r × F)
         const F = this._angularVec.clone().multiplyScalar(-0.1); //마찰력
-        console.log("F: ", F);
+        // console.log("F: ", F);
         const r = n.clone();
         const tau = r.clone().cross(F);
-        console.log("Torque (τ):", tau);
+        // console.log("Torque (τ):", tau);
     
         // 관성 모멘트 텐서의 역행렬 계산
         const I_inv = new THREE.Matrix3().set(
@@ -345,7 +334,7 @@ class pongGame {
     
         // 각속도 변화 계산 (Δω = I^(-1) * τ)
         const delta_w = new THREE.Vector3().copy(tau).applyMatrix3(I_inv);
-        console.log("Angular Velocity Change (Δω):", delta_w);
+        // console.log("Angular Velocity Change (Δω):", delta_w);
     
         // 최종 각속도 벡터 계산 (ω' = ω + Δω)
         const w_prime = w.clone().add(delta_w);
@@ -370,7 +359,7 @@ class pongGame {
         const reflection = plane.normal.clone().multiplyScalar(dotProduct * 2);
         // console.log("Reflection:", reflection);
 
-        const angularComponent = this._angularVec.clone().cross(plane.normal.clone().multiplyScalar(this._radius / 10));
+        const angularComponent = this._angularVec.clone().cross(plane.normal.clone().multiplyScalar(this._radius));
         // console.log("angularComponent:", angularComponent);
 
         this._vec.sub(reflection).add(angularComponent);
@@ -385,7 +374,7 @@ class pongGame {
             // 공의 이동 업데이트를 작은 시간 간격으로 나누어 수행
             const steps = 10; // 충돌 체크 빈도
             for (let i = 0; i < steps; i++) {
-                const movement = new THREE.Vector3().copy(this._vec).multiplyScalar(0.4 / steps);
+                const movement = new THREE.Vector3().copy(this._vec).multiplyScalar(0.4 / steps); //이게 뭐였더라
                 this._ball.position.add(movement);
                 this._ball.rotation.x += this._angularVec.x;
                 this._ball.rotation.y += this._angularVec.y;
@@ -452,7 +441,6 @@ class pongGame {
         // this._panel2.position.add(this._panel2Vec);
     }
 }
-
 
 window.onload = function() {
     new pongGame();
