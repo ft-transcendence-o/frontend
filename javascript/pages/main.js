@@ -130,6 +130,7 @@ export default class extends AbstractView {
 
 				// 라우팅 이벤트 추가
 				if (event.target.href == "http://127.0.0.1:5500/match_record") {
+					localStorage.setItem("record_page", 1);
 					navigateTo("/match_record");
 				}
 			});
