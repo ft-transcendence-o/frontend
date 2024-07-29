@@ -53,8 +53,10 @@ class pongGame {
         //게임에 사용할 변수들
         this._vec = new THREE.Vector3(0, 0, 3); //공의 방향벡터 //0.5일때 터짐
         this._angularVec = new THREE.Vector3(0, 0, 0); //공의 각속도 회전 벡터
-        this._flag = 1; //공이 player1의 방향인지 player2의 방향인지 여부
+        this._flag = true; //공이 player1의 방향인지 player2의 방향인지 여부
         this._keyState = {}; // 키보드 입력 상태를 추적하는 변수
+        this._panel1Vec = new THREE.Vector3(0, 0, 0);
+        this._panel2Vec = new THREE.Vector3(0, 0, 1);
     }
 
     _setupCamera() {
@@ -66,7 +68,7 @@ class pongGame {
             0.1,
             1000
         );
-        camera1.position.set(0, 0, 100);
+        camera1.position.set(0, 20, 100);
         camera1.lookAt(0, 0, 0);
         this._camera1 = camera1;
 
@@ -76,7 +78,7 @@ class pongGame {
             0.1,
             1000
         );
-        camera2.position.set(0, 0, -100);
+        camera2.position.set(0, 20, -100);
         camera2.lookAt(0, 0, 0);
         this._camera2 = camera2;
     }
@@ -102,8 +104,9 @@ class pongGame {
             let box = new THREE.Box3().setFromObject(this._ball);
             let size = new THREE.Vector3();
             box.getSize(size);
-            this._radius = 2;
-        
+            console.log("size: ", size);
+            this._radius = Math.max(size.x, size.y, size.z) / 2; // 반지름 계산
+            console.log("radius : ", this._radius);
             this._ball.traverse((child) => {
                 if (child.isMesh) {
                     child.geometry.computeBoundingBox();
@@ -211,15 +214,6 @@ class pongGame {
         this._panel2Plane = panel2Plane;
         this._panel2 = panel2;
         this._scene.add(panel2);
-        // const panel2Mesh = new THREE.Mesh(panelGeomtery, panelMaterial);
-        // panel2Mesh.position.set(0, 0, -50);
-        // panel2Mesh.lookAt(0, 0, -100);
-        // const panel2Plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 6);
-        // const panel2 = new THREE.Group();
-        // panel2.add(panel2Mesh);
-        // panel2.add(panel2Plane);
-        // this._panel2 = panel2;
-        // this._scene.add(panel2);
     }
 
     resize() {
@@ -245,43 +239,59 @@ class pongGame {
         // 생성자의 코드와 동일: 계속 렌더 메소드가 무한히 반복되어 호출되도록 만든다
     }
 
-    collision() {
+    collisionWithSide() { //충돌이 발생한 plane을 반환한다
         for (const plane of this._planes){
             const collisionPoint = this.getCollisionPointWithPlane(plane);
             if (collisionPoint) {
-                // console.log("collision plane");
-                // console.log(plane.normal); //정상출력
-                // console.log(this._vec); //정상출력
-                // console.log('Collision detected at:', collisionPoint);
                 this._ball.position.copy(collisionPoint);
                 this._ball.position.add(plane.normal.clone().multiplyScalar(this._radius));
                 return plane;
             }
         }
-        let collisionPoint = this.getCollisionPointWithPlane(this._panel1Plane);
-        if (collisionPoint) { //TODO: panel1범위밖이면 종료하는 루틴을 추가
-            if (Math.abs(this._panel1.position.x - collisionPoint.x) > 6 || Math.abs(this._panel1.position.y - collisionPoint.y) > 6){
-                console.log("out of panel1");
-
-            }
-            this._ball.position.copy(collisionPoint);
-            this._ball.position.add(this._panel1Plane.normal.clone().multiplyScalar(this._radius));
-            return this._panel1Plane;
-        }
-
-        collisionPoint = this.getCollisionPointWithPlane(this._panel2Plane);
-        if (collisionPoint) { //TODO: panel1범위밖이면 종료하는 루틴을 추가
-            // console.log("collision plane");
-            // console.log(plane.normal); //정상출력
-            // console.log(this._vec); //정상출력
-            // console.log('Collision detected at:', collisionPoint);
-            if (Math.abs(this._panel2.position.x - collisionPoint.x) > 6 || Math.abs(this._panel2.position.y - collisionPoint.y) > 6)
-            console.log("out of panel2");
-            this._ball.position.copy(collisionPoint);
-            this._ball.position.add(this._panel2Plane.normal.clone().multiplyScalar(this._radius));
-            return this._panel2Plane;
-        }
         return null;
+    }
+
+    collisionWithPanel() { //TODO: 문제발생지점
+        const panel1Box = new THREE.Box3().setFromObject(this._panel1);
+        const panel2Box = new THREE.Box3().setFromObject(this._panel2);
+        const ballBox = new THREE.Box3().setFromObject(this._ball);
+
+        if (panel1Box.intersectsBox(ballBox) && this._flag == true) {
+            this._flag = false;
+            console.log('panel1 충돌 발생');
+            // 구체 중심과 PlaneMesh의 경계 상자 내에서의 최소 거리 계산
+            const sphereCenter = this._ball.position.clone();
+            const closestPoint = new THREE.Vector3();
+            panel1Box.clampPoint(sphereCenter, closestPoint);
+            const distance = closestPoint.distanceTo(sphereCenter);
+
+            this._angularVec.sub(this._panel1Vec.multiplyScalar(0.01));
+            this.updateVector(this._panel1Plane);
+
+            this._ball.position.copy(closestPoint);
+            this._ball.position.add(this._panel1Plane.normal.clone().multiplyScalar(2));
+    
+            console.log('충돌 지점:', closestPoint);
+            console.log('구체 중심과 충돌 지점 간의 거리:', distance);
+        }
+        else if (panel2Box.intersectsBox(ballBox) && this._flag == false) {
+            this._flag = true;
+            console.log('panel2 충돌 발생');
+            
+            const sphereCenter = this._ball.position.clone();
+            const closestPoint = new THREE.Vector3();
+            panel2Box.clampPoint(sphereCenter, closestPoint);
+            const distance = closestPoint.distanceTo(sphereCenter);
+
+            this._angularVec.sub(this._panel2Vec.multiplyScalar(0.01));
+            this.updateVector(this._panel2Plane);
+
+            this._ball.position.copy(closestPoint);
+            this._ball.position.add(this._panel2Plane.normal.clone().multiplyScalar(2)); //충돌시 반지름만큼 좌표를 더해준다
+    
+            console.log('충돌 지점:', closestPoint);
+            console.log('구체 중심과 충돌 지점 간의 거리:', distance);
+        }
     }
 
     getCollisionPointWithPlane(plane) {
@@ -302,7 +312,6 @@ class pongGame {
         const v = this._vec.clone();
         const w = this._angularVec.clone();
 
-        
         // 충격 모멘트 계산 (τ = r × F)
         const F = this._angularVec.clone().multiplyScalar(-0.1); //마찰력
         console.log("F: ", F);
@@ -366,17 +375,27 @@ class pongGame {
                 this._ball.rotation.z += this._angularVec.z;
 
                 // 충돌 감지 및 처리
-                const collisionPlane = this.collision();
+                const collisionPlane = this.collisionWithSide();
                 if (collisionPlane) {
                     // console.log("collision plane return");
                     // console.log(collisionPlane.normal);
                     this.updateVector(collisionPlane);
                     break; // 충돌이 발생하면 반복문을 중지합니다.
                 }
+                this.collisionWithPanel();
+                if (this._ball.position.z >= 50){
+                    console.log("player1 win");
+                    this._ball.position.x = 0;
+                    this._ball.position.y = 0;
+                    this._ball.position.z = 0;
+                }
+                else if (this._ball.position.z <= - 50){
+                    console.log("player2 win");
+                    this._ball.position.x = 0;
+                    this._ball.position.y = 0;
+                    this._ball.position.z = 0;
+                }
             }
-            // if (this._ball.position.z > 49 || this._ball.position.z < -49){
-            //     this._vec.z *= -1;
-            // }
             this.updatePanel();
             this._perspectiveLineEdges.position.z = this._ball.position.z;
         }
@@ -394,28 +413,38 @@ class pongGame {
     updatePanel(){
         if (this._keyState['KeyW']) {
             this._panel1.position.y += 0.6;
+            this._panel1Vec.y = 0.6;
         }
         if (this._keyState['KeyS']) {
             this._panel1.position.y -= 0.6;
+            this._panel1Vec.y = -0.6;
         }
         if (this._keyState['KeyA']) {
-            this._panel1.position.x -= 0.6;
+            this._panel1.position.x -= 0.6;s
+            this._panel2Vec.x = -0.6;
         }
         if (this._keyState['KeyD']) {
             this._panel1.position.x += 0.6;
+            this._panel2Vec.x = 0.6;
         }
         if (this._keyState['ArrowUp']) {
+            this._panel2Vec.y = 0.6;
             this._panel2.position.y += 0.6;
         }
         if (this._keyState['ArrowDown']) {
+            this._panel2Vec.y = -0.6;
             this._panel2.position.y -= 0.6;
         }
         if (this._keyState['ArrowLeft']) {
+            this._panel2Vec.x = 0.6;
             this._panel2.position.x += 0.6;
         }
         if (this._keyState['ArrowRight']) {
+            this._panel2Vec.x = -0.6;
             this._panel2.position.x -= 0.6;
         }
+        // this._panel1.position.add(this._panel1Vec);
+        // this._panel2.position.add(this._panel2Vec);
     }
 }
 
