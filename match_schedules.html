@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="./bootstrap-5.3.3-dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="css/style.css">
+	<title>Match Schedules</title>
+</head>
+<body>
+    <div class="container-fluid d-flex flex-column align-items-center">
+		<div style="background-color: black; position: absolute; width: 1440px; height: 1024px;">
+
+			<!-- backgound outline -->
+			<div class="blue_outline" style="background-color: black; position: absolute; width: 1408px; height: 992px; top: 16px; left: 16px; z-index: 1;"></div>
+			
+			<!-- top item -->
+			<div id="top_item" class="PS2P_font" style="position: relative; z-index: 2; margin-top: 50px; font-size: 30px; margin-top: 50px;">
+
+				<!-- nav menu buttons -->
+				<ul class="nav justify-content-end">
+					<li style="margin-right: 40px;">
+						<a class="btn btn-primary" href="/main">>MAIN
+                            <p style="font-size: 20px; margin-top: -12px;">(ESC)</p>
+                        </a>
+					</li>
+				</ul>
+			</div>
+        </div>
+    </div>
+
+	<script>
+		// 클릭 가능한 요소들에 이벤트 리스너를 등록한다
+        const Top_Buttons = document.querySelector("#top_item").querySelectorAll("a");
+
+		Top_Buttons.forEach((Button) => {
+
+            Button.addEventListener("click", (event) => {
+                event.preventDefault();
+                console.log(event.target.href);
+
+                // 라우팅 이벤트 추가
+                // 비동기 이슈?
+                if (event.target.href === "http://127.0.0.1:5500/main") {
+                    navigateTo("/main");
+                }
+            });
+
+            Button.addEventListener("mouseenter", (event) => {
+                Button.classList.remove("blue_outline");
+                Button.classList.add("green_outline");
+                Button.classList.add("white_stroke_2_5px");
+            });
+
+            Button.addEventListener("mouseleave", (event) => {
+                Button.classList.add("blue_outline");
+                Button.classList.remove("green_outline");
+                Button.classList.remove("white_stroke_2_5px");
+            });
+        });
+
+        Button.addEventListener("mouseenter", (event) => {
+            // 
+        });
+
+        Button.addEventListener("mouseleave", (event) => {
+            // 
+        });
+	</script>
+    <script src="./bootstrap-5.3.3-dist/js/bootstrap.min.js"></script>
+</body>
+</html>
