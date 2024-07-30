@@ -96,19 +96,19 @@
                 <div class="container" style="padding-top: 4px;">
                     <div class="row">
                         <div class="col-2" style="margin-left: 48px;">
-                            <img class="mx-auto d-block" src="./image/ghost_blue.png" style="width: 100px; height: 97.8px;" alt="">
+                            <img id="img_player1" class="mx-auto d-block" src="./image/ghost_blue.png" style="width: 100px; height: 97.8px;" alt="">
                             <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player1</p>
                         </div>
                         <div class="col-2" style="margin-left: 133px;">
-                            <img class="mx-auto d-block" src="./image/ghost_red.png" style="width: 100px; height: 97.8px;" alt="">
+                            <img id="img_player2" class="mx-auto d-block" src="./image/ghost_red.png" style="width: 100px; height: 97.8px;" alt="">
                             <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player2</p>
                         </div>
                         <div class="col-2" style="margin-left: 86px;">
-                            <img class="mx-auto d-block" src="./image/ghost_pink.png" style="width: 100px; height: 97.8px;" alt="">
+                            <img id="img_player3" class="mx-auto d-block" src="./image/ghost_pink.png" style="width: 100px; height: 97.8px;" alt="">
                             <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player1</p>
                         </div>
                         <div class="col-2" style="margin-left: 129px;">
-                            <img class="mx-auto d-block" src="./image/ghost_orange.png" style="width: 100px; height: 97.8px;" alt="">
+                            <img id="img_player4" class="mx-auto d-block" src="./image/ghost_orange.png" style="width: 100px; height: 97.8px;" alt="">
                             <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player2</p>
                         </div>
                     </div>
@@ -136,6 +136,10 @@
         document.querySelector(".line_1-common").style.stroke = "#14FF00";
 
         // 승 패에 따라 svg의 line 색을 바꾼다
+
+        // 승 패에 따라 플레이어 이미지를 바꾼다
+        const img_player1 = document.querySelector("#img_player1");
+        img_player1.src = "./image/ghost_death.png";
 
 		// 클릭 가능한 요소들에 이벤트 리스너를 등록한다
         const Top_Buttons = document.querySelector("#top_item").querySelectorAll("a");
