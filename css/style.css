@@ -94,6 +94,10 @@ body {
 	color: #ff0000;
 }
 
+.blue_hover {
+	color: #1E30F5;
+}
+
 .white_stroke_5px{
 	text-shadow:
         -5px -5px 0 #ffffff,  
@@ -118,4 +122,8 @@ body {
 		2.5px 2.5px 0 #ffffff,
 		-2.5px 0px 0 #ffffff,
         2.5px 0px 0 #ffffff;
+}
+
+.line_1-1 {
+	stroke: #14FF00;
 }

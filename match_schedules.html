@@ -15,13 +15,13 @@
 			<div class="blue_outline" style="background-color: black; position: absolute; width: 1408px; height: 992px; top: 16px; left: 16px; z-index: 1;"></div>
 			
 			<!-- top item -->
-			<div id="top_item" class="PS2P_font" style="position: relative; z-index: 2; margin-top: 50px; font-size: 30px; margin-top: 50px; height: 40px;">
+			<div id="top_item" class="PS2P_font" style="position: relative; z-index: 2; margin-top: 50px; font-size: 30px; height: 50px;">
 
 				<!-- nav menu buttons -->
 				<ul class="nav justify-content-end">
 					<li style="margin-right: 40px;">
 						<a class="btn btn-primary" href="/main">>MAIN
-                            <p style="font-size: 20px;">(ESC)</p>
+                            <p style="font-size: 20px; margin-top: -12px;">(ESC)</p>
                         </a>
 					</li>
 				</ul>
@@ -46,36 +46,32 @@
 
                         <!-- 모두 가운데 정렬되어 있기 때문에 선의 위치도 크기 / 2 로 계산한다 -->
 
-                        <!-- top -->
-                        <!-- <line x1="0" y1="4" x2="1030" y2="4" style="stroke: white; stroke-width: 8;"/> -->
-
-                        <!-- left -->
-                        <!-- <line x1="4" y1="0" x2="4" y2="360" style="stroke: white; stroke-width: 8;"/> -->
                         <!-- 1-1 -->
-                        <line x1="7" y1="276" x2="7" y2="360" style="stroke: white; stroke-width: 8;"/>
+                        <line class="line_1-1" x1="7" y1="276" x2="7" y2="360" style="stroke: white; stroke-width: 8;"/>
+                        <line class="line_1-1" x1="3" y1="276" x2="181" y2="276" style="stroke: white; stroke-width: 8;"/>
                         <!-- 1-2 -->
-                        <line x1="360" y1="276" x2="360" y2="360" style="stroke: white; stroke-width: 8;"/>
-
-                        <!-- center -->
-                        <line x1="519" y1="0" x2="519" y2="80" style="stroke: white; stroke-width: 8;"/>
-                        <line x1="181" y1="80" x2="849" y2="80" style="stroke: white; stroke-width: 8;"/>
-                        <line x1="7" y1="280" x2="1015" y2="280" style="stroke: white; stroke-width: 8;"/>
-
-                        <!-- right -->
-                        <!-- <line x1="1026" y1="0" x2="1026" y2="360" style="stroke: white; stroke-width: 8;"/> -->
+                        <line class="line_1-2" x1="360" y1="276" x2="360" y2="360" style="stroke: white; stroke-width: 8;"/>
+                        <line class="line_1-2" x1="189" y1="276" x2="364" y2="276" style="stroke: white; stroke-width: 8;"/>
+                        <!-- 1-common -->
+                        <line class="line_1-common" x1="185" y1="76" x2="185" y2="280" style="stroke: white; stroke-width: 8;"/>
 
                         <!-- 2-1 -->
-                        <line x1="666" y1="276" x2="666" y2="360" style="stroke: white; stroke-width: 8;"/>
+                        <line class="line_2-1" x1="666" y1="276" x2="666" y2="360" style="stroke: white; stroke-width: 8;"/>
+                        <line class="line_2-1" x1="662" y1="276" x2="841" y2="276" style="stroke: white; stroke-width: 8;"/>
                         <!-- 2-2 -->
-                        <line x1="1015" y1="276" x2="1015" y2="360" style="stroke: white; stroke-width: 8;"/>
-
+                        <line class="line_2-2" x1="1015" y1="276" x2="1015" y2="360" style="stroke: white; stroke-width: 8;"/>
+                        <line class="line_2-2" x1="849" y1="276" x2="1019" y2="276" style="stroke: white; stroke-width: 8;"/>
+                        <!-- 2-common -->
+                        <line class="line_2-common" x1="845" y1="76" x2="845" y2="280" style="stroke: white; stroke-width: 8;"/>
+                        
                         <!-- 3-1 -->
-                        <line x1="185" y1="80" x2="185" y2="280" style="stroke: white; stroke-width: 8;"/>
-                        <line x1="845" y1="80" x2="845" y2="280" style="stroke: white; stroke-width: 8;"/>
+                        <line class="line_3-1" x1="189" y1="80" x2="516" y2="80" style="stroke: white; stroke-width: 8;"/>
                         <!-- 3-2 -->
+                        <line class="line_3-1" x1="522" y1="80" x2="841" y2="80" style="stroke: white; stroke-width: 8;"/>
 
-                        <!-- bottom -->
-                        <!-- <line x1="0" y1="356" x2="1030" y2="356" style="stroke: white; stroke-width: 8;"/> -->
+                        <!-- final -->
+                        <line class="line_final" x1="519" y1="0" x2="519" y2="84" style="stroke: white; stroke-width: 8;"/>
+
                     </svg>
 
                     <span style="font-size: 30px; line-height: 32px; position: absolute; top: 660px; left: 310px; text-align: center;">
@@ -101,25 +97,25 @@
                     <div class="row">
                         <div class="col-2" style="margin-left: 48px;">
                             <img class="mx-auto d-block" src="./image/ghost_blue.png" style="width: 100px; height: 97.8px;" alt="">
-                            <p style="font-size: 30px; text-align: center; margin-top: 34px; margin-bottom: 34px; max-width: 306px;">player1</p>
+                            <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player1</p>
                         </div>
                         <div class="col-2" style="margin-left: 133px;">
                             <img class="mx-auto d-block" src="./image/ghost_red.png" style="width: 100px; height: 97.8px;" alt="">
-                            <p style="font-size: 30px; text-align: center; margin-top: 34px; margin-bottom: 34px; max-width: 306px;">player2</p>
+                            <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player2</p>
                         </div>
                         <div class="col-2" style="margin-left: 86px;">
                             <img class="mx-auto d-block" src="./image/ghost_pink.png" style="width: 100px; height: 97.8px;" alt="">
-                            <p style="font-size: 30px; text-align: center; margin-top: 34px; margin-bottom: 34px; max-width: 306px;">player1</p>
+                            <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player1</p>
                         </div>
                         <div class="col-2" style="margin-left: 129px;">
                             <img class="mx-auto d-block" src="./image/ghost_orange.png" style="width: 100px; height: 97.8px;" alt="">
-                            <p style="font-size: 30px; text-align: center; margin-top: 34px; margin-bottom: 34px; max-width: 306px;">player2</p>
+                            <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player2</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- start button -->
-                <div class="PS2P_font blue_outline" style="position: absolute; width: 328px; height: 161.88px; max-width: 328px; max-height: 161.88px; top: 420px; left: 550px; display: flex; flex-direction: column; justify-content: center;">
+                <!-- center button -->
+                <div class="PS2P_font center_button blue_outline" style="position: absolute; width: 328px; height: 161.88px; max-width: 328px; max-height: 161.88px; top: 420px; left: 550px; display: flex; flex-direction: column; justify-content: center;">
                     <!-- 세로로 가운데 정렬 -->
                     <p style="font-size: 30px; margin-bottom: 0px; text-align: center; line-height: 34px;">START!</p>
                     <!-- <p style="font-size: 30px; margin-bottom: 0px; text-align: center; line-height: 34px;">TOURNAMENT<br>AGAIN?</p> -->
@@ -131,6 +127,16 @@
     </div>
 
 	<script>
+        // 임시로 line 의 색을 바꿔본다
+        const lines = document.querySelectorAll(".line_1-1");
+
+        lines.forEach( (line) => {
+            line.style.stroke = "#14FF00";
+        })
+        document.querySelector(".line_1-common").style.stroke = "#14FF00";
+
+        // 승 패에 따라 svg의 line 색을 바꾼다
+
 		// 클릭 가능한 요소들에 이벤트 리스너를 등록한다
         const Top_Buttons = document.querySelector("#top_item").querySelectorAll("a");
 
@@ -159,6 +165,30 @@
                 Button.classList.remove("white_stroke_2_5px");
             });
         });
+
+        const Center_Button = document.querySelector(".center_button");
+
+        Center_Button.addEventListener("click", (event) => {
+            event.preventDefault();
+            console.log(event.target.href);
+
+            // 라우팅 이벤트 추가
+        });
+
+        Center_Button.addEventListener("mouseenter", (event) => {
+            Center_Button.classList.remove("blue_outline");
+            Center_Button.classList.add("green_outline");
+            Center_Button.classList.add("white_stroke_2_5px");
+            Center_Button.classList.add("blue_hover");
+        });
+
+        Center_Button.addEventListener("mouseleave", (event) => {
+            Center_Button.classList.add("blue_outline");
+            Center_Button.classList.remove("green_outline");
+            Center_Button.classList.remove("white_stroke_2_5px");
+            Center_Button.classList.remove("blue_hover");
+        });
+
 	</script>
     <script src="./bootstrap-5.3.3-dist/js/bootstrap.min.js"></script>
 </body>
