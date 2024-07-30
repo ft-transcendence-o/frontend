@@ -15,13 +15,13 @@
 			<div class="blue_outline" style="background-color: black; position: absolute; width: 1408px; height: 992px; top: 16px; left: 16px; z-index: 1;"></div>
 			
 			<!-- top item -->
-			<div id="top_item" class="PS2P_font" style="position: relative; z-index: 2; margin-top: 50px; font-size: 30px; margin-top: 50px;">
+			<div id="top_item" class="PS2P_font" style="position: relative; z-index: 2; margin-top: 50px; font-size: 30px; margin-top: 50px; height: 40px;">
 
 				<!-- nav menu buttons -->
 				<ul class="nav justify-content-end">
 					<li style="margin-right: 40px;">
 						<a class="btn btn-primary" href="/main">>MAIN
-                            <p style="font-size: 20px; margin-top: -12px;">(ESC)</p>
+                            <p style="font-size: 20px;">(ESC)</p>
                         </a>
 					</li>
 				</ul>
@@ -31,17 +31,17 @@
             <div class="PS2P_font" style="position: relative; z-index: 2;">
 
                 <!-- TOURNAMENT text -->
-                <p style="text-align: center; font-size: 30px;">TOURNAMENT</p>
+                <p style="text-align: center; font-size: 30px; margin-bottom: 0px;">TOURNAMENT</p>
 
                 <!-- trophy -->
-                <div>
+                <div style="margin-top: -23px;">
                     <img src="./image/trophy.png" alt="" class="mx-auto d-block">
                 </div>
 
                 <!-- 1. boder left right 노가다 -->
 
                 <!-- 2. svg 노가다 -->
-                <div>
+                <div style="height: 360px;">
                     <svg width="1040" height="360" class="mx-auto d-block">
 
                         <!-- 모두 가운데 정렬되어 있기 때문에 선의 위치도 크기 / 2 로 계산한다 -->
@@ -51,7 +51,10 @@
 
                         <!-- left -->
                         <!-- <line x1="4" y1="0" x2="4" y2="360" style="stroke: white; stroke-width: 8;"/> -->
-                        <line x1="7" y1="0" x2="7" y2="360" style="stroke: white; stroke-width: 8;"/>
+                        <line x1="7" y1="276" x2="7" y2="360" style="stroke: white; stroke-width: 8;"/>
+
+                        <!-- 1-2 -->
+                        <line x1="360" y1="276" x2="360" y2="360" style="stroke: white; stroke-width: 8;"/>
 
                         <!-- center -->
                         <line x1="519" y1="0" x2="519" y2="360" style="stroke: white; stroke-width: 8;"/>
@@ -65,22 +68,31 @@
                         <!-- bottom -->
                         <!-- <line x1="0" y1="356" x2="1030" y2="356" style="stroke: white; stroke-width: 8;"/> -->
                     </svg>
+
+                    <span style="font-size: 30px; line-height: 24px; position: relative; top: -20px; left: 310px;">
+                        MATCH<br>
+                        NO.1
+                    </span>
                 </div>
 
                 <!-- ghost -->
-                <div class="row">
-                    <div class="col-6" style="padding-left: 180px;">
-                        <img src="./image/ghost_blue.png" style="width: 100px; height: 97.8px;" alt="">
-                        <img src="./image/ghost_red.png" style="width: 100px; height: 97.8px; margin-left: 240px;" alt="">
-                    </div>
-                    <div class="col-6" style="padding-left: 100px;">
-                        <img src="./image/ghost_pink.png" style="width: 100px; height: 97.8px;" alt="">
-                        <img src="./image/ghost_orange.png" style="width: 100px; height: 97.8px; margin-left: 240px;" alt="">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-3">
+                            <img class="mx-auto d-block" src="./image/ghost_blue.png" style="width: 100px; height: 97.8px;" alt="">
+                            <p style="font-size: 30px; text-align: center;">player1</p>
+                        </div>
+                        <div class="col-3">
+                            <img class="mx-auto d-block" src="./image/ghost_red.png" style="width: 100px; height: 97.8px;" alt="">
+                            <p style="font-size: 30px; text-align: center;">player2</p>
+                        </div>
+                        <!-- <div class="col-6" style="padding-left: 100px;">
+                            <img src="./image/ghost_pink.png" style="width: 100px; height: 97.8px;" alt="">
+                            <img src="./image/ghost_orange.png" style="width: 100px; height: 97.8px; margin-left: 240px;" alt="">
+                        </div> -->
                     </div>
                 </div>
-                
             </div>
-            
         </div>
     </div>
 
@@ -112,14 +124,6 @@
                 Button.classList.remove("green_outline");
                 Button.classList.remove("white_stroke_2_5px");
             });
-        });
-
-        Button.addEventListener("mouseenter", (event) => {
-            // 
-        });
-
-        Button.addEventListener("mouseleave", (event) => {
-            // 
         });
 	</script>
     <script src="./bootstrap-5.3.3-dist/js/bootstrap.min.js"></script>
