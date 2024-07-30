@@ -1,6 +1,25 @@
 import * as THREE from '../build/three.module.js';
 import { GLTFLoader } from '../build/GLTFLoader.js';
 
+let player1Score = 0;
+let player2Score = 0;
+
+function countdown() {
+    let countdownElement = document.querySelector("#countDown");
+    let countdownValue = 3;
+
+    let countdownInterval = setInterval(() => {
+        countdownValue--;
+        countdownElement.innerText = countdownValue;
+
+        if (countdownValue === 0) {
+            clearInterval(countdownInterval);
+            countdownElement.innerText = "START";
+            return ;
+        }
+    }, 1000);
+}
+
 class pongGame {
     // constructor : renderer, scene, 함수들 정의
     constructor() {
@@ -8,15 +27,23 @@ class pongGame {
         const canvas2 = document.querySelector("#canvas2");
         this._divCanvas1 = canvas1;
         this._divCanvas2 = canvas2;
+        this._canvasWidth = 712;
+        this._canvasHeight = 700;
 
-        // renderer라는 화면에 찍어내는 객체를 생성한다
-        // renderer는 2개 존재하며 같은 scene을 인자로 받아 렌더링해준다
+        //게임에 사용할 변수들
+        this._vec = new THREE.Vector3(0, 0, 2); //공의 방향벡터 //0.5일때 터짐
+        this._angularVec = new THREE.Vector3(0, 0, 0); //공의 각속도 회전 벡터
+        this._flag = true; //공이 player1의 방향인지 player2의 방향인지 여부
+        this._keyState = {}; // 키보드 입력 상태를 추적하는 변수
+        this._panel1Vec = new THREE.Vector3(0, 0, 0);
+        this._panel2Vec = new THREE.Vector3(0, 0, 0);
+
         let renderer1 = new THREE.WebGLRenderer({
             canvas: canvas1,
             antialias: true,
         });
         renderer1.outputEncoding = THREE.sRGBEncoding;
-        renderer1.setSize(window.innerWidth / 2, window.innerHeight);
+        renderer1.setSize(this._canvasWidth + 11, this._canvasHeight);
         this._renderer1 = renderer1;
 
         let renderer2 = new THREE.WebGLRenderer({
@@ -24,7 +51,7 @@ class pongGame {
             antialias: true,
         });
         renderer2.outputEncoding = THREE.sRGBEncoding;
-        renderer2.setSize(window.innerWidth / 2, window.innerHeight);
+        renderer2.setSize(this._canvasWidth, this._canvasHeight);
         this._renderer2 = renderer2;
 
         let scene = new THREE.Scene();
@@ -41,34 +68,24 @@ class pongGame {
         // keyup 이벤트 핸들러를 추가
         window.addEventListener('keyup', this.keyup.bind(this));
 
-        // resize 이벤트 핸들러를 추가
-        window.addEventListener('resize', this.resize.bind(this));
-
-        // 현재 창 크기에 맞게 카메라, 광원, 렌더러를 설정
-        this.resize();
+        // 게임시작시 카운트 다운
+        countdown();
+        setTimeout()
 
         // render 함수 정의 및 애니메이션 프레임 요청
         requestAnimationFrame(this.render.bind(this));
-
-        //게임에 사용할 변수들
-        this._vec = new THREE.Vector3(0, 0, 2); //공의 방향벡터 //0.5일때 터짐
-        this._angularVec = new THREE.Vector3(0, 0, 0); //공의 각속도 회전 벡터
-        this._flag = true; //공이 player1의 방향인지 player2의 방향인지 여부
-        this._keyState = {}; // 키보드 입력 상태를 추적하는 변수
-        this._panel1Vec = new THREE.Vector3(0, 0, 0);
-        this._panel2Vec = new THREE.Vector3(0, 0, 0);
     }
 
     _setupCamera() {
-        const width = window.innerWidth / 2; // TODO: 화면에 맞게 수정해야함
-        const height = window.innerHeight; // TODO: 화면에 맞게 수정해야함
+        const width = this._canvasWidth;
+        const height = this._canvasHeight;
         const camera1 = new THREE.PerspectiveCamera(
             45,
             width / height,
             0.1,
             1000
         );
-        camera1.position.set(0, 0, 100);
+        camera1.position.set(0, 0, 80);
         camera1.lookAt(0, 0, 0);
         this._camera1 = camera1;
 
@@ -78,7 +95,7 @@ class pongGame {
             0.1,
             1000
         );
-        camera2.position.set(0, 0, -100);
+        camera2.position.set(0, 0, -80);
         camera2.lookAt(0, 0, 0);
         this._camera2 = camera2;
     }
@@ -210,20 +227,6 @@ class pongGame {
         this._panel2Plane = panel2Plane;
         this._panel2 = panel2;
         this._scene.add(panel2);
-    }
-
-    resize() {
-        const width = window.innerWidth / 2; // TODO: 화면에 맞게 수정해야함
-        const height = window.innerHeight; // TODO: 화면에 맞게 수정해야함
-        // html의 div쪽의 크기를 가져와서 카메라의 속성값을 설정해줌
-
-        this._camera1.aspect = width / height; // 카메라 속성값 설정
-        this._camera1.updateProjectionMatrix();
-        this._renderer1.setSize(width, height);
-
-        this._camera2.aspect = width / height; // 카메라 속성값 설정
-        this._camera2.updateProjectionMatrix();
-        this._renderer2.setSize(width, height);
     }
 
     render(time) { // 렌더링이 시작된 이후 경과된 밀리초를 받는다
