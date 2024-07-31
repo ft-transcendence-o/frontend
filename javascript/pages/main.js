@@ -1,5 +1,6 @@
 import { navigateTo } from "../../router.js";
 import AbstractView from "./AbstractView.js";
+import { navigateTo } from "../../router.js";
 
 function getCookie(name) {
     let matches = document.cookie.match(new RegExp(
@@ -25,6 +26,7 @@ export default class extends AbstractView {
     async getHtml() {
         return `
         <div class="container-fluid d-flex flex-column align-items-center">
+
         <div style="background-color: black; position: absolute; width: 1440px; height: 1024px;">
 
             <!-- backgound outline -->
