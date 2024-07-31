@@ -280,6 +280,7 @@ class pongGame {
                 if (++this._player2Score === 10){
                     this._vec.set(0, 0, 0);
                 }
+                console.log(this._player2Score);
                 this._ball.position.x = 0;
                 this._ball.position.y = 0;
                 this._ball.position.z = 0;
@@ -306,11 +307,11 @@ class pongGame {
                 if (++this._player1Score === 10){
                     this._vec.set(0, 0, 0);
                 }
+                console.log(this._player1Score);
                 this._ball.position.x = 0;
                 this._ball.position.y = 0;
                 this._ball.position.z = 0;
                 console.log("ball vec:", this._vec);
-                this._player1Score++;
             }
         }
     }
