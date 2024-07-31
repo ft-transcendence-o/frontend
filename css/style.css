@@ -94,6 +94,10 @@ body {
 	color: #ff0000;
 }
 
+.blue_hover {
+	color: #1E30F5;
+}
+
 .white_stroke_5px{
 	text-shadow:
         -5px -5px 0 #ffffff,  
