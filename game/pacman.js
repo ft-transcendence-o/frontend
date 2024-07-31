@@ -96,7 +96,7 @@ class pongGame {
             0.1,
             1000
         );
-        camera1.position.set(0, 0, 80);
+        camera1.position.set(0, 4, 80);
         camera1.lookAt(0, 0, 0);
         this._camera1 = camera1;
 
@@ -106,7 +106,7 @@ class pongGame {
             0.1,
             1000
         );
-        camera2.position.set(0, 0, -80);
+        camera2.position.set(0, 4, -80);
         camera2.lookAt(0, 0, 0);
         this._camera2 = camera2;
     }
@@ -274,6 +274,18 @@ class pongGame {
 
                 this._angularVec.sub(this._panel1Vec.multiplyScalar(0.01));
                 this.updateVector(this._panel1Plane);
+                if (collisionPoint1.x < this._panel1.x) {
+                    this._vec.x += 1;
+                }
+                if (collisionPoint1.x > this._panel1.x) {
+                    this._vec.x -= 1;
+                }
+                if (collisionPoint1.y < this._panel1.y) {
+                    this._vec.y += 1;
+                }
+                if (collisionPoint1.y > this._panel1.y) {
+                    this._vec.y -= 1;
+                }
                 this._vec.x *= 1.1;
                 this._vec.y *= 1.1;
                 // this._vec.add(this._vec.clone)
@@ -318,6 +330,19 @@ class pongGame {
             
                 this._angularVec.sub(this._panel2Vec.multiplyScalar(0.01));
                 this.updateVector(this._panel2Plane);
+
+                if (collisionPoint2.x < this._panel2.x) {
+                    this._vec.x += 1;
+                }
+                if (collisionPoint2.x > this._panel2.x) {
+                    this._vec.x -= 1;
+                }
+                if (collisionPoint2.y < this._panel2.y) {
+                    this._vec.y += 1;
+                }
+                if (collisionPoint2.y > this._panel2.y) {
+                    this._vec.y -= 1;
+                }
 
                 console.log('충돌 지점:', collisionPoint2);
                 // console.log('구체 중심과 충돌 지점 간의 거리:', distance);
