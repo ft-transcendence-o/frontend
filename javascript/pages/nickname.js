@@ -4,7 +4,7 @@ import AbstractView from "./AbstractView.js";
 export default class extends AbstractView {
     constructor() {
         super();
-        this.setTitle("Example1");
+        this.setTitle("Nickname");
     }
 
     /**
@@ -63,7 +63,7 @@ export default class extends AbstractView {
         </div>
 
         <!-- 레디 Button -->
-        <button type="button" style="background-color: black; z-index: 5; margin-top: 34px; width: 232px; height: 131px;" class="blue_outline PS2P_font">
+        <button id="ready_button" type="button" style="background-color: black; z-index: 5; margin-top: 34px; width: 232px; height: 131px;" class="blue_outline PS2P_font">
             <span style="font-size: 30px; line-height: 30px;">READY!</span>
             <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
         </button>
@@ -74,9 +74,7 @@ export default class extends AbstractView {
     }
 
     async init() {
-
-        /* MAIN 버튼 */
-		const Main_Button = document.querySelector("#main_button").querySelectorAll("a");
+        const Main_Button = document.querySelectorAll("#main_button a");
 
 		Main_Button.forEach((Button) => {
 
@@ -86,13 +84,13 @@ export default class extends AbstractView {
                 navigateTo('/main');
 			});
 
-			Button.addEventListener("mouseenter", (event) => {
+			Button.addEventListener("mouseenter", () => {
 				Button.classList.remove("blue_outline");
 				Button.classList.add("green_outline");
 				Button.classList.add("white_stroke_2_5px");
 			});
 
-			Button.addEventListener("mouseleave", (event) => {
+			Button.addEventListener("mouseleave", () => {
 				Button.classList.add("blue_outline");
 				Button.classList.remove("green_outline");
 				Button.classList.remove("white_stroke_2_5px");
@@ -100,30 +98,24 @@ export default class extends AbstractView {
 		});
 
         /* READY 버튼 */
-        const Ready_Button = document.querySelector("#ready_button").querySelector("a");
+        const Ready_Button = document.querySelector("#ready_button");
 
-        Ready_Button.forEach((Button) => {
+        Ready_Button.addEventListener("click", (event) => {
+            event.preventDefault();
+            console.log("ready button clicked!");
+            navigateTo('/');
+        });
 
-            Button.addEventListener("click", (event) => {
-                event.preventDefault();
-                console.log(event.target.href);
-                // navigateTo('/tournament');
-            });
+        Ready_Button.addEventListener("mouseenter", () => {
+            Ready_Button.classList.remove("blue_outline");
+            Ready_Button.classList.add("green_outline");
+            Ready_Button.classList.add("blue_font_white_stroke_3px");
+        });
 
-			Button.addEventListener("mouseenter", (event) => {
-				Button.classList.remove("blue_outline");
-				Button.classList.add("green_outline");
-				Button.classList.add("white_stroke_2_5px");
-			});
-
-			Button.addEventListener("mouseleave", (event) => {
-				Button.classList.add("blue_outline");
-				Button.classList.remove("green_outline");
-				Button.classList.remove("white_stroke_2_5px");
-			});
-
-
-        })
-
+        Ready_Button.addEventListener("mouseleave", () => {
+            Ready_Button.classList.add("blue_outline");
+            Ready_Button.classList.remove("green_outline");
+            Ready_Button.classList.remove("blue_font_white_stroke_3px");
+        });
     }
 }

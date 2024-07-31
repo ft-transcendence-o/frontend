@@ -119,3 +119,12 @@ body {
 		-2.5px 0px 0 #ffffff,
         2.5px 0px 0 #ffffff;
 }
+
+.blue_font_white_stroke_3px{
+	color: #1E30F5;
+	text-shadow:
+        -3px -3px 0 #ffffff,  
+        3px -3px 0 #ffffff,
+        -3px 3px 0 #ffffff,
+        3px 3px 0 #ffffff;
+}

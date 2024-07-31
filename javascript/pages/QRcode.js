@@ -23,13 +23,17 @@ export default class extends AbstractView {
 			<!-- QR Code -->
 			<div id="qrcode" style="position:absolute; top: 171px; z-index: 1;">
 			</div>
-	
-			<!-- Next Button -->
-			<button type="button" style="background-color: black; z-index: 4; margin-top: 640px; font-size: 50px; width: 280px; height: 139px;" class="blue_outline PS2P_font">NEXT</button>
+
+
+			<!-- 넥스트 Button -->
+			<button id="next_button" type="button" style="background-color: black; z-index: 4; margin-top: 600px; width: 280px; height: 139px;" class="blue_outline PS2P_font">
+				<span style="font-size: 50px; line-height: 50px;">NEXT</span>
+				<span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
+			</button>
 	
 	
 			<!-- footer -->
-			<div class="row" style="position:absolute; padding-top:824px; z-index: 3;">
+			<div class="row" style="position:absolute; margin-top:824px; z-index: 3;">
 				<div class="col-12">
 					<p class="m-0 text-center text-white PS2P_font" style="padding-bottom: 34px; font-size: 30px;">SCAN THE QR-CODE</p>
 					<p class="m-0 text-center text-white PS2P_font" style="padding-bottom: 0px; font-size: 30px;">VIA GOOGLE OTP/AUTHENTICATOR</p>
@@ -42,15 +46,27 @@ export default class extends AbstractView {
     }
 
     async init() {
-		function next_click(event) {
-            event.preventDefault(); // 기본 동작 방지
-            // 사용자를 42 인증 페이지로 리다이렉트
-            // query parameter(?다음) 부분을 환경변수로 대체해야 한다.
+
+		/* 넥스트 Button */
+        const Next_Button = document.querySelector("#next_button");
+
+        Next_Button.addEventListener("click", (event) => {
+            event.preventDefault();
+            console.log("next button clicked!");
             navigateTo('/OTP');
-        }
-		
-		const qr_button = document.querySelector("button");
-		qr_button.addEventListener("click", next_click);
+        });
+
+        Next_Button.addEventListener("mouseenter", () => {
+            Next_Button.classList.remove("blue_outline");
+            Next_Button.classList.add("green_outline");
+            Next_Button.classList.add("blue_font_white_stroke_3px");
+        });
+
+        Next_Button.addEventListener("mouseleave", () => {
+            Next_Button.classList.add("blue_outline");
+            Next_Button.classList.remove("green_outline");
+            Next_Button.classList.remove("blue_font_white_stroke_3px");
+        });
 
 		function generateQRcode(otpUri) {
 			const qrCodeDiv = document.getElementById('qrcode');
