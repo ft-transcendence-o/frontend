@@ -13,7 +13,7 @@
 }
 
 body {
-	background-color: blue;
+	background-color: black;
 }
 
 .backimg {
@@ -166,3 +166,13 @@ body {
 	color: transparent;
 	font-size: 30px;
 }
+
+.blue_font_white_stroke_3px{
+	color: #1E30F5;
+	text-shadow:
+        -3px -3px 0 #ffffff,  
+        3px -3px 0 #ffffff,
+        -3px 3px 0 #ffffff,
+        3px 3px 0 #ffffff;
+}
+
