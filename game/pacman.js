@@ -6,12 +6,14 @@ function countdown() {
     let countdownValue = 4;
 
     let countdownInterval = setInterval(() => {
-        countdownValue--;
-        countdownElement.innerText = countdownValue;
+        countdownElement.innerText =  --countdownValue;
 
         if (countdownValue === 0) {
-            clearInterval(countdownInterval);
             countdownElement.innerText = "START";
+        }
+        else if (countdownValue === -1) {
+            clearInterval(countdownInterval);
+            countdownElement.innerText = "";
             return ;
         }
     }, 1000);
@@ -28,9 +30,13 @@ class pongGame {
         this._canvasHeight = 700;
 
         // game_var
-        this._gameVar = document.querySelector("game_var");
+        this._gameVar = document.querySelector("#game_var");
+        this._player1Nick = "hgu";
+        this._player2Nick = "yonghyle";
         this._player1Score = 0;
         this._player2Score = 0;
+        document.querySelector("#player1_nick").innerHTML = this._player1Nick;
+        document.querySelector("#player2_nick").innerHTML = this._player2Nick;
 
         //게임에 사용할 변수들
         this._vec = new THREE.Vector3(0, 0, 2); //공의 방향벡터 //0.5일때 터짐
@@ -39,6 +45,7 @@ class pongGame {
         this._keyState = {}; // 키보드 입력 상태를 추적하는 변수
         this._panel1Vec = new THREE.Vector3(0, 0, 0);
         this._panel2Vec = new THREE.Vector3(0, 0, 0);
+        this._isPaused = false;
 
         let renderer1 = new THREE.WebGLRenderer({
             canvas: canvas1,
@@ -74,7 +81,7 @@ class pongGame {
         countdown();
         this._renderer1.render(this._scene, this._camera1);
         this._renderer2.render(this._scene, this._camera2);
-        setTimeout(() => {requestAnimationFrame(this.render.bind(this));}, 4000);
+        setTimeout(() => {requestAnimationFrame(this.render.bind(this));}, 5000);
 
         // render 함수 정의 및 애니메이션 프레임 요청
         // requestAnimationFrame(this.render.bind(this));
@@ -182,8 +189,6 @@ class pongGame {
             new THREE.Plane(new THREE.Vector3(-1, 0, 0), this._stadium.geometry.parameters.width / 2), // Right
             new THREE.Plane(new THREE.Vector3(0, 1, 0), this._stadium.geometry.parameters.height / 2), // Bottom
             new THREE.Plane(new THREE.Vector3(0, -1, 0), this._stadium.geometry.parameters.height / 2), // Top
-            // new THREE.Plane(new THREE.Vector3(0, 0, 1), this._stadium.geometry.parameters.depth / 2),  // Front
-            // new THREE.Plane(new THREE.Vector3(0, 0, -1), this._stadium.geometry.parameters.depth / 2)  // Back
         ];
 
         //Mesh: 경기장 테두리
@@ -277,14 +282,29 @@ class pongGame {
             }
             else {
                 console.log("player2 win");
-                if (++this._player2Score === 10){
+                document.querySelector("#player2_score").innerHTML = ++this._player2Score;
+                if (this._player2Score === 4){
                     this._vec.set(0, 0, 0);
+                    this._angularVec.set(0, 0, 0.1);
+                    document.querySelector("#winner2").innerHTML = `
+                    <div style="font-size: 100px; line-height: 100px; color: white;">WIN!</div>
+                    <button id="next_button" type="button" style="
+                        background-color: black;
+                        width: 328px; height: 199px;
+                        margin-left: 20px;" 
+                        class="blue_outline">
+                        <span style="font-size: 50px; line-height: 50px;">
+                            >>NEXT
+                        </span>
+                        <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
+                    </button>`;
                 }
                 console.log(this._player2Score);
                 this._ball.position.x = 0;
                 this._ball.position.y = 0;
                 this._ball.position.z = 0;
                 console.log("ball vec:", this._vec);
+                this.pauseGame(1000);
             }
             
         }
@@ -304,14 +324,29 @@ class pongGame {
             }
             else { //여기로 빠진다
                 console.log("player1 win");
-                if (++this._player1Score === 10){
+                document.querySelector("#player1_score").innerHTML = ++this._player1Score;
+                if (this._player1Score === 4){
                     this._vec.set(0, 0, 0);
+                    this._angularVec.set(0, 0, 0.1);
+                    document.querySelector("#winner1").innerHTML = `
+                    <div style="font-size: 100px; line-height: 100px; color: white;">WIN!</div>
+                    <button id="next_button" type="button" style="
+                        background-color: black;
+                        width: 328px; height: 199px;
+                        margin-left: 20px;" 
+                        class="blue_outline">
+                        <span style="font-size: 50px; line-height: 50px;">
+                            >>NEXT
+                        </span>
+                        <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
+                    </button>`;
                 }
                 console.log(this._player1Score);
                 this._ball.position.x = 0;
                 this._ball.position.y = 0;
                 this._ball.position.z = 0;
                 console.log("ball vec:", this._vec);
+                this.pauseGame(1000);
             }
         }
     }
@@ -384,8 +419,7 @@ class pongGame {
     }
 
     update(time) { // TODO: 앞으로 동작에 대해서 함수를 들어서 정의해야함
-        if (this._ball) {
-
+        if (this._ball && !this._isPaused) {
             // 공의 이동 업데이트를 작은 시간 간격으로 나누어 수행
             const steps = 10; // 충돌 체크 빈도
             for (let i = 0; i < steps; i++) {
@@ -408,6 +442,13 @@ class pongGame {
             this.updatePanel();
             this._perspectiveLineEdges.position.z = this._ball.position.z;
         }
+    }
+
+    pauseGame(duration) {
+        this._isPaused = true;
+        setTimeout(() => {
+            this._isPaused = false;
+        }, duration);
     }
 
     keydown(event) {
@@ -452,8 +493,6 @@ class pongGame {
             this._panel2Vec.x = -0.6;
             this._panel2.position.x -= 0.6;
         }
-        // this._panel1.position.add(this._panel1Vec);
-        // this._panel2.position.add(this._panel2Vec);
     }
 }
 
