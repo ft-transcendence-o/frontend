@@ -1,12 +1,9 @@
 import * as THREE from '../build/three.module.js';
 import { GLTFLoader } from '../build/GLTFLoader.js';
 
-let player1Score = 0;
-let player2Score = 0;
-
 function countdown() {
     let countdownElement = document.querySelector("#countDown");
-    let countdownValue = 3;
+    let countdownValue = 4;
 
     let countdownInterval = setInterval(() => {
         countdownValue--;
@@ -29,6 +26,11 @@ class pongGame {
         this._divCanvas2 = canvas2;
         this._canvasWidth = 712;
         this._canvasHeight = 700;
+
+        // game_var
+        this._gameVar = document.querySelector("game_var");
+        this._player1Score = 0;
+        this._player2Score = 0;
 
         //게임에 사용할 변수들
         this._vec = new THREE.Vector3(0, 0, 2); //공의 방향벡터 //0.5일때 터짐
@@ -70,10 +72,12 @@ class pongGame {
 
         // 게임시작시 카운트 다운
         countdown();
-        setTimeout()
+        this._renderer1.render(this._scene, this._camera1);
+        this._renderer2.render(this._scene, this._camera2);
+        setTimeout(() => {requestAnimationFrame(this.render.bind(this));}, 4000);
 
         // render 함수 정의 및 애니메이션 프레임 요청
-        requestAnimationFrame(this.render.bind(this));
+        // requestAnimationFrame(this.render.bind(this));
     }
 
     _setupCamera() {
@@ -273,6 +277,9 @@ class pongGame {
             }
             else {
                 console.log("player2 win");
+                if (++this._player2Score === 10){
+                    this._vec.set(0, 0, 0);
+                }
                 this._ball.position.x = 0;
                 this._ball.position.y = 0;
                 this._ball.position.z = 0;
@@ -296,10 +303,14 @@ class pongGame {
             }
             else { //여기로 빠진다
                 console.log("player1 win");
+                if (++this._player1Score === 10){
+                    this._vec.set(0, 0, 0);
+                }
                 this._ball.position.x = 0;
                 this._ball.position.y = 0;
                 this._ball.position.z = 0;
                 console.log("ball vec:", this._vec);
+                this._player1Score++;
             }
         }
     }
