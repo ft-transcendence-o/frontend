@@ -1,6 +1,5 @@
 import { navigateTo } from "../../router.js";
 import AbstractView from "./AbstractView.js";
-import { navigateTo } from "../../router.js";
 
 function getCookie(name) {
     let matches = document.cookie.match(new RegExp(
