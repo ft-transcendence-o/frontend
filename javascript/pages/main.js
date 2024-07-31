@@ -40,7 +40,7 @@ export default class extends AbstractView {
                 <!-- nav menu buttons -->
                 <ul class="nav justify-content-end">
                     <li>
-                        <a class="btn btn-primary" href="/MATCH-RECORD">>MATCH-RECORD</a>
+                        <a class="btn btn-primary" href="/match_record">>MATCH-RECORD</a>
                     </li>
                     <li style="margin-left: 20px;">
                         <a class="btn btn-primary" href="/LANGUAGE">>LANGUAGE</a>
@@ -227,10 +227,10 @@ export default class extends AbstractView {
         // backend api를 통해 유저의 이름을 받아와서 요소에 집어넣는다
         const User_Name_Holder = document.querySelector("#top_item").querySelector("#user_name");
 
-        const response = await fetch("http://10.19.218.225:8000/user-management/info", {
+        const response = await fetch("http://localhost:8000/user-management/info", {
             method: "GET",
             headers: {
-                "Authorization": `Bearer ${localStorage.getItem('jwt')}`,
+                "Authorization": `Bearer ${getCookie('jwt')}`,
                 'Content-Type': 'application/json',
             },
         });

@@ -1,5 +1,5 @@
 import AbstractView from "./AbstractView.js";
-import { navigateTo } from "../../router.js";
+import { navigateTo, getCookie } from "../../router.js";
 
 export default class extends AbstractView {
     constructor() {
@@ -265,10 +265,10 @@ export default class extends AbstractView {
         });
 
         // 요청 할 페이지를 localStorage에서 관리하는식으로 시도
-        const response = await fetch(`http://10.19.218.225:8000/game-management/game?page=${localStorage.getItem("record_page")}`, {
+        const response = await fetch(`http://localhost:8000/game-management/game?page=${localStorage.getItem("record_page")}`, {
             method: "GET",
             headers: {
-                "Authorization": `Bearer ${localStorage.getItem('jwt')}`,
+                "Authorization": `Bearer ${getCookie('jwt')}`,
                 'Content-Type': 'application/json',
             },
         });
