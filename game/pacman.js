@@ -1,5 +1,6 @@
 import * as THREE from '../build/three.module.js';
 import { GLTFLoader } from '../build/GLTFLoader.js';
+import { navigateTo } from "../../router.js";
 
 function countdown() {
     let countdownElement = document.querySelector("#countDown");
@@ -31,8 +32,8 @@ class pongGame {
 
         // game_var
         this._gameVar = document.querySelector("#game_var");
-        this._player1Nick = "hgu";
-        this._player2Nick = "yonghyle";
+        this._player1Nick = localStorage.getItem("match_1up");
+        this._player2Nick = localStorage.getItem("match_2up");
         this._player1Score = 0;
         this._player2Score = 0;
         document.querySelector("#player1_nick").innerHTML = this._player1Nick;
@@ -295,7 +296,7 @@ class pongGame {
             else {
                 console.log("player2 win");
                 document.querySelector("#player2_score").innerHTML = ++this._player2Score;
-                if (this._player2Score === 4){
+                if (this._player2Score === 1){
                     this._vec.set(0, 0, 0);
                     this._angularVec.set(0, 0, 0.1);
                     document.querySelector("#winner2").innerHTML = `
@@ -310,6 +311,20 @@ class pongGame {
                         </span>
                         <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
                     </button>`;
+                    const result = {
+                        "player1Nick": this._player1Nick,
+                        "player2Nick": this._player2Nick,
+                        "player1Score" : this._player1Score,
+                        "player2Score" : this._player2Score,
+                        "mode": "TOURNAMENT"
+                    }  
+                    localStorage.setItem(`game${localStorage.getItem("match_count")}`, JSON.stringify(result));
+                    localStorage.setItem("match_count", localStorage.getItem("match_count") + 1);
+                    this._nextButton = document.querySelector("#next_button");
+                    this._nextButton.addEventListener("click", (event) => {
+                        console.log("test");
+                        navigateTo("/match_schedules");
+                    })
                 }
                 console.log(this._player2Score);
                 this._ball.position.x = 0;
@@ -350,7 +365,7 @@ class pongGame {
             else { //여기로 빠진다
                 console.log("player1 win");
                 document.querySelector("#player1_score").innerHTML = ++this._player1Score;
-                if (this._player1Score === 4){
+                if (this._player1Score === 1){
                     this._vec.set(0, 0, 0);
                     this._angularVec.set(0, 0, 0.1);
                     document.querySelector("#winner1").innerHTML = `
@@ -365,6 +380,20 @@ class pongGame {
                         </span>
                         <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
                     </button>`;
+                    const result = {
+                        "player1Nick": this._player1Nick,
+                        "player2Nick": this._player2Nick,
+                        "player1Score" : this._player1Score,
+                        "player2Score" : this._player2Score,
+                        "mode": "TOURNAMENT"
+                    }  
+                    localStorage.setItem(`game${localStorage.getItem("match_count")}`, JSON.stringify(result));
+                    localStorage.setItem("match_count", localStorage.getItem("match_count") + 1);
+                    this._nextButton = document.querySelector("#next_button");
+                    this._nextButton.addEventListener("click", (event) => {
+                        console.log("test");
+                        navigateTo("/match_schedules");
+                    })
                 }
                 console.log(this._player1Score);
                 this._ball.position.x = 0;

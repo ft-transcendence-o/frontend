@@ -6,6 +6,7 @@ import OTP from "./javascript/pages/OTP.js"
 import main from "./javascript/pages/main.js"
 import match_record from "./javascript/pages/match_record.js"
 import nickname from "./javascript/pages/nickname.js"
+import match_schedules from "./javascript/pages/match_schedules.js"
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -43,6 +44,7 @@ export const router = async () => {
         { path: "/main", view: main },
         { path: "/match_record", view: match_record },
         { path: "/nickname", view: nickname },
+        { path: "/match_schedules", view: match_schedules},
     ];
 
     const potentialMatches = routes.map((route) => {
@@ -55,7 +57,7 @@ export const router = async () => {
     let match = potentialMatches.find((potentialMatche) => potentialMatche.isMatch);
 
     if (!match) {
-        document.querySelector('#app').innerHTML = `<h1>404</h1>`
+        // document.querySelector('#app').innerHTML = `<h1>404</h1>`
     } else {
         const view = new match.route.view();
         document.querySelector('#app').innerHTML = await view.getHtml();
