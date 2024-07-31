@@ -13,7 +13,7 @@
 }
 
 body {
-	background-color: blue;
+	background-color: black;
 }
 
 .backimg {
@@ -123,3 +123,60 @@ body {
 		-2.5px 0px 0 #ffffff,
         2.5px 0px 0 #ffffff;
 }
+
+/* match-record page-link tag */
+.page-link {
+	background-color: transparent;
+	border: none;
+	color: white;
+	font-size: 30px;
+}
+
+.page-link:hover {
+	background-color: transparent;
+	border: none;
+	color: white;
+	font-size: 30px;
+}
+
+.page-link:focus {
+	background-color: transparent;
+	border: none;
+	color: white;
+	font-size: 30px;
+	transition: none;
+	box-shadow: none;
+}
+
+.page-link:active {
+	background-color: transparent;
+	border: none;
+	color: white;
+	font-size: 30px;
+	transition: none;
+}
+
+.page-link.active {
+	background-color: transparent;
+	border: none;
+	color: white;
+	font-size: 30px;
+	text-decoration: underline;
+}
+
+.page-link.disabled {
+	background-color: transparent;
+	border: none;
+	color: transparent;
+	font-size: 30px;
+}
+
+.blue_font_white_stroke_3px{
+	color: #1E30F5;
+	text-shadow:
+        -3px -3px 0 #ffffff,  
+        3px -3px 0 #ffffff,
+        -3px 3px 0 #ffffff,
+        3px 3px 0 #ffffff;
+}
+

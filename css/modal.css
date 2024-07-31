@@ -1,0 +1,75 @@
+.custom-modal .modal-dialog {
+    max-width: 1200px;  /* Adjust this value to change the modal width */
+}
+
+.custom-modal .modal-content {
+    background-color: black;
+    color: #14FF00;
+    /* border: 5px solid #14FF00; */
+}
+
+.custom-modal-header,
+.custom-modal-body,
+.custom-modal-footer {
+    border: none;
+}
+
+.custom-modal-title {
+    margin-top: 100px;
+    font-size: 30px;
+    text-align: center;
+    width: 100%;
+}
+
+.custom-modal-body {
+    margin-top: 50px;
+    margin-bottom: 100px;
+    font-size: 24px;
+    text-align: center;
+}
+
+.custom-modal-footer {
+    display: flex;
+    justify-content: space-around;
+    border-top: none;
+}
+
+.custom-btn-left {
+    background-color: black;
+    border: 2px solid #14FF00;
+    color: #14FF00;
+    font-size: 20px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.custom-btn-right {
+    background-color: black;
+    border: 2px solid #14FF00;
+    color: #14FF00;
+    font-size: 20px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.custom-btn-left:hover {
+    background-color: yellow;
+    color: black;
+}
+
+.custom-btn-right:hover {
+    background-color: #FF01F5;
+    color: yellow;
+}
+
+.custom-btn-close {
+    background: transparent;
+    border: none;
+    color: #14FF00;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.custom-btn-close:hover {
+    color: red;
+}
