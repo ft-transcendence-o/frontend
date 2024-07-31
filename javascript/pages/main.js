@@ -1,6 +1,5 @@
 import { navigateTo } from "../../router.js";
 import AbstractView from "./AbstractView.js";
-import { navigateTo } from "../../router.js";
 
 function getCookie(name) {
     let matches = document.cookie.match(new RegExp(
@@ -223,6 +222,25 @@ export default class extends AbstractView {
         // backend api를 통해 유저의 이름을 받아와서 요소에 집어넣는다
         const User_Name_Holder = document.querySelector("#top_item").querySelector("#user_name");
 
-        // User_Name_Holder.innerHTML = "TEST_ID";
+        const response = await fetch("http://10.19.218.225:8000/user-management/info", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem('jwt')}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        if (response.ok) {
+            const jsonResponse = await response.json();
+            console.log("success");
+            console.log(response);
+            console.log(jsonResponse);
+            console.log(jsonResponse['login']); //await으로 해결
+            User_Name_Holder.innerHTML = jsonResponse['login'];
+        } else {
+            const jsonResponse = await response.json();
+            console.log("Fail");
+            console.log(response);
+            console.log(jsonResponse);
+        }
     }
 }
