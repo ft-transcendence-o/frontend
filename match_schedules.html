@@ -159,6 +159,11 @@
         const txt_match2 = document.querySelector("#match_2");
         txt_match2.style.color = "#14FF00";
 
+        // 현재 경기 상태에 따라 화면의 요소들을 갱신한다
+        // 모든 요소들을 id로 찾아서 일일이 속성값을 바꿀것인지
+        // 클래스를 추가할것인지... -> css도 깎아야함
+        // img 태그를 제외하고 style 속성을 바꾸는 요소들은 css로 적용시킬수있다
+
 		// 클릭 가능한 요소들에 이벤트 리스너를 등록한다
         const Top_Buttons = document.querySelector("#top_item").querySelectorAll("a");
 
