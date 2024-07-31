@@ -1,4 +1,3 @@
-// Javascript 파일 import 
 import home from "./javascript/pages/home.js"
 import example1 from "./javascript/pages/example1.js"
 import example2 from "./javascript/pages/example2.js"
@@ -7,6 +6,7 @@ import OTP from "./javascript/pages/OTP.js"
 import main from "./javascript/pages/main.js"
 import match_record from "./javascript/pages/match_record.js"
 import nickname from "./javascript/pages/nickname.js"
+
 
 document.addEventListener('DOMContentLoaded', () => {
     document.body.addEventListener('click', (event) => {
