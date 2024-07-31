@@ -205,6 +205,8 @@ export default class extends AbstractView {
             console.log(event.target.href);
 
             // 라우팅 이벤트 추가
+            // match_count 확인
+            // match_1up, match_2up setitem
         });
 
         Center_Button.addEventListener("mouseenter", (event) => {
