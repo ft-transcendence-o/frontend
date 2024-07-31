@@ -105,9 +105,9 @@ export default class extends AbstractView {
             event.preventDefault(); // 기본 동작 방지
             // 사용자를 42 인증 페이지로 리다이렉트
             // query parameter(?다음) 부분을 환경변수로 대체해야 한다.
-            window.location.href = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-13da844ab09c30f81a4aac6f7f77bd34bfa89523fd00822876ca6c9ab86ac14f&redirect_uri=http%3A%2F%2F127.0.0.1%3A5500&response_type=code";
+            navigateTo('/game');
+            // window.location.href = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-13da844ab09c30f81a4aac6f7f77bd34bfa89523fd00822876ca6c9ab86ac14f&redirect_uri=http%3A%2F%2F127.0.0.1%3A5500&response_type=code";
         }
-            
             const login_button = document.querySelector(".login");
             const login_arrow = login_button.querySelector("span");
             const login_text = login_button.querySelector("span:last-child");
@@ -128,45 +128,45 @@ export default class extends AbstractView {
             // URL에서 코드 파라미터 확인
             const urlParams = new URLSearchParams(window.location.search);
             const code = urlParams.get("code");
-            if (code) {
-                console.log("Received authorization code:", code);
-                const spinner = document.getElementById("spinner");
-                spinner.style.display = "flex"; // 뺑글이 범위 시작
-                // 여기서 백엔드로 코드를 보내 액세스 토큰을 얻는 로직을 구현할 수 있습니다.
-                // authorization code를 백엔드에 전송하고 백엔드로부터 응답 받기
-                try {
-                    const response = await fetch("http://localhost:8000/user-management/token", {
-                        method: "POST",
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({"code": code})
-                    });
-                    if (response.ok) {
-                        const jsonResponse = await response.json();
-                        console.log("success");
-                        console.log(response);
-                        console.log(jsonResponse);
-                        console.log(jsonResponse['jwt']); //await으로 해결
+            // if (code) {
+            //     console.log("Received authorization code:", code);
+            //     const spinner = document.getElementById("spinner");
+            //     spinner.style.display = "flex"; // 뺑글이 범위 시작
+            //     // 여기서 백엔드로 코드를 보내 액세스 토큰을 얻는 로직을 구현할 수 있습니다.
+            //     // authorization code를 백엔드에 전송하고 백엔드로부터 응답 받기
+            //     try {
+            //         const response = await fetch("http://localhost:8000/user-management/token", {
+            //             method: "POST",
+            //             headers: {
+            //                 'Content-Type': 'application/json',
+            //             },
+            //             body: JSON.stringify({"code": code})
+            //         });
+            //         if (response.ok) {
+            //             const jsonResponse = await response.json();
+            //             console.log("success");
+            //             console.log(response);
+            //             console.log(jsonResponse);
+            //             console.log(jsonResponse['jwt']); //await으로 해결
     
-                        localStorage.setItem('jwt', jsonResponse['jwt']);
-                        console.log("JWT saved to local storage");
+            //             localStorage.setItem('jwt', jsonResponse['jwt']);
+            //             console.log("JWT saved to local storage");
     
-                        if (jsonResponse['show_otp_qr'] === false) {
-                            navigateTo('/QRcode');
-                        } else if (jsonResponse['otp_verified'] === false) {
-                            navigateTo('/OTP');
-                        } else {
-                            navigateTo('/main');
-                        }
-                    } else {
-                        console.log("error");
-                    }
-                } catch (error) {
-                    console.log("Fetch error:", error);
-                } finally {
-                    spinner.style.display = "none"; // 뺑글이 범위 끝
-                }
-            }
+            //             if (jsonResponse['show_otp_qr'] === false) {
+            //                 navigateTo('/QRcode');
+            //             } else if (jsonResponse['otp_verified'] === false) {
+            //                 navigateTo('/OTP');
+            //             } else {
+            //                 navigateTo('/main');
+            //             }
+            //         } else {
+            //             console.log("error");
+            //         }
+            //     } catch (error) {
+            //         console.log("Fetch error:", error);
+            //     } finally {
+            //         spinner.style.display = "none"; // 뺑글이 범위 끝
+            //     }
+            // }
     }
 }

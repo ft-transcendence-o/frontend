@@ -7,6 +7,7 @@ import main from "./javascript/pages/main.js"
 import match_record from "./javascript/pages/match_record.js"
 import nickname from "./javascript/pages/nickname.js"
 import match_schedules from "./javascript/pages/match_schedules.js"
+import PongGame from "./javascript/pages/game.js"
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -45,6 +46,7 @@ export const router = async () => {
         { path: "/match_record", view: match_record },
         { path: "/nickname", view: nickname },
         { path: "/match_schedules", view: match_schedules},
+        { path: "/game", view: PongGame},
     ];
 
     const potentialMatches = routes.map((route) => {

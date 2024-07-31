@@ -2,25 +2,7 @@ import * as THREE from '../build/three.module.js';
 import { GLTFLoader } from '../build/GLTFLoader.js';
 import { navigateTo } from "../../router.js";
 
-function countdown() {
-    let countdownElement = document.querySelector("#countDown");
-    let countdownValue = 4;
-
-    let countdownInterval = setInterval(() => {
-        countdownElement.innerText =  --countdownValue;
-
-        if (countdownValue === 0) {
-            countdownElement.innerText = "START";
-        }
-        else if (countdownValue === -1) {
-            clearInterval(countdownInterval);
-            countdownElement.innerText = "";
-            return ;
-        }
-    }, 1000);
-}
-
-class pongGame {
+export class PongGame {
     // constructor : renderer, scene, 함수들 정의
     constructor() {
         const canvas1 = document.querySelector("#canvas1");
@@ -79,7 +61,7 @@ class pongGame {
         window.addEventListener('keyup', this.keyup.bind(this));
 
         // 게임시작시 카운트 다운
-        countdown();
+        this.countdown();
         this._renderer1.render(this._scene, this._camera1);
         this._renderer2.render(this._scene, this._camera2);
         setTimeout(() => {requestAnimationFrame(this.render.bind(this));}, 5000);
@@ -125,7 +107,7 @@ class pongGame {
         const loader = new GLTFLoader();
 
         //Mesh: pacman ball
-        loader.load("pac/scene.gltf", (gltf) => {
+        loader.load("./game/pac/scene.gltf", (gltf) => {
             this._ball = gltf.scene;
             this._scene.add(this._ball);
         
@@ -548,8 +530,26 @@ class pongGame {
             this._panel2.position.x -= 0.6;
         }
     }
+
+    countdown() {
+        let countdownElement = document.querySelector("#countDown");
+        let countdownValue = 4;
+    
+        let countdownInterval = setInterval(() => {
+            countdownElement.innerText =  --countdownValue;
+    
+            if (countdownValue === 0) {
+                countdownElement.innerText = "START";
+            }
+            else if (countdownValue === -1) {
+                clearInterval(countdownInterval);
+                countdownElement.innerText = "";
+                return ;
+            }
+        }, 1000);
+    }
 }
 
 window.onload = function() {
-    new pongGame();
+    new PongGame();
 }
