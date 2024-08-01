@@ -39,7 +39,7 @@ export default class extends AbstractView {
         </div>
 
         <!-- 닉네임 input fields -->
-        <div class="PS2P_font nickname-container" style="position: relative; z-index: 4; margin-top: 70px; margin-right: 170px; font-size: 30px;">
+        <div class="PS2P_font nickname-container" style="position: relative; z-index: 4; margin-top: 60px; margin-right: 170px; font-size: 30px;">
 
             <div class="nickname-input d-flex align-items-center mb-3">
                 <span style="color: white; margin-right: 58px;">1UP</span>
@@ -65,10 +65,10 @@ export default class extends AbstractView {
         </div>
 
         <!-- invalid input -->
-        <div id="invalid_input" style="z-index: 5; padding-top: 20px; text-align: center"></div>
+        <div id="invalid_input" style="z-index: 5; position: absolute; margin-top: 790px; text-align: center"></div>
 
         <!-- 레디 Button -->
-        <button id="ready_button" type="button" style="background-color: black; z-index: 6; margin-top: 34px; width: 232px; height: 131px;" class="blue_outline PS2P_font">
+        <button id="ready_button" type="button" style="background-color: black; z-index: 6; margin-top: 80px; width: 232px; height: 110px;" class="blue_outline PS2P_font">
             <span style="font-size: 30px; line-height: 30px;">READY!</span>
             <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
         </button>
@@ -131,14 +131,14 @@ export default class extends AbstractView {
             });
 
             if (!allFlieldsFilled) {
-                invalidInputElement.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 20px; z-index:4">NO EMPTY INPUT FIELD!</p>`;
+                invalidInputElement.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">NO EMPTY INPUT FIELD!</p>`;
                 return;
             }
 
             // 중복 확인
             const hasDuplicates = new Set(nicknames).size !== nicknames.length;
             if (hasDuplicates) {
-                invalid_input.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 20px; z-index:4">NICKNAME DUPLICAION NOT ALLOWED!</p>`;
+                invalid_input.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">NICKNAME DUPLICAION NOT ALLOWED!</p>`;
                 return;
             }
 
@@ -188,5 +188,8 @@ export default class extends AbstractView {
                 }
             });
         });
+
+        // Ensure the first input field gets focused when the page is opened
+        requestAnimationFrame(() => inputFields[0].focus());
     }
 }

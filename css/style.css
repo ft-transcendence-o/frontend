@@ -6,10 +6,27 @@
 }
 
 @font-face {
-	font-family: 'PS2P-FONT';
-	src: url('../font/PressStart2P-vaV7.ttf') format('truetype');
-	font-weight: normal;
-	font-style: normal;
+    font-family: 'PS2P-FONT';
+    src: url('../font/PressStart2P-vaV7.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    unicode-range: U+0000-007F; /* 영어를 비롯한 기본 라틴 문자 범위 */
+}
+
+@font-face {
+    font-family: 'PS2P-FONT-Korean';
+    src: url('../font/neodgm.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    unicode-range: U+AC00-D7AF; /* 한글 */
+}
+
+@font-face {
+    font-family: 'PS2P-FONT-Japanese';
+    src: url('../font/zpix.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    unicode-range: U+3040-309F, U+30A0-30FF; /* 히라가나 카타카나 */
 }
 
 body {
@@ -37,8 +54,8 @@ body {
 }
 
 .PS2P_font {
-	font-family: "PS2P-FONT", Arial, Helvetica, sans-serif;
-	color: white;
+    font-family: "PS2P-FONT", "PS2P-FONT-Korean", "PS2P-FONT-Japanese", Arial, Helvetica, sans-serif;
+    color: white;
 }
 
 .btn.btn-primary {
