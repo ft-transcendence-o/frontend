@@ -75,7 +75,7 @@
 
                     </svg>
 
-                    <span class="match_text" id="match_1" style="font-size: 30px; line-height: 30px; position: absolute; top: 650px; left: 310px; text-align: center;">
+                    <span class="match_text" id="match_1" style="font-size: 30px; line-height: 30px; position: absolute; top: 650px; left: 310px; text-align: center; color: #14FF00;">
                         MATCH<br>
                         NO.1
                     </span>
@@ -137,32 +137,6 @@
     </div>
 
 	<script>
-        // 임시로 line 의 색을 바꿔본다
-        // const lines = document.querySelectorAll(".line_1-1");
-
-        // lines.forEach( (line) => {
-        //     line.style.stroke = "#14FF00";
-        // })
-        // document.querySelector(".line_1-common").style.stroke = "#14FF00";
-
-        // 승 패에 따라 svg의 line 색을 바꾼다
-
-        // 승 패에 따라 플레이어 이미지를 바꾼다
-        // const img_player1 = document.querySelector("#img_player1");
-        // img_player1.src = "./image/ghost_death.png";
-
-        // 승 패에 따라 match 텍스트의 색을 바꾼다
-        // const txt_match1 = document.querySelector("#match_1");
-        // txt_match1.style.color = "gray";
-
-        // const txt_match2 = document.querySelector("#match_2");
-        // txt_match2.style.color = "#14FF00";
-
-        // 현재 경기 상태에 따라 화면의 요소들을 갱신한다
-        // 모든 요소들을 id로 찾아서 일일이 속성값을 바꿀것인지
-        // 클래스를 추가할것인지... -> css도 깎아야함
-        // img 태그를 제외하고 style 속성을 바꾸는 요소들은 css로 적용시킬수있다
-
         // player nickname을 적용시킨다
         const player_infos = document.querySelectorAll(".player_info");
         const nicknames = JSON.parse(localStorage.getItem("nicknames"));
@@ -175,62 +149,102 @@
         const match_textes = document.querySelectorAll(".match_text");
         const match_count = localStorage.getItem("match_count");
 
-        for (idx = 0; idx < match_count - 1; idx++)
+        let match1_winner;
+        let match2_winner;
+
+        if (match_count > 1)
         {
-            match_textes[idx].style.color = "gray";
-            // json parse 잊지말것...!
-            const game = JSON.parse(localStorage.getItem(`game${idx + 1}`));
+            match_textes[0].style.color = "gray";
+            match_textes[1].style.color = "#14FF00";
 
-            // match1, 2에서는 player1, player2, player3, player4, 로 지칭 가능하지만
-            // match3 에서는 match1, 2 의 각 승자가 올라오기때문에 쉽지 않다...
+            const game = JSON.parse(localStorage.getItem("game1"));
 
-            // // 승패에 따라 이미지를 변경한다
-            // if (game['player1Score'] > game['player2Score'])
-            // {
-            //     const img = document.querySelector(`#img_player${2 + idx * 2}`)
-            //     img.src = "./image/ghost_death.png"
-            // }
-            // else
-            // {
-            //     const img = document.querySelector(`#img_player${1 + idx * 2}`)
-            //     img.src = "./image/ghost_death.png"
-            // }
-
-            // 승패에 따라 선의 색상을 변경한다
-            // 현재 매치의 1p 2p 와 점수를 비교하는것이기에 idx + 1 계산에 문제가 없음
             if (game['player1Score'] > game['player2Score'])
             {
-                const lines = document.querySelectorAll(`.line_${idx + 1}-1`)
+                const lines = document.querySelectorAll(".line_1-1")
                 
                 lines.forEach( (line) => {
                     line.style.stroke = "#14FF00";
                 })
+                player_infos[1].querySelector("img").src = "./image/ghost_death.png"
+                match1_winner = 0;
             }
             else
             {
-                const lines = document.querySelectorAll(`.line_${idx + 1}-2`)
+                const lines = document.querySelectorAll(".line_1-2")
                 
                 lines.forEach( (line) => {
                     line.style.stroke = "#14FF00";
                 })
+                player_infos[0].querySelector("img").src = "./image/ghost_death.png"
+                match1_winner = 1;
             }
-            const line = document.querySelector(`.line_${idx + 1}-common`);
+            const line = document.querySelector(".line_1-common");
             line.style.stroke = "#14FF00";
         }
 
-        // 경기 진행에 따라 match text의 색상을 변경한다
-        if (match_count < 4)
+        if (match_count > 2)
         {
-            match_textes[match_count - 1].style.color = "#14FF00";
+            match_textes[1].style.color = "gray";
+            match_textes[2].style.color = "#14FF00";
+
+            const game = JSON.parse(localStorage.getItem("game2"));
+
+            if (game['player1Score'] > game['player2Score'])
+            {
+                const lines = document.querySelectorAll(".line_2-1")
+                
+                lines.forEach( (line) => {
+                    line.style.stroke = "#14FF00";
+                })
+                player_infos[3].querySelector("img").src = "./image/ghost_death.png"
+                match2_winner = 2;
+            }
+            else
+            {
+                const lines = document.querySelectorAll(".line_2-2")
+                
+                lines.forEach( (line) => {
+                    line.style.stroke = "#14FF00";
+                })
+                player_infos[2].querySelector("img").src = "./image/ghost_death.png"
+                match2_winner = 3;
+            }
+            const line = document.querySelector(".line_2-common");
+            line.style.stroke = "#14FF00";
         }
-        // 모든 경기가 끝났을 때
-        else
+
+        if (match_count > 3)
         {
+            match_textes[2].style.color = "gray";
+
+            const game = JSON.parse(localStorage.getItem("game3"));
+
+            if (game['player1Score'] > game['player2Score'])
+            {
+                const lines = document.querySelectorAll(".line_3-1")
+                
+                lines.forEach( (line) => {
+                    line.style.stroke = "#14FF00";
+                })
+                player_infos[match2_winner].querySelector("img").src = "./image/ghost_death.png"
+            }
+            else
+            {
+                const lines = document.querySelectorAll(".line_3-2")
+                
+                lines.forEach( (line) => {
+                    line.style.stroke = "#14FF00";
+                })
+                player_infos[match1_winner].querySelector("img").src = "./image/ghost_death.png"
+            }
+            const line = document.querySelector(".line_3-common");
+            line.style.stroke = "#14FF00";
+
             document.querySelector("#champion_text").style.display = "block";
             document.querySelector(".center_button").querySelector("p").innerHTML = "TOURNAMENT<br>AGAIN?";
             // 여기서 백엔드로 게임기록 일괄 전송?
         }
-
 
 		// 클릭 가능한 요소들에 이벤트 리스너를 등록한다
         const Top_Buttons = document.querySelector("#top_item").querySelectorAll("a");
