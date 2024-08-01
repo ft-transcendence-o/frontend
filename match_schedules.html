@@ -96,19 +96,19 @@
                 <!-- ghost -->
                 <div class="container" style="padding-top: 4px;">
                     <div class="row">
-                        <div class="col-2" style="margin-left: 48px;">
+                        <div class="col-2 player_info" style="margin-left: 48px;">
                             <img id="img_player1" class="mx-auto d-block" src="./image/ghost_blue.png" style="width: 100px; height: 97.8px;" alt="">
                             <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player1</p>
                         </div>
-                        <div class="col-2" style="margin-left: 133px;">
+                        <div class="col-2 player_info" style="margin-left: 133px;">
                             <img id="img_player2" class="mx-auto d-block" src="./image/ghost_red.png" style="width: 100px; height: 97.8px;" alt="">
                             <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player2</p>
                         </div>
-                        <div class="col-2" style="margin-left: 86px;">
+                        <div class="col-2 player_info" style="margin-left: 86px;">
                             <img id="img_player3" class="mx-auto d-block" src="./image/ghost_pink.png" style="width: 100px; height: 97.8px;" alt="">
                             <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player3</p>
                         </div>
-                        <div class="col-2" style="margin-left: 129px;">
+                        <div class="col-2 player_info" style="margin-left: 129px;">
                             <img id="img_player4" class="mx-auto d-block" src="./image/ghost_orange.png" style="width: 100px; height: 97.8px;" alt="">
                             <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player4</p>
                         </div>
@@ -116,10 +116,9 @@
                 </div>
 
                 <!-- center button -->
-                <div class="PS2P_font center_button blue_outline" style="position: absolute; width: 328px; height: 161.88px; max-width: 328px; max-height: 161.88px; top: 420px; left: 550px; display: flex; flex-direction: column; justify-content: center;">
+                <div class="PS2P_font center_button blue_outline" style="position: absolute; width: 328px; height: 161.88px; max-width: 328px; max-height: 161.88px; top: 420px; left: 550px; display: flex; flex-direction: column; justify-content: center; cursor: pointer;">
                     <!-- 세로로 가운데 정렬 -->
                     <p style="font-size: 30px; margin-bottom: 0px; text-align: center; line-height: 34px;">START!</p>
-                    <!-- <p style="font-size: 30px; margin-bottom: 0px; text-align: center; line-height: 34px;">TOURNAMENT<br>AGAIN?</p> -->
                     <p style="font-size: 20px; margin-bottom: 0px; text-align: center;">(ENTER)</p>
                 </div>
 
@@ -163,6 +162,14 @@
         // 모든 요소들을 id로 찾아서 일일이 속성값을 바꿀것인지
         // 클래스를 추가할것인지... -> css도 깎아야함
         // img 태그를 제외하고 style 속성을 바꾸는 요소들은 css로 적용시킬수있다
+
+        // player nickname을 적용시킨다
+        const player_infos = document.querySelectorAll(".player_info");
+        const nicknames = JSON.parse(localStorage.getItem("nicknames"));
+        for (idx = 0; idx < player_infos.length; idx++)
+        {
+            player_infos[idx].querySelector("p").innerText = nicknames[idx];
+        }
 
         // match_count에 따라 match text의 색을 변경한다
         const match_textes = document.querySelectorAll(".match_text");
@@ -258,9 +265,21 @@
 
         Center_Button.addEventListener("click", (event) => {
             event.preventDefault();
-            console.log(event.target.href);
 
             // 라우팅 이벤트 추가
+            if (localStorage.getItem("match_count") < 4)
+            {
+                // match_1up, match_2up 에 적절한 닉네임 넣어주기
+                localStorage.setItem("match_1up", `${dummy1}`);
+                localStorage.setItem("match_2up", `${dummy2}`);
+                console.log("go to game page");
+                // navigateTo("/game");
+            }
+            else
+            {
+                console.log("go to nickname page");
+                // navigateTo("/nickname");
+            }
         });
 
         Center_Button.addEventListener("mouseenter", (event) => {
