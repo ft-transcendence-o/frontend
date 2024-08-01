@@ -1,4 +1,5 @@
 import AbstractView from "./AbstractView.js";
+import { navigateTo, getCookie } from "../../router.js";
 
 export default class extends AbstractView {
     constructor() {
@@ -145,7 +146,8 @@ export default class extends AbstractView {
         // player nickname을 적용시킨다
         const player_infos = document.querySelectorAll(".player_info");
         const nicknames = JSON.parse(localStorage.getItem("nicknames"));
-        for (idx = 0; idx < player_infos.length; idx++)
+        console.log(nicknames);
+        for (let idx = 0; idx < player_infos.length; idx++)
         {
             player_infos[idx].querySelector("p").innerText = nicknames[idx];
         }
