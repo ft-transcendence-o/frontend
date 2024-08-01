@@ -145,6 +145,10 @@ export default class extends AbstractView {
                 {
                     navigateTo("/nickname");
                 }
+                else if (Button.dataset.href === "/1ON1")
+                {
+                    navigateTo("/game");
+                }
             });
 
             Button.addEventListener("mouseenter", (event) => {

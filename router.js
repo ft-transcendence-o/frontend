@@ -59,7 +59,7 @@ export const router = async () => {
     let match = potentialMatches.find((potentialMatche) => potentialMatche.isMatch);
 
     if (!match) {
-        // document.querySelector('#app').innerHTML = `<h1>404</h1>`
+        document.querySelector('#app').innerHTML = `<h1>404</h1>`
     } else {
         const view = new match.route.view();
         document.querySelector('#app').innerHTML = await view.getHtml();
