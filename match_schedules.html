@@ -106,11 +106,11 @@
                         </div>
                         <div class="col-2" style="margin-left: 86px;">
                             <img id="img_player3" class="mx-auto d-block" src="./image/ghost_pink.png" style="width: 100px; height: 97.8px;" alt="">
-                            <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player1</p>
+                            <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player3</p>
                         </div>
                         <div class="col-2" style="margin-left: 129px;">
                             <img id="img_player4" class="mx-auto d-block" src="./image/ghost_orange.png" style="width: 100px; height: 97.8px;" alt="">
-                            <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player2</p>
+                            <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player4</p>
                         </div>
                     </div>
                 </div>
@@ -171,25 +171,27 @@
         for (idx = 0; idx < match_count - 1; idx++)
         {
             match_textes[idx].style.color = "gray";
-            const game = localStorage.getItem(`game${idx + 1}`);
+            // json parse 잊지말것...!
+            const game = JSON.parse(localStorage.getItem(`game${idx + 1}`));
 
             // 승패에 따라 이미지를 변경한다
             if (game['player1Score'] > game['player2Score'])
             {
+                console.log(`#img_player${2 + idx * 2}`);
                 const img = document.querySelector(`#img_player${2 + idx * 2}`)
                 img.src = "./image/ghost_death.png"
             }
             else
             {
+                console.log(`#img_player${1 + idx * 2}`);
                 const img = document.querySelector(`#img_player${1 + idx * 2}`)
                 img.src = "./image/ghost_death.png"
             }
 
             // 승패에 따라 선의 색상을 변경한다
-            
             if (game['player1Score'] > game['player2Score'])
             {
-                const lines = document.querySelectorAll(`.line_${idx + 1}-2`)
+                const lines = document.querySelectorAll(`.line_${idx + 1}-1`)
                 
                 lines.forEach( (line) => {
                     line.style.stroke = "#14FF00";
@@ -197,7 +199,7 @@
             }
             else
             {
-                const lines = document.querySelectorAll(`.line_${idx + 1}-1`)
+                const lines = document.querySelectorAll(`.line_${idx + 1}-2`)
                 
                 lines.forEach( (line) => {
                     line.style.stroke = "#14FF00";
@@ -206,6 +208,8 @@
             const line = document.querySelector(`.line_${idx + 1}-common`);
             line.style.stroke = "#14FF00";
         }
+
+        // 경기 진행에 따라 match text의 색상을 변경한다
         if (match_count < 4)
         {
             match_textes[match_count - 1].style.color = "#14FF00";
