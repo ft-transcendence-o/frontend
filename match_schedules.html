@@ -137,6 +137,15 @@
     </div>
 
 	<script>
+        // temp function
+        function getCookie(name) {
+            let matches = document.cookie.match(new RegExp(
+                "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+            ));
+            return matches ? decodeURIComponent(matches[1]) : undefined;
+        }
+
+
         // player nickname을 적용시킨다
         const player_infos = document.querySelectorAll(".player_info");
         const nicknames = JSON.parse(localStorage.getItem("nicknames"));
@@ -243,7 +252,52 @@
 
             document.querySelector("#champion_text").style.display = "block";
             document.querySelector(".center_button").querySelector("p").innerHTML = "TOURNAMENT<br>AGAIN?";
+
             // 여기서 백엔드로 게임기록 일괄 전송?
+            // game_result 객체 만들기
+            const game1 = JSON.parse(localStorage.getItem("game1"));
+            const game2 = JSON.parse(localStorage.getItem("game2"));
+            const game3 = JSON.parse(localStorage.getItem("game3"));
+            let game_result = {
+                "game1": {
+                    "player1Nick": game1["player1Nick"],
+                    "player2Nick": game1["player2Nick"],
+                    "player1Score" : game1["player1Score"],
+                    "player2Score" : game1["player2Score"],
+                    "mode": "TOURNAMENT"
+                },
+                "game2": {
+                    "player1Nick": game2["player1Nick"],
+                    "player2Nick": game2["player2Nick"],
+                    "player1Score" : game2["player1Score"],
+                    "player2Score" : game2["player2Score"],
+                    "mode": "TOURNAMENT"
+                },
+                "game3": {
+                    "player1Nick": game3["player1Nick"],
+                    "player2Nick": game3["player2Nick"],
+                    "player1Score" : game3["player1Score"],
+                    "player2Score" : game3["player2Score"],
+                    "mode": "TOURNAMENT"
+                },
+            };
+            
+            const response = await fetch("http://localhost:8000/user-management/info", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${getCookie('jwt')}`,
+                },
+                body: JSON.stringify(game_result),
+            });
+
+            if (response.ok)
+            {
+                console.log("TOURNAMENT POST OK");
+            }
+            else
+            {
+                console.log("status:", response.status);
+            }
         }
 
 		// 클릭 가능한 요소들에 이벤트 리스너를 등록한다
