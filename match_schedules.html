@@ -75,15 +75,15 @@
 
                     </svg>
 
-                    <span id="match_1" style="font-size: 30px; line-height: 30px; position: absolute; top: 650px; left: 310px; text-align: center;">
+                    <span class="match_text" id="match_1" style="font-size: 30px; line-height: 30px; position: absolute; top: 650px; left: 310px; text-align: center;">
                         MATCH<br>
                         NO.1
                     </span>
-                    <span id="match_2" style="font-size: 30px; line-height: 30px; position: absolute; top: 650px; left: 970px; text-align: center;">
+                    <span class="match_text" id="match_2" style="font-size: 30px; line-height: 30px; position: absolute; top: 650px; left: 970px; text-align: center;">
                         MATCH<br>
                         NO.2
                     </span>
-                    <span id="match_final" style="font-size: 30px; line-height: 30px; position: absolute; top: 334px; left: 646px; text-align: center; text-shadow:
+                    <span class="match_text" id="match_final" style="font-size: 30px; line-height: 30px; position: absolute; top: 334px; left: 646px; text-align: center; text-shadow:
                     -1px -1px 0 #000000,  
                     1px -1px 0 #000000,
                     -1px 1px 0 #000000,
@@ -139,30 +139,78 @@
 
 	<script>
         // 임시로 line 의 색을 바꿔본다
-        const lines = document.querySelectorAll(".line_1-1");
+        // const lines = document.querySelectorAll(".line_1-1");
 
-        lines.forEach( (line) => {
-            line.style.stroke = "#14FF00";
-        })
-        document.querySelector(".line_1-common").style.stroke = "#14FF00";
+        // lines.forEach( (line) => {
+        //     line.style.stroke = "#14FF00";
+        // })
+        // document.querySelector(".line_1-common").style.stroke = "#14FF00";
 
         // 승 패에 따라 svg의 line 색을 바꾼다
 
         // 승 패에 따라 플레이어 이미지를 바꾼다
-        const img_player1 = document.querySelector("#img_player1");
-        img_player1.src = "./image/ghost_death.png";
+        // const img_player1 = document.querySelector("#img_player1");
+        // img_player1.src = "./image/ghost_death.png";
 
         // 승 패에 따라 match 텍스트의 색을 바꾼다
-        const txt_match1 = document.querySelector("#match_1");
-        txt_match1.style.color = "gray";
+        // const txt_match1 = document.querySelector("#match_1");
+        // txt_match1.style.color = "gray";
 
-        const txt_match2 = document.querySelector("#match_2");
-        txt_match2.style.color = "#14FF00";
+        // const txt_match2 = document.querySelector("#match_2");
+        // txt_match2.style.color = "#14FF00";
 
         // 현재 경기 상태에 따라 화면의 요소들을 갱신한다
         // 모든 요소들을 id로 찾아서 일일이 속성값을 바꿀것인지
         // 클래스를 추가할것인지... -> css도 깎아야함
         // img 태그를 제외하고 style 속성을 바꾸는 요소들은 css로 적용시킬수있다
+
+        // match_count에 따라 match text의 색을 변경한다
+        const match_textes = document.querySelectorAll(".match_text");
+        const match_count = localStorage.getItem("match_count");
+
+        for (idx = 0; idx < match_count - 1; idx++)
+        {
+            match_textes[idx].style.color = "gray";
+            const game = localStorage.getItem(`game${idx + 1}`);
+
+            // 승패에 따라 이미지를 변경한다
+            if (game['player1Score'] > game['player2Score'])
+            {
+                const img = document.querySelector(`#img_player${2 + idx * 2}`)
+                img.src = "./image/ghost_death.png"
+            }
+            else
+            {
+                const img = document.querySelector(`#img_player${1 + idx * 2}`)
+                img.src = "./image/ghost_death.png"
+            }
+
+            // 승패에 따라 선의 색상을 변경한다
+            
+            if (game['player1Score'] > game['player2Score'])
+            {
+                const lines = document.querySelectorAll(`.line_${idx + 1}-2`)
+                
+                lines.forEach( (line) => {
+                    line.style.stroke = "#14FF00";
+                })
+            }
+            else
+            {
+                const lines = document.querySelectorAll(`.line_${idx + 1}-1`)
+                
+                lines.forEach( (line) => {
+                    line.style.stroke = "#14FF00";
+                })
+            }
+            const line = document.querySelector(`.line_${idx + 1}-common`);
+            line.style.stroke = "#14FF00";
+        }
+        if (match_count < 4)
+        {
+            match_textes[match_count - 1].style.color = "#14FF00";
+        }
+
 
 		// 클릭 가능한 요소들에 이벤트 리스너를 등록한다
         const Top_Buttons = document.querySelector("#top_item").querySelectorAll("a");
