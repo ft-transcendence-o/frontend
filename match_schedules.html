@@ -68,10 +68,10 @@
                         <!-- 3-1 -->
                         <line class="line_3-1" x1="189" y1="80" x2="516" y2="80" style="stroke: white; stroke-width: 8;"/>
                         <!-- 3-2 -->
-                        <line class="line_3-1" x1="522" y1="80" x2="841" y2="80" style="stroke: white; stroke-width: 8;"/>
+                        <line class="line_3-2" x1="522" y1="80" x2="841" y2="80" style="stroke: white; stroke-width: 8;"/>
 
                         <!-- final -->
-                        <line class="line_final" x1="519" y1="0" x2="519" y2="84" style="stroke: white; stroke-width: 8;"/>
+                        <line class="line_3-common" x1="519" y1="0" x2="519" y2="84" style="stroke: white; stroke-width: 8;"/>
 
                     </svg>
 
@@ -125,7 +125,7 @@
 
                 <!-- Champion -->
                 <!-- 모든 경기가 끝났을때만 조건부로 표시한다 -->
-                <div class="PS2P_font" style="position: absolute; display: none; top: 170px; left: 274px; font-size: 100px; text-shadow:
+                <div id="champion_text" class="PS2P_font" style="position: absolute; display: none; top: 170px; left: 274px; font-size: 100px; text-shadow:
                 -1px -1px 0 #000000,  
                 1px -1px 0 #000000,
                 -1px 1px 0 #000000,
@@ -174,21 +174,23 @@
             // json parse 잊지말것...!
             const game = JSON.parse(localStorage.getItem(`game${idx + 1}`));
 
-            // 승패에 따라 이미지를 변경한다
-            if (game['player1Score'] > game['player2Score'])
-            {
-                console.log(`#img_player${2 + idx * 2}`);
-                const img = document.querySelector(`#img_player${2 + idx * 2}`)
-                img.src = "./image/ghost_death.png"
-            }
-            else
-            {
-                console.log(`#img_player${1 + idx * 2}`);
-                const img = document.querySelector(`#img_player${1 + idx * 2}`)
-                img.src = "./image/ghost_death.png"
-            }
+            // match1, 2에서는 player1, player2, player3, player4, 로 지칭 가능하지만
+            // match3 에서는 match1, 2 의 각 승자가 올라오기때문에 쉽지 않다...
+
+            // // 승패에 따라 이미지를 변경한다
+            // if (game['player1Score'] > game['player2Score'])
+            // {
+            //     const img = document.querySelector(`#img_player${2 + idx * 2}`)
+            //     img.src = "./image/ghost_death.png"
+            // }
+            // else
+            // {
+            //     const img = document.querySelector(`#img_player${1 + idx * 2}`)
+            //     img.src = "./image/ghost_death.png"
+            // }
 
             // 승패에 따라 선의 색상을 변경한다
+            // 현재 매치의 1p 2p 와 점수를 비교하는것이기에 idx + 1 계산에 문제가 없음
             if (game['player1Score'] > game['player2Score'])
             {
                 const lines = document.querySelectorAll(`.line_${idx + 1}-1`)
@@ -213,6 +215,13 @@
         if (match_count < 4)
         {
             match_textes[match_count - 1].style.color = "#14FF00";
+        }
+        // 모든 경기가 끝났을 때
+        else
+        {
+            document.querySelector("#champion_text").style.display = "block";
+            document.querySelector(".center_button").querySelector("p").innerHTML = "TOURNAMENT<br>AGAIN?";
+            // 여기서 백엔드로 게임기록 일괄 전송?
         }
 
 
