@@ -281,32 +281,58 @@ export class PongGame {
                 if (this._player2Score === 1){
                     this._vec.set(0, 0, 0);
                     this._angularVec.set(0, 0, 0.1);
-                    document.querySelector("#winner2").innerHTML = `
-                    <div style="font-size: 100px; line-height: 100px; color: white;">WIN!</div>
-                    <button id="next_button" type="button" style="
-                        background-color: black;
-                        width: 328px; height: 199px;
-                        margin-left: 20px;" 
-                        class="blue_outline">
-                        <span style="font-size: 50px; line-height: 50px;">
-                            >>NEXT
-                        </span>
-                        <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
-                    </button>`;
-                    const result = {
-                        "player1Nick": this._player1Nick,
-                        "player2Nick": this._player2Nick,
-                        "player1Score" : this._player1Score,
-                        "player2Score" : this._player2Score,
-                        "mode": "TOURNAMENT"
-                    }  
-                    localStorage.setItem(`game${localStorage.getItem("match_count")}`, JSON.stringify(result));
-                    localStorage.setItem("match_count", localStorage.getItem("match_count") + 1);
-                    this._nextButton = document.querySelector("#next_button");
-                    this._nextButton.addEventListener("click", (event) => {
-                        console.log("test");
-                        navigateTo("/match_schedules");
-                    })
+                    if (localStorage.getItem('mode') === "TOURNAMENT") {
+                        document.querySelector("#winner2").innerHTML = `
+                        <div style="font-size: 100px; line-height: 100px; color: white;">WIN!</div>
+                        <button id="next_button" type="button" style="
+                            background-color: black;
+                            width: 328px; height: 199px;
+                            margin-left: 20px;" 
+                            class="blue_outline">
+                            <span style="font-size: 50px; line-height: 50px;">
+                                >>NEXT
+                            </span>
+                            <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
+                        </button>`;
+                        this._result = {
+                            "player1Nick": this._player1Nick,
+                            "player2Nick": this._player2Nick,
+                            "player1Score" : this._player1Score,
+                            "player2Score" : this._player2Score,
+                            "mode": "TOURNAMENT"
+                        }  
+                        localStorage.setItem(`game${localStorage.getItem("match_count")}`, JSON.stringify(this._result));
+                        localStorage.setItem("match_count", localStorage.getItem("match_count") + 1);
+                        this._nextButton = document.querySelector("#next_button");
+                        this._nextButton.addEventListener("click", (event) => {
+                            navigateTo("/match_schedules");
+                        })
+                    }
+                    else { //TODO: 1vs1
+                        document.querySelector("#winner2").innerHTML = `
+                        <div style="font-size: 100px; line-height: 100px; color: white;">WIN!</div>
+                        <button id="next_button" type="button" style="
+                            background-color: black;
+                            width: 328px; height: 199px;
+                            margin-left: 20px;" 
+                            class="blue_outline">
+                            <span style="font-size: 50px; line-height: 50px;">
+                                1 ON 1
+                                AGAIN?
+                            </span>
+                            <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
+                        </button>`;
+                        this._result = {
+                            "player1": this._player1Nick,
+                            "player2": this._player2Nick,
+                            "score" : this._player1Score + ":" + this._player2Score,
+                            "mode": "1vs1"
+                        }
+                        this._nextButton = document.querySelector("#next_button");
+                        this._nextButton.addEventListener("click", (event) => {
+                            navigateTo("/match_schedules");
+                        })
+                    }
                 }
                 console.log(this._player2Score);
                 this._ball.position.x = 0;
