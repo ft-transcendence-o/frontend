@@ -334,20 +334,66 @@
         Center_Button.addEventListener("click", (event) => {
             event.preventDefault();
 
+            const match_count = localStorage.getItem("match_count");
+            const nicknames = JSON.parse(localStorage.getItem("nicknames"));
+
+            let match_1up;
+            let match_2up;
             // 라우팅 이벤트 추가
-            if (localStorage.getItem("match_count") < 4)
+            if (match_count > 3)
             {
-                // match_1up, match_2up 에 적절한 닉네임 넣어주기
-                localStorage.setItem("match_1up", `${dummy1}`);
-                localStorage.setItem("match_2up", `${dummy2}`);
-                console.log("go to game page");
-                // navigateTo("/game");
+                console.log("go to nickname page");
+                navigateTo("/nickname");
             }
             else
             {
-                console.log("go to nickname page");
-                // navigateTo("/nickname");
+                console.log("go to game page");
+                // match_1up, match_2up 에 적절한 닉네임 넣어주기
+
+                // 첫번째 경기라면 1, 2번째 유저의 닉네임을 대입한다
+                if (match_count == 1)
+                {
+                    match_1up = nicknames[0];
+                    match_2up = nicknames[1];
+                }
+                // 두번째 경기라면 3, 4번째 유저의 닉네임을 대입한다
+                else if (match_count == 2)
+                {
+                    match_1up = nicknames[2];
+                    match_2up = nicknames[3];
+                }
+                // 마지막 경기라면
+                else
+                {
+                    const game1 = JSON.parse(localStorage.getItem("game1"));
+                    const game2 = JSON.parse(localStorage.getItem("game2"));
+
+                    // 첫번째 경기 승자의 닉네임을 대입한다
+                    if (game1['player1Score'] > game1['player2Score'])
+                    {
+                        match_1up = nicknames[0];
+                    }
+                    else
+                    {
+                        match_1up = nicknames[1];
+                    }
+
+                    // 두번째 경기 승자의 닉네임을 대입한다
+                    if (game2['player1Score'] > game2['player2Score'])
+                    {
+                        match_2up = nicknames[2];
+                    }
+                    else
+                    {
+                        match_2up = nicknames[3];
+                    }
+                }
+
+                localStorage.setItem("match_1up", match_1up);
+                localStorage.setItem("match_2up", match_2up);
+                navigateTo("/game");
             }
+            
         });
 
         Center_Button.addEventListener("mouseenter", (event) => {
