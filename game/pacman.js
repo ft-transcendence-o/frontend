@@ -473,8 +473,29 @@ export class PongGame {
     //     }
     // }
     
+    async fetchResult() {
+        const response = await fetch("http://localhost:8000/game-management/game", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${getCookie('jwt')}`,
+            },
+            body: JSON.stringify({
+                "player1Nick": "1up",
+                "player2Nick": "2up",
+                "player1Score" : this._player1Score,
+                "player2Score" : this._player2Score,
+                "mode": "1VS1"
+            })
+            });
+            if (response.ok) {
+                console.log("success");
+            }
+            else {
+                console.log(await response.json());
+            }
+    }
 
-    async collisionWithGoalArea() { //TODO: 문제발생지점
+    collisionWithGoalArea() { //TODO: 문제발생지점
         const collisionPoint1 = this.getCollisionPointWithPlane(this._panel1Plane);
         const collisionPoint2 = this.getCollisionPointWithPlane(this._panel2Plane);
 
@@ -553,25 +574,7 @@ export class PongGame {
                             <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
                         </button>`;
                         /////////////////////
-                        const response = await fetch("http://localhost:8000/game-management/game", {
-                        method: "POST",
-                        headers: {
-                            "Authorization": `Bearer ${getCookie('jwt')}`,
-                        },
-                        body: JSON.stringify({
-                            "player1Nick": "1up",
-                            "player2Nick": "2up",
-                            "player1Score" : this._player1Score,
-                            "player2Score" : this._player2Score,
-                            "mode": "1VS1"
-                        })
-                        });
-                        if (response.ok) {
-                            console.log("success");
-                        }
-                        else {
-                            console.log("response:", response);
-                        }
+                        this.fetchResult();
                         /////////////////////////////////////
                         this._nextButton = document.querySelector("#next_button");
                         this._nextButton.addEventListener("click", (event) => {
@@ -664,25 +667,7 @@ export class PongGame {
                             <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
                         </button>`;
                         /////////////////////
-                        const response = await fetch("http://localhost:8000/game-management/game", {
-                        method: "POST",
-                        headers: {
-                            "Authorization": `Bearer ${getCookie('jwt')}`,
-                        },
-                        body: JSON.stringify({
-                            "player1Nick": "1up",
-                            "player2Nick": "2up",
-                            "player1Score" : this._player1Score,
-                            "player2Score" : this._player2Score,
-                            "mode": "1VS1"
-                        })
-                        });
-                        if (response.ok) {
-                            console.log("success");
-                        }
-                        else {
-                            console.log("response:", response);
-                        }
+                        this.fetchResult();
                         /////////////////////////////////////
                         this._nextButton = document.querySelector("#next_button");
                         this._nextButton.addEventListener("click", (event) => { 
