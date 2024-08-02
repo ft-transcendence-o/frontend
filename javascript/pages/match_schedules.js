@@ -1,4 +1,5 @@
 import AbstractView from "./AbstractView.js";
+import { navigateTo, getCookie } from "../../router.js";
 
 export default class extends AbstractView {
     constructor() {
@@ -71,22 +72,22 @@ export default class extends AbstractView {
                             <!-- 3-1 -->
                             <line class="line_3-1" x1="189" y1="80" x2="516" y2="80" style="stroke: white; stroke-width: 8;"/>
                             <!-- 3-2 -->
-                            <line class="line_3-1" x1="522" y1="80" x2="841" y2="80" style="stroke: white; stroke-width: 8;"/>
+                            <line class="line_3-2" x1="522" y1="80" x2="841" y2="80" style="stroke: white; stroke-width: 8;"/>
 
                             <!-- final -->
-                            <line class="line_final" x1="519" y1="0" x2="519" y2="84" style="stroke: white; stroke-width: 8;"/>
+                            <line class="line_3-common" x1="519" y1="0" x2="519" y2="84" style="stroke: white; stroke-width: 8;"/>
 
                         </svg>
 
-                        <span id="match_1" style="font-size: 30px; line-height: 30px; position: absolute; top: 650px; left: 310px; text-align: center;">
+                        <span class="match_text" id="match_1" style="font-size: 30px; line-height: 30px; position: absolute; top: 650px; left: 310px; text-align: center; color: #14FF00;">
                             MATCH<br>
                             NO.1
                         </span>
-                        <span id="match_2" style="font-size: 30px; line-height: 30px; position: absolute; top: 650px; left: 970px; text-align: center;">
+                        <span class="match_text" id="match_2" style="font-size: 30px; line-height: 30px; position: absolute; top: 650px; left: 970px; text-align: center;">
                             MATCH<br>
                             NO.2
                         </span>
-                        <span id="match_final" style="font-size: 30px; line-height: 30px; position: absolute; top: 334px; left: 646px; text-align: center; text-shadow:
+                        <span class="match_text" id="match_final" style="font-size: 30px; line-height: 30px; position: absolute; top: 334px; left: 646px; text-align: center; text-shadow:
                         -1px -1px 0 #000000,  
                         1px -1px 0 #000000,
                         -1px 1px 0 #000000,
@@ -99,36 +100,35 @@ export default class extends AbstractView {
                     <!-- ghost -->
                     <div class="container" style="padding-top: 4px;">
                         <div class="row">
-                            <div class="col-2" style="margin-left: 48px;">
+                            <div class="col-2 player_info" style="margin-left: 48px;">
                                 <img id="img_player1" class="mx-auto d-block" src="./image/ghost_blue.png" style="width: 100px; height: 97.8px;" alt="">
                                 <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player1</p>
                             </div>
-                            <div class="col-2" style="margin-left: 133px;">
+                            <div class="col-2 player_info" style="margin-left: 133px;">
                                 <img id="img_player2" class="mx-auto d-block" src="./image/ghost_red.png" style="width: 100px; height: 97.8px;" alt="">
                                 <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player2</p>
                             </div>
-                            <div class="col-2" style="margin-left: 86px;">
+                            <div class="col-2 player_info" style="margin-left: 86px;">
                                 <img id="img_player3" class="mx-auto d-block" src="./image/ghost_pink.png" style="width: 100px; height: 97.8px;" alt="">
-                                <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player1</p>
+                                <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player3</p>
                             </div>
-                            <div class="col-2" style="margin-left: 129px;">
+                            <div class="col-2 player_info" style="margin-left: 129px;">
                                 <img id="img_player4" class="mx-auto d-block" src="./image/ghost_orange.png" style="width: 100px; height: 97.8px;" alt="">
-                                <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player2</p>
+                                <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player4</p>
                             </div>
                         </div>
                     </div>
 
                     <!-- center button -->
-                    <div class="PS2P_font center_button blue_outline" style="position: absolute; width: 328px; height: 161.88px; max-width: 328px; max-height: 161.88px; top: 420px; left: 550px; display: flex; flex-direction: column; justify-content: center;">
+                    <div class="PS2P_font center_button blue_outline" style="position: absolute; width: 328px; height: 161.88px; max-width: 328px; max-height: 161.88px; top: 420px; left: 550px; display: flex; flex-direction: column; justify-content: center; cursor: pointer;">
                         <!-- 세로로 가운데 정렬 -->
                         <p style="font-size: 30px; margin-bottom: 0px; text-align: center; line-height: 34px;">START!</p>
-                        <!-- <p style="font-size: 30px; margin-bottom: 0px; text-align: center; line-height: 34px;">TOURNAMENT<br>AGAIN?</p> -->
                         <p style="font-size: 20px; margin-bottom: 0px; text-align: center;">(ENTER)</p>
                     </div>
 
                     <!-- Champion -->
                     <!-- 모든 경기가 끝났을때만 조건부로 표시한다 -->
-                    <div class="PS2P_font" style="position: absolute; display: none; top: 170px; left: 274px; font-size: 100px; text-shadow:
+                    <div id="champion_text" class="PS2P_font" style="position: absolute; display: none; top: 170px; left: 274px; font-size: 100px; text-shadow:
                     -1px -1px 0 #000000,  
                     1px -1px 0 #000000,
                     -1px 1px 0 #000000,
@@ -143,31 +143,160 @@ export default class extends AbstractView {
     }
 
     async init() {
-        // 임시로 line 의 색을 바꿔본다
-        // const lines = document.querySelectorAll(".line_1-1");
+        // player nickname을 적용시킨다
+        const player_infos = document.querySelectorAll(".player_info");
+        const nicknames = JSON.parse(localStorage.getItem("nicknames"));
+        console.log(nicknames);
+        for (let idx = 0; idx < player_infos.length; idx++)
+        {
+            player_infos[idx].querySelector("p").innerText = nicknames[idx];
+        }
 
-        // lines.forEach( (line) => {
-        //     line.style.stroke = "#14FF00";
-        // })
-        // document.querySelector(".line_1-common").style.stroke = "#14FF00";
+        // match_count에 따라 match text의 색을 변경한다
+        const match_textes = document.querySelectorAll(".match_text");
+        const match_count = localStorage.getItem("match_count");
 
-        // 승 패에 따라 svg의 line 색을 바꾼다
+        let match1_winner;
+        let match2_winner;
 
-        // 승 패에 따라 플레이어 이미지를 바꾼다
-        // const img_player1 = document.querySelector("#img_player1");
-        // img_player1.src = "./image/ghost_death.png";
+        if (match_count > 1)
+        {
+            match_textes[0].style.color = "gray";
+            match_textes[1].style.color = "#14FF00";
 
-        // 승 패에 따라 match 텍스트의 색을 바꾼다
-        // const txt_match1 = document.querySelector("#match_1");
-        // txt_match1.style.color = "gray";
+            const game = JSON.parse(localStorage.getItem("game1"));
 
-        // const txt_match2 = document.querySelector("#match_2");
-        // txt_match2.style.color = "#14FF00";
+            if (game['player1Score'] > game['player2Score'])
+            {
+                const lines = document.querySelectorAll(".line_1-1")
+                
+                lines.forEach( (line) => {
+                    line.style.stroke = "#14FF00";
+                })
+                player_infos[1].querySelector("img").src = "./image/ghost_death.png"
+                match1_winner = 0;
+            }
+            else
+            {
+                const lines = document.querySelectorAll(".line_1-2")
+                
+                lines.forEach( (line) => {
+                    line.style.stroke = "#14FF00";
+                })
+                player_infos[0].querySelector("img").src = "./image/ghost_death.png"
+                match1_winner = 1;
+            }
+            const line = document.querySelector(".line_1-common");
+            line.style.stroke = "#14FF00";
+        }
 
-        // 현재 경기 상태에 따라 화면의 요소들을 갱신한다
-        // 모든 요소들을 id로 찾아서 일일이 속성값을 바꿀것인지
-        // 클래스를 추가할것인지... -> css도 깎아야함
-        // img 태그를 제외하고 style 속성을 바꾸는 요소들은 css로 적용시킬수있다
+        if (match_count > 2)
+        {
+            match_textes[1].style.color = "gray";
+            match_textes[2].style.color = "#14FF00";
+
+            const game = JSON.parse(localStorage.getItem("game2"));
+
+            if (game['player1Score'] > game['player2Score'])
+            {
+                const lines = document.querySelectorAll(".line_2-1")
+                
+                lines.forEach( (line) => {
+                    line.style.stroke = "#14FF00";
+                })
+                player_infos[3].querySelector("img").src = "./image/ghost_death.png"
+                match2_winner = 2;
+            }
+            else
+            {
+                const lines = document.querySelectorAll(".line_2-2")
+                
+                lines.forEach( (line) => {
+                    line.style.stroke = "#14FF00";
+                })
+                player_infos[2].querySelector("img").src = "./image/ghost_death.png"
+                match2_winner = 3;
+            }
+            const line = document.querySelector(".line_2-common");
+            line.style.stroke = "#14FF00";
+        }
+
+        if (match_count > 3)
+        {
+            match_textes[2].style.color = "gray";
+
+            const game = JSON.parse(localStorage.getItem("game3"));
+
+            if (game['player1Score'] > game['player2Score'])
+            {
+                const lines = document.querySelectorAll(".line_3-1")
+                
+                lines.forEach( (line) => {
+                    line.style.stroke = "#14FF00";
+                })
+                player_infos[match2_winner].querySelector("img").src = "./image/ghost_death.png"
+            }
+            else
+            {
+                const lines = document.querySelectorAll(".line_3-2")
+                
+                lines.forEach( (line) => {
+                    line.style.stroke = "#14FF00";
+                })
+                player_infos[match1_winner].querySelector("img").src = "./image/ghost_death.png"
+            }
+            const line = document.querySelector(".line_3-common");
+            line.style.stroke = "#14FF00";
+
+            document.querySelector("#champion_text").style.display = "block";
+            document.querySelector(".center_button").querySelector("p").innerHTML = "TOURNAMENT<br>AGAIN?";
+
+            // 여기서 백엔드로 게임기록 일괄 전송?
+            // game_result 객체 만들기
+            const game1 = JSON.parse(localStorage.getItem("game1"));
+            const game2 = JSON.parse(localStorage.getItem("game2"));
+            const game3 = JSON.parse(localStorage.getItem("game3"));
+            let game_result = {
+                "game1": {
+                    "player1Nick": game1["player1Nick"],
+                    "player2Nick": game1["player2Nick"],
+                    "player1Score" : game1["player1Score"],
+                    "player2Score" : game1["player2Score"],
+                    "mode": "TOURNAMENT"
+                },
+                "game2": {
+                    "player1Nick": game2["player1Nick"],
+                    "player2Nick": game2["player2Nick"],
+                    "player1Score" : game2["player1Score"],
+                    "player2Score" : game2["player2Score"],
+                    "mode": "TOURNAMENT"
+                },
+                "game3": {
+                    "player1Nick": game3["player1Nick"],
+                    "player2Nick": game3["player2Nick"],
+                    "player1Score" : game3["player1Score"],
+                    "player2Score" : game3["player2Score"],
+                    "mode": "TOURNAMENT"
+                },
+            };
+            
+            const response = await fetch("http://localhost:8000/game-management/tournament", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${getCookie('jwt')}`,
+                },
+                body: JSON.stringify(game_result),
+            });
+
+            if (response.ok)
+            {
+                console.log("TOURNAMENT POST OK");
+            }
+            else
+            {
+                console.log("status:", response.status);
+            }
+        }
 
 		// 클릭 가능한 요소들에 이벤트 리스너를 등록한다
         const Top_Buttons = document.querySelector("#top_item").querySelectorAll("a");
@@ -202,11 +331,67 @@ export default class extends AbstractView {
 
         Center_Button.addEventListener("click", (event) => {
             event.preventDefault();
-            console.log(event.target.href);
 
+            const match_count = localStorage.getItem("match_count");
+            const nicknames = JSON.parse(localStorage.getItem("nicknames"));
+
+            let match_1up;
+            let match_2up;
             // 라우팅 이벤트 추가
-            // match_count 확인
-            // match_1up, match_2up setitem
+            if (match_count > 3)
+            {
+                console.log("go to nickname page");
+                navigateTo("/nickname");
+            }
+            else
+            {
+                console.log("go to game page");
+                // match_1up, match_2up 에 적절한 닉네임 넣어주기
+
+                // 첫번째 경기라면 1, 2번째 유저의 닉네임을 대입한다
+                if (match_count == 1)
+                {
+                    match_1up = nicknames[0];
+                    match_2up = nicknames[1];
+                }
+                // 두번째 경기라면 3, 4번째 유저의 닉네임을 대입한다
+                else if (match_count == 2)
+                {
+                    match_1up = nicknames[2];
+                    match_2up = nicknames[3];
+                }
+                // 마지막 경기라면
+                else
+                {
+                    const game1 = JSON.parse(localStorage.getItem("game1"));
+                    const game2 = JSON.parse(localStorage.getItem("game2"));
+
+                    // 첫번째 경기 승자의 닉네임을 대입한다
+                    if (game1['player1Score'] > game1['player2Score'])
+                    {
+                        match_1up = nicknames[0];
+                    }
+                    else
+                    {
+                        match_1up = nicknames[1];
+                    }
+
+                    // 두번째 경기 승자의 닉네임을 대입한다
+                    if (game2['player1Score'] > game2['player2Score'])
+                    {
+                        match_2up = nicknames[2];
+                    }
+                    else
+                    {
+                        match_2up = nicknames[3];
+                    }
+                }
+
+                localStorage.setItem("match_1up", match_1up);
+                localStorage.setItem("match_2up", match_2up);
+                navigateTo("/game");
+            }
+            
         });
 
         Center_Button.addEventListener("mouseenter", (event) => {
