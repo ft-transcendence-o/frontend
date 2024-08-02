@@ -11,8 +11,9 @@ export class PongGame {
         this._divCanvas2 = canvas2;
         this._canvasWidth = 712;
         this._canvasHeight = 700;
+        this._isRunning = true;
 
-        // game_var
+        // game_status_var
         this._gameVar = document.querySelector("#game_var");
         this._player1 = {
             Nick: localStorage.getItem("match_1up"),
@@ -64,6 +65,9 @@ export class PongGame {
 
         // keyup 이벤트 핸들러를 추가
         window.addEventListener('keyup', this.keyup.bind(this));
+
+        // main 버튼 이벤트 핸들러를 추가
+        this.mainButtonEvent();
 
         // 게임시작시 카운트 다운
         this.countdown();
@@ -227,6 +231,8 @@ export class PongGame {
     }
 
     render(time) { // 렌더링이 시작된 이후 경과된 밀리초를 받는다
+        if (!this._isRunning)
+            return ;
         // 렌더러가 scenen을 카메라의 시점을 기준으로 렌더링하는작업을 한다
         this._renderer1.render(this._scene, this._camera1);
         this._renderer2.render(this._scene, this._camera2);
@@ -269,99 +275,13 @@ export class PongGame {
             }
     }
 
-    // collisionWithPanel(panel, panelPlane, panelVec, collisionPoint, winner) {
-    //     if (collisionPoint){
-    //         if (Math.abs(collisionPoint.x  - panel.position.x) < 4 && Math.abs(collisionPoint.y - panel.position.y) < 4 && this._flag == true) {
-    //             this._flag = false;
-    //             console.log('panel1 충돌 발생');
-    //             // 구체 중심과 PlaneMesh의 경계 상자 내에서의 최소 거리 계산
-
-    //             this._ball.position.copy(collisionPoint);
-    //             this._ball.position.add(panelPlane.normal.clone().multiplyScalar(2));
-
-    //             this._angularVec.sub(panelVec.multiplyScalar(0.01));
-    //             this.updateVector(panelPlane);
-    //             if (collisionPoint.x < this._panel1.x) {
-    //                 this._vec.x += 1;
-    //             }
-    //             if (collisionPoint.x > this._panel1.x) {
-    //                 this._vec.x -= 1;
-    //             }
-    //             if (collisionPoint.y < this._panel1.y) {
-    //                 this._vec.y += 1;
-    //             }
-    //             if (collisionPoint.y > this._panel1.y) {
-    //                 this._vec.y -= 1;
-    //             }
-    //             this._vec.x *= 1.1;
-    //             this._vec.y *= 1.1;
-    //             console.log('충돌 지점:', collisionPoint);
-    //         }
-    //         else {
-    //             document.querySelector("#player2_score").innerHTML = ++(winner.Score);
-    //             console.log(winner);
-    //             if (this._player2.Score === 2){
-    //                 this._vec.set(0, 0, 0);
-    //                 this._angularVec.set(0, 0, 0.1);
-    //                 if (this._mode === "TOURNAMENT") {
-    //                     document.querySelector("#winner2").innerHTML = `
-    //                     <div style="font-size: 100px; line-height: 100px; color: white;">WIN!</div>
-    //                     <button id="next_button" type="button" style="
-    //                         background-color: black;
-    //                         width: 328px; height: 199px;
-    //                         margin-left: 20px;" 
-    //                         class="blue_outline">
-    //                         <span style="font-size: 50px; line-height: 50px;">
-    //                             >>NEXT
-    //                         </span>
-    //                         <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
-    //                     </button>`;
-    //                     this._result = {
-    //                         "player1Nick": this._player1.Nick,
-    //                         "player2Nick": this._player2.Nick,
-    //                         "player1Score" : this._player1.Score,
-    //                         "player2Score" : this._player2.Score,
-    //                         "mode": "TOURNAMENT"
-    //                     }  
-    //                     localStorage.setItem(`game${localStorage.getItem("match_count")}`, JSON.stringify(this._result));
-    //                     localStorage.setItem("match_count", localStorage.getItem("match_count") + 1);
-    //                     this._nextButton = document.querySelector("#next_button");
-    //                     this._nextButton.addEventListener("click", (event) => {
-    //                         navigateTo("/match_schedules");
-    //                     })
-    //                 }
-    //                 else { //TODO: 1vs1
-    //                     document.querySelector("#winner2").innerHTML = `
-    //                     <div style="font-size: 100px; line-height: 100px; color: white;">WIN!</div>
-    //                     <button id="next_button" type="button" style="
-    //                         background-color: black;
-    //                         width: 328px; height: 199px;
-    //                         margin-left: 20px;" 
-    //                         class="blue_outline">
-    //                         <span style="font-size: 50px; line-height: 50px;">
-    //                             1 ON 1
-    //                             AGAIN?
-    //                         </span>
-    //                         <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
-    //                     </button>`;
-    //                     /////////////////////
-    //                     this.fetchResult();
-    //                     /////////////////////////////////////
-    //                     this._nextButton = document.querySelector("#next_button");
-    //                     this._nextButton.addEventListener("click", (event) => {
-    //                         navigateTo("/main");
-    //                     })
-    //                 }
-    //             }
-    //             console.log(this._player2Score);
-    //             this._ball.position.x = 0;
-    //             this._ball.position.y = 0;
-    //             this._ball.position.z = 0;
-    //             console.log("ball vec:", this._vec);
-    //             this.pauseGame(1000);
-    //         }
-    //     }
-    // }
+    setGame() {
+        this._ball.position.x = 0;
+        this._ball.position.y = 0;
+        this._ball.position.z = 0;
+        console.log("ball vec:", this._vec);
+        this.pauseGame(1000);
+    }
 
     collisionWithGoalArea() { //TODO: 문제발생지점
         const collisionPoint1 = this.getCollisionPointWithPlane(this._panel1Plane);
@@ -413,17 +333,17 @@ export class PongGame {
                             </span>
                             <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
                         </button>`;
-                        this._result = {
+                        localStorage.setItem(`game${localStorage.getItem("match_count")}`, JSON.stringify({
                             "player1Nick": this._player1.Nick,
                             "player2Nick": this._player2.Nick,
                             "player1Score" : this._player1.Score,
                             "player2Score" : this._player2.Score,
                             "mode": "TOURNAMENT"
-                        }  
-                        localStorage.setItem(`game${localStorage.getItem("match_count")}`, JSON.stringify(this._result));
+                        }));
                         localStorage.setItem("match_count", localStorage.getItem("match_count") + 1);
                         this._nextButton = document.querySelector("#next_button");
                         this._nextButton.addEventListener("click", (event) => {
+                            this._isRunning = false;
                             navigateTo("/match_schedules");
                         })
                     }
@@ -446,18 +366,13 @@ export class PongGame {
                         /////////////////////////////////////
                         this._nextButton = document.querySelector("#next_button");
                         this._nextButton.addEventListener("click", (event) => {
-                            navigateTo("/main");
+                            this._isRunning = false;
+                            navigateTo("/game");
                         })
                     }
                 }
-                console.log(this._player2.Score);
-                this._ball.position.x = 0;
-                this._ball.position.y = 0;
-                this._ball.position.z = 0;
-                console.log("ball vec:", this._vec);
-                this.pauseGame(1000);
+                this.setGame();
             }
-            
         }
         else if (collisionPoint2){
             if (Math.abs(collisionPoint2.x  - this._panel2.position.x) < 4 && Math.abs(collisionPoint2.y - this._panel2.position.y) < 4 && this._flag == false) {
@@ -482,14 +397,12 @@ export class PongGame {
                 if (collisionPoint2.y > this._panel2.y) {
                     this._vec.y -= 1;
                 }
-
                 console.log('충돌 지점:', collisionPoint2);
-                // console.log('구체 중심과 충돌 지점 간의 거리:', distance);
             }
             else {
                 console.log("player1 win");
-                document.querySelector("#player1_score").innerHTML = ++this._player1Score;
-                if (this._player1Score === 1){
+                document.querySelector("#player1_score").innerHTML = ++(this._player1.Score);
+                if (this._player1.Score === 1){
                     this._vec.set(0, 0, 0);
                     this._angularVec.set(0, 0, 0.1);
                     if (this._mode === "TOURNAMENT") {
@@ -505,22 +418,21 @@ export class PongGame {
                             </span>
                             <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
                         </button>`;
-                        const result = {
+                        localStorage.setItem(`game${localStorage.getItem("match_count")}`, JSON.stringify({
                             "player1Nick": this._player1.Nick,
                             "player2Nick": this._player2.Nick,
                             "player1Score" : this._player1.Score,
                             "player2Score" : this._player2.Score,
                             "mode": "TOURNAMENT"
-                        }  
-                        localStorage.setItem(`game${localStorage.getItem("match_count")}`, JSON.stringify(result));
+                        }));
                         localStorage.setItem("match_count", localStorage.getItem("match_count") + 1);
                         this._nextButton = document.querySelector("#next_button");
                         this._nextButton.addEventListener("click", (event) => {
-                            console.log("test");
+                            this._isRunning = false;
                             navigateTo("/match_schedules");
                         })
                     }
-                    else { //TODO: 1vs1
+                    else { //1vs1
                         document.querySelector("#winner1").innerHTML = `
                         <div style="font-size: 100px; line-height: 100px; color: white;">WIN!</div>
                         <button id="next_button" type="button" style="
@@ -539,16 +451,12 @@ export class PongGame {
                         /////////////////////////////////////
                         this._nextButton = document.querySelector("#next_button");
                         this._nextButton.addEventListener("click", (event) => { 
-                            navigateTo("/main");
+                            this._isRunning = false;
+                            navigateTo("/game");
                         })
                     }
                 }
-                console.log(this._player1Score);
-                this._ball.position.x = 0;
-                this._ball.position.y = 0;
-                this._ball.position.z = 0;
-                console.log("ball vec:", this._vec);
-                this.pauseGame(1000);
+                this.setGame();
             }
         }
     }
@@ -713,6 +621,35 @@ export class PongGame {
                 return ;
             }
         }, 1000);
+    }
+
+    mainButtonEvent() {
+        this._Top_Buttons = document.querySelector("#top_item").querySelectorAll("a");
+	
+		this._Top_Buttons.forEach((Button) => {
+
+            Button.addEventListener("click", (event) => {
+                event.preventDefault();
+                console.log(event.target.href);
+
+                if (event.target.href === "http://localhost:5500/main") {
+                    this._isRunning = false;
+                    navigateTo("/main");
+                }
+            });
+
+            Button.addEventListener("mouseenter", (event) => {
+                Button.classList.remove("blue_outline");
+                Button.classList.add("green_outline");
+                Button.classList.add("white_stroke_2_5px");
+            });
+
+            Button.addEventListener("mouseleave", (event) => {
+                Button.classList.add("blue_outline");
+                Button.classList.remove("green_outline");
+                Button.classList.remove("white_stroke_2_5px");
+            });
+        });
     }
 }
 
