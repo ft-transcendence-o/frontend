@@ -75,33 +75,6 @@ export default class extends AbstractView {
     }
 
     async init() {
-		const Top_Buttons = document.querySelector("#top_item").querySelectorAll("a");
-	
-		Top_Buttons.forEach((Button) => {
-
-            Button.addEventListener("click", (event) => {
-                event.preventDefault();
-                console.log(event.target.href);
-
-                // 라우팅 이벤트 추가
-                // 비동기 이슈?
-                if (event.target.href === "http://localhost:5500/main") {
-                    navigateTo("/main");
-                }
-            });
-
-            Button.addEventListener("mouseenter", (event) => {
-                Button.classList.remove("blue_outline");
-                Button.classList.add("green_outline");
-                Button.classList.add("white_stroke_2_5px");
-            });
-
-            Button.addEventListener("mouseleave", (event) => {
-                Button.classList.add("blue_outline");
-                Button.classList.remove("green_outline");
-                Button.classList.remove("white_stroke_2_5px");
-            });
-        });
 		new PongGame();
     }
 }

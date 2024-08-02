@@ -1,6 +1,6 @@
 import * as THREE from '../build/three.module.js';
 import { GLTFLoader } from '../build/GLTFLoader.js';
-import { navigateTo, getCookie } from "../../router.js";
+import { navigateTo, getCookie, router } from "../../router.js";
 
 export class PongGame {
     // constructor : renderer, scene, 함수들 정의
@@ -68,6 +68,9 @@ export class PongGame {
 
         // main 버튼 이벤트 핸들러를 추가
         this.mainButtonEvent();
+
+        // 뒤로가기 앞으로가기 이벤트 핸들러를 추가
+        window.addEventListener('popstate', this.gameRoute.bind(this));
 
         // 게임시작시 카운트 다운
         this.countdown();
@@ -650,6 +653,13 @@ export class PongGame {
                 Button.classList.remove("white_stroke_2_5px");
             });
         });
+    }
+
+    gameRoute() {
+        this._isRunning = false;
+        console.log("gameROute");
+        console.log("isRunning : ", this._isRunning);
+        router();
     }
 }
 
