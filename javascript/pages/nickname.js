@@ -150,6 +150,8 @@ export default class extends AbstractView {
 
             // 닉네임을 local storage에 저장
             localStorage.setItem('nicknames', JSON.stringify(storedNicknames));
+            localStorage.setItem('match_count', 1);
+            localStorage.setItem('match_mode', 'TOURNAMENT');
 
             navigateTo('/');
         });
