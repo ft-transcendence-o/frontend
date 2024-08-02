@@ -474,7 +474,7 @@ export class PongGame {
     // }
     
 
-    async collisionWithPanel() { //TODO: 문제발생지점
+    async collisionWithGoalArea() { //TODO: 문제발생지점
         const collisionPoint1 = this.getCollisionPointWithPlane(this._panel1Plane);
         const collisionPoint2 = this.getCollisionPointWithPlane(this._panel2Plane);
 
@@ -575,7 +575,7 @@ export class PongGame {
                         /////////////////////////////////////
                         this._nextButton = document.querySelector("#next_button");
                         this._nextButton.addEventListener("click", (event) => {
-                            navigateTo("/match_schedules");
+                            navigateTo("/main");
                         })
                     }
                 }
@@ -686,7 +686,7 @@ export class PongGame {
                         /////////////////////////////////////
                         this._nextButton = document.querySelector("#next_button");
                         this._nextButton.addEventListener("click", (event) => { 
-                            navigateTo("/match_schedules");
+                            navigateTo("/main");
                         })
                     }
                 }
@@ -786,7 +786,7 @@ export class PongGame {
                     this.updateVector(collisionPlane);
                     break; // 충돌이 발생하면 반복문을 중지합니다.
                 }
-                this.collisionWithPanel();
+                this.collisionWithGoalArea();
             }
             this.updatePanel();
             this._perspectiveLineEdges.position.z = this._ball.position.z;
