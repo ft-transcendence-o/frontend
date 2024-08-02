@@ -234,7 +234,7 @@ export default class extends AbstractView {
 
                 // 라우팅 이벤트 추가
                 // 비동기 이슈?
-                if (event.target.href === "http://127.0.0.1:5500/main") {
+                if (event.target.href === "http://localhost:5500/main") {
                     navigateTo("/main");
                 }
             });
@@ -276,7 +276,7 @@ export default class extends AbstractView {
             this.create_page_buttons(page);
 
             // 클릭 가능한 요소들에 이벤트 리스너를 등록한다
-            const baseUrl = "http://127.0.0.1:5500/";
+            const baseUrl = "http://localhost:5500/";
             const Page_Buttons = document.querySelectorAll(".page-link");
 
             console.log(Page_Buttons);

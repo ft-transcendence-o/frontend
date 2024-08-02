@@ -309,7 +309,7 @@ export default class extends AbstractView {
 
                 // 라우팅 이벤트 추가
                 // 비동기 이슈?
-                if (event.target.href === "http://127.0.0.1:5500/main") {
+                if (event.target.href === "http://localhost:5500/main") {
                     navigateTo("/main");
                 }
             });
