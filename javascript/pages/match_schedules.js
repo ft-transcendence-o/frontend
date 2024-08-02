@@ -143,10 +143,12 @@ export default class extends AbstractView {
     }
 
     async init() {
+        // localStorage 변조에 대응하기 위해 미리 변수에 담아두고 리터럴 값을 이벤트 리스너로 넣어준다
+
         // player nickname을 적용시킨다
         const player_infos = document.querySelectorAll(".player_info");
         const nicknames = JSON.parse(localStorage.getItem("nicknames"));
-        console.log(nicknames);
+
         for (let idx = 0; idx < player_infos.length; idx++)
         {
             player_infos[idx].querySelector("p").innerText = nicknames[idx];
@@ -156,17 +158,20 @@ export default class extends AbstractView {
         const match_textes = document.querySelectorAll(".match_text");
         const match_count = localStorage.getItem("match_count");
 
+        // nickname에서 넘어올때 game 기록 조작을 방지하기 위해 다 지워준다
+        const game1 = JSON.parse(localStorage.getItem("game1"));
+        const game2 = JSON.parse(localStorage.getItem("game2"));
+        const game3 = JSON.parse(localStorage.getItem("game3"));
+
         let match1_winner;
         let match2_winner;
 
-        if (match_count > 1)
+        if (game1)
         {
             match_textes[0].style.color = "gray";
             match_textes[1].style.color = "#14FF00";
 
-            const game = JSON.parse(localStorage.getItem("game1"));
-
-            if (game['player1Score'] > game['player2Score'])
+            if (game1['player1Score'] > game1['player2Score'])
             {
                 const lines = document.querySelectorAll(".line_1-1")
                 
@@ -190,14 +195,12 @@ export default class extends AbstractView {
             line.style.stroke = "#14FF00";
         }
 
-        if (match_count > 2)
+        if (game2)
         {
             match_textes[1].style.color = "gray";
             match_textes[2].style.color = "#14FF00";
 
-            const game = JSON.parse(localStorage.getItem("game2"));
-
-            if (game['player1Score'] > game['player2Score'])
+            if (game2['player1Score'] > game2['player2Score'])
             {
                 const lines = document.querySelectorAll(".line_2-1")
                 
@@ -221,13 +224,11 @@ export default class extends AbstractView {
             line.style.stroke = "#14FF00";
         }
 
-        if (match_count > 3)
+        if (game3)
         {
             match_textes[2].style.color = "gray";
 
-            const game = JSON.parse(localStorage.getItem("game3"));
-
-            if (game['player1Score'] > game['player2Score'])
+            if (game3['player1Score'] > game3['player2Score'])
             {
                 const lines = document.querySelectorAll(".line_3-1")
                 
@@ -253,9 +254,6 @@ export default class extends AbstractView {
 
             // 여기서 백엔드로 게임기록 일괄 전송?
             // game_result 객체 만들기
-            const game1 = JSON.parse(localStorage.getItem("game1"));
-            const game2 = JSON.parse(localStorage.getItem("game2"));
-            const game3 = JSON.parse(localStorage.getItem("game3"));
             let game_result = {
                 "game1": {
                     "player1Nick": game1["player1Nick"],
@@ -298,7 +296,103 @@ export default class extends AbstractView {
             }
         }
 
-		// 클릭 가능한 요소들에 이벤트 리스너를 등록한다
+        const Center_Button = document.querySelector(".center_button");
+
+        Center_Button.addEventListener("click", (event) => {
+            event.preventDefault();
+
+            // 라우팅 이벤트 추가
+            if (match_count > 3)
+            {
+                // 다음의 변수는 localStorage 변조에 대응하기 위해 직접 지운다
+                localStorage.removeItem('nicknames');
+                localStorage.removeItem('match_count');
+                localStorage.removeItem('match_mode');
+                localStorage.removeItem('game1');
+                localStorage.removeItem('game2');
+                localStorage.removeItem('game3');
+                localStorage.removeItem("match_1up");
+                localStorage.removeItem("match_2up");
+                
+                console.log("go to nickname page");
+                navigateTo("/nickname");
+            }
+            else
+            {
+                let match_1up;
+                let match_2up;
+                console.log("go to game page");
+
+                // 첫번째 경기라면 1, 2번째 유저의 닉네임을 대입한다
+                if (match_count == 1)
+                {
+                    match_1up = nicknames[0];
+                    match_2up = nicknames[1];
+                }
+                // 두번째 경기라면 3, 4번째 유저의 닉네임을 대입한다
+                else if (match_count == 2)
+                {
+                    match_1up = nicknames[2];
+                    match_2up = nicknames[3];
+                }
+                // 마지막 경기라면
+                else
+                {
+                    // 첫번째 경기 승자의 닉네임을 대입한다
+                    if (game1['player1Score'] > game1['player2Score'])
+                    {
+                        match_1up = nicknames[0];
+                    }
+                    else
+                    {
+                        match_1up = nicknames[1];
+                    }
+
+                    // 두번째 경기 승자의 닉네임을 대입한다
+                    if (game2['player1Score'] > game2['player2Score'])
+                    {
+                        match_2up = nicknames[2];
+                    }
+                    else
+                    {
+                        match_2up = nicknames[3];
+                    }
+                }
+
+                // 다음의 변수는 localStorage 변조에 대응하기 위해 매번 직접 덮어써놓는다
+                localStorage.setItem('nicknames', JSON.stringify(nicknames));
+                localStorage.setItem('match_count', match_count);
+                localStorage.setItem('match_mode', 'TOURNAMENT');
+                if (game1)
+                {
+                    localStorage.setItem('game1', JSON.stringify(game1));
+                }
+                if (game2)
+                {
+                    localStorage.setItem('game2', JSON.stringify(game2));
+                }
+
+                localStorage.setItem("match_1up", match_1up);
+                localStorage.setItem("match_2up", match_2up);
+                navigateTo("/game");
+            }
+        });
+
+        Center_Button.addEventListener("mouseenter", (event) => {
+            Center_Button.classList.remove("blue_outline");
+            Center_Button.classList.add("green_outline");
+            Center_Button.classList.add("white_stroke_2_5px");
+            Center_Button.classList.add("blue_hover");
+        });
+
+        Center_Button.addEventListener("mouseleave", (event) => {
+            Center_Button.classList.add("blue_outline");
+            Center_Button.classList.remove("green_outline");
+            Center_Button.classList.remove("white_stroke_2_5px");
+            Center_Button.classList.remove("blue_hover");
+        });
+
+        // 클릭 가능한 요소들에 이벤트 리스너를 등록한다
         const Top_Buttons = document.querySelector("#top_item").querySelectorAll("a");
 
 		Top_Buttons.forEach((Button) => {
@@ -325,87 +419,6 @@ export default class extends AbstractView {
                 Button.classList.remove("green_outline");
                 Button.classList.remove("white_stroke_2_5px");
             });
-        });
-
-        const Center_Button = document.querySelector(".center_button");
-
-        Center_Button.addEventListener("click", (event) => {
-            event.preventDefault();
-
-            const match_count = localStorage.getItem("match_count");
-            const nicknames = JSON.parse(localStorage.getItem("nicknames"));
-
-            let match_1up;
-            let match_2up;
-            // 라우팅 이벤트 추가
-            if (match_count > 3)
-            {
-                console.log("go to nickname page");
-                navigateTo("/nickname");
-            }
-            else
-            {
-                console.log("go to game page");
-                // match_1up, match_2up 에 적절한 닉네임 넣어주기
-
-                // 첫번째 경기라면 1, 2번째 유저의 닉네임을 대입한다
-                if (match_count == 1)
-                {
-                    match_1up = nicknames[0];
-                    match_2up = nicknames[1];
-                }
-                // 두번째 경기라면 3, 4번째 유저의 닉네임을 대입한다
-                else if (match_count == 2)
-                {
-                    match_1up = nicknames[2];
-                    match_2up = nicknames[3];
-                }
-                // 마지막 경기라면
-                else
-                {
-                    const game1 = JSON.parse(localStorage.getItem("game1"));
-                    const game2 = JSON.parse(localStorage.getItem("game2"));
-
-                    // 첫번째 경기 승자의 닉네임을 대입한다
-                    if (game1['player1Score'] > game1['player2Score'])
-                    {
-                        match_1up = nicknames[0];
-                    }
-                    else
-                    {
-                        match_1up = nicknames[1];
-                    }
-
-                    // 두번째 경기 승자의 닉네임을 대입한다
-                    if (game2['player1Score'] > game2['player2Score'])
-                    {
-                        match_2up = nicknames[2];
-                    }
-                    else
-                    {
-                        match_2up = nicknames[3];
-                    }
-                }
-
-                localStorage.setItem("match_1up", match_1up);
-                localStorage.setItem("match_2up", match_2up);
-                navigateTo("/game");
-            }
-            
-        });
-
-        Center_Button.addEventListener("mouseenter", (event) => {
-            Center_Button.classList.remove("blue_outline");
-            Center_Button.classList.add("green_outline");
-            Center_Button.classList.add("white_stroke_2_5px");
-            Center_Button.classList.add("blue_hover");
-        });
-
-        Center_Button.addEventListener("mouseleave", (event) => {
-            Center_Button.classList.add("blue_outline");
-            Center_Button.classList.remove("green_outline");
-            Center_Button.classList.remove("white_stroke_2_5px");
-            Center_Button.classList.remove("blue_hover");
         });
     }
 }
