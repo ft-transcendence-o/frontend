@@ -278,6 +278,26 @@ export class PongGame {
             }
     }
 
+    tournamentGameSet() {
+        localStorage.setItem(`game${localStorage.getItem("match_count")}`, JSON.stringify({
+            "player1Nick": this._player1.Nick,
+            "player2Nick": this._player2.Nick,
+            "player1Score" : this._player1.Score,
+            "player2Score" : this._player2.Score,
+            "mode": "TOURNAMENT"
+        }));
+        localStorage.setItem("match_count", localStorage.getItem("match_count") + 1);
+        document.querySelector("#next_button").addEventListener("click", (event) => {
+            this._isRunning = false;
+            navigateTo("/match_schedules");
+        })
+        this._ball.position.x = 0;
+        this._ball.position.y = 0;
+        this._ball.position.z = 0;
+        console.log("ball vec:", this._vec);
+        this.pauseGame(1000);
+    }
+
     setGame() {
         this._ball.position.x = 0;
         this._ball.position.y = 0;
@@ -301,20 +321,7 @@ export class PongGame {
 
                 this._angularVec.sub(this._panel1Vec.multiplyScalar(0.01));
                 this.updateVector(this._panel1Plane);
-                if (collisionPoint1.x < this._panel1.x) {
-                    this._vec.x += 1;
-                }
-                if (collisionPoint1.x > this._panel1.x) {
-                    this._vec.x -= 1;
-                }
-                if (collisionPoint1.y < this._panel1.y) {
-                    this._vec.y += 1;
-                }
-                if (collisionPoint1.y > this._panel1.y) {
-                    this._vec.y -= 1;
-                }
-                this._vec.x *= 1.1;
-                this._vec.y *= 1.1;
+                this.updateVectorByPanel(this._panel1, collisionPoint1);
                 console.log('충돌 지점:', collisionPoint1);
             }
             else {
@@ -336,19 +343,7 @@ export class PongGame {
                             </span>
                             <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
                         </button>`;
-                        localStorage.setItem(`game${localStorage.getItem("match_count")}`, JSON.stringify({
-                            "player1Nick": this._player1.Nick,
-                            "player2Nick": this._player2.Nick,
-                            "player1Score" : this._player1.Score,
-                            "player2Score" : this._player2.Score,
-                            "mode": "TOURNAMENT"
-                        }));
-                        localStorage.setItem("match_count", localStorage.getItem("match_count") + 1);
-                        this._nextButton = document.querySelector("#next_button");
-                        this._nextButton.addEventListener("click", (event) => {
-                            this._isRunning = false;
-                            navigateTo("/match_schedules");
-                        })
+                        this.tournamentGameSet();
                     }
                     else { //TODO: 1vs1
                         document.querySelector("#winner2").innerHTML = `
@@ -367,8 +362,7 @@ export class PongGame {
                         /////////////////////
                         this.fetchResult();
                         /////////////////////////////////////
-                        this._nextButton = document.querySelector("#next_button");
-                        this._nextButton.addEventListener("click", (event) => {
+                        document.querySelector("#next_button").addEventListener("click", (event) => {
                             this._isRunning = false;
                             navigateTo("/game");
                         })
@@ -387,19 +381,7 @@ export class PongGame {
             
                 this._angularVec.sub(this._panel2Vec.multiplyScalar(0.01));
                 this.updateVector(this._panel2Plane);
-
-                if (collisionPoint2.x < this._panel2.x) {
-                    this._vec.x += 1;
-                }
-                if (collisionPoint2.x > this._panel2.x) {
-                    this._vec.x -= 1;
-                }
-                if (collisionPoint2.y < this._panel2.y) {
-                    this._vec.y += 1;
-                }
-                if (collisionPoint2.y > this._panel2.y) {
-                    this._vec.y -= 1;
-                }
+                this.updateVectorByPanel(this._panel2, collisionPoint2);
                 console.log('충돌 지점:', collisionPoint2);
             }
             else {
@@ -421,19 +403,7 @@ export class PongGame {
                             </span>
                             <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
                         </button>`;
-                        localStorage.setItem(`game${localStorage.getItem("match_count")}`, JSON.stringify({
-                            "player1Nick": this._player1.Nick,
-                            "player2Nick": this._player2.Nick,
-                            "player1Score" : this._player1.Score,
-                            "player2Score" : this._player2.Score,
-                            "mode": "TOURNAMENT"
-                        }));
-                        localStorage.setItem("match_count", localStorage.getItem("match_count") + 1);
-                        this._nextButton = document.querySelector("#next_button");
-                        this._nextButton.addEventListener("click", (event) => {
-                            this._isRunning = false;
-                            navigateTo("/match_schedules");
-                        })
+                        this.tournamentGameSet();
                     }
                     else { //1vs1
                         document.querySelector("#winner1").innerHTML = `
@@ -452,8 +422,7 @@ export class PongGame {
                         /////////////////////
                         this.fetchResult();
                         /////////////////////////////////////
-                        this._nextButton = document.querySelector("#next_button");
-                        this._nextButton.addEventListener("click", (event) => { 
+                        document.querySelector("#next_button").addEventListener("click", (event) => { 
                             this._isRunning = false;
                             navigateTo("/game");
                         })
@@ -529,6 +498,12 @@ export class PongGame {
 
         // ball의 각속도 벡터
         this.updateAngularVelocity(plane, this._radius, previousVec);
+    }
+
+    updateVectorByPanel(panel, collisionPoint) {
+        this._vec.x += (collisionPoint.x - panel.position.x) >> 4;
+        this._vec.y += (collisionPoint.y - panel.position.y) >> 4;
+        console.log(this._vec);
     }
 
     update(time) { // TODO: 앞으로 동작에 대해서 함수를 들어서 정의해야함
