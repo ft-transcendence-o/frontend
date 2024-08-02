@@ -14,13 +14,17 @@ export class PongGame {
 
         // game_var
         this._gameVar = document.querySelector("#game_var");
-        this._player1Nick = localStorage.getItem("match_1up");
-        this._player2Nick = localStorage.getItem("match_2up");
-        this._player1Score = 0;
-        this._player2Score = 0;
+        this._player1 = {
+            Nick: localStorage.getItem("match_1up"),
+            Score : 0,
+        }
+        this._player2 = {
+            Nick: localStorage.getItem("match_2up"),
+            Score : 0,
+        }
         this._mode = localStorage.getItem('mode');
-        document.querySelector("#player1_nick").innerHTML = this._player1Nick;
-        document.querySelector("#player2_nick").innerHTML = this._player2Nick;
+        document.querySelector("#player1_nick").innerHTML = this._player1.Nick;
+        document.querySelector("#player2_nick").innerHTML = this._player2.Nick;
 
         //게임에 사용할 변수들
         this._vec = new THREE.Vector3(0, 0, 2); //공의 방향벡터 //0.5일때 터짐
@@ -242,40 +246,61 @@ export class PongGame {
         }
         return null;
     }
-
-    // collisionWithPanel() { 
-    //     const collisionPoint1 = this.getCollisionPointWithPlane(this._panel1Plane);
-    //     const collisionPoint2 = this.getCollisionPointWithPlane(this._panel2Plane);
     
-    //     if (collisionPoint1) {
-    //         if (Math.abs(collisionPoint1.x - this._panel1.position.x) < 4 && Math.abs(collisionPoint1.y - this._panel1.position.y) < 4 && this._flag == true) {
+    async fetchResult() {
+        const response = await fetch("http://localhost:8000/game-management/game", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${getCookie('jwt')}`,
+            },
+            body: JSON.stringify({
+                "player1Nick": "1up",
+                "player2Nick": "2up",
+                "player1Score" : this._player1.Score,
+                "player2Score" : this._player2.Score,
+                "mode": "1VS1"
+            })
+            });
+            if (response.ok) {
+                console.log("success");
+            }
+            else {
+                console.log(await response.json());
+            }
+    }
+
+    // collisionWithPanel(panel, panelPlane, panelVec, collisionPoint, winner) {
+    //     if (collisionPoint){
+    //         if (Math.abs(collisionPoint.x  - panel.position.x) < 4 && Math.abs(collisionPoint.y - panel.position.y) < 4 && this._flag == true) {
     //             this._flag = false;
     //             console.log('panel1 충돌 발생');
-    
-    //             this._ball.position.copy(collisionPoint1);
-    //             this._ball.position.add(this._panel1Plane.normal.clone().multiplyScalar(2));
-    
-    //             this._angularVec.sub(this._panel1Vec.multiplyScalar(0.01));
-    //             this.updateVector(this._panel1Plane);
-    //             if (collisionPoint1.x < this._panel1.x) {
+    //             // 구체 중심과 PlaneMesh의 경계 상자 내에서의 최소 거리 계산
+
+    //             this._ball.position.copy(collisionPoint);
+    //             this._ball.position.add(panelPlane.normal.clone().multiplyScalar(2));
+
+    //             this._angularVec.sub(panelVec.multiplyScalar(0.01));
+    //             this.updateVector(panelPlane);
+    //             if (collisionPoint.x < this._panel1.x) {
     //                 this._vec.x += 1;
     //             }
-    //             if (collisionPoint1.x > this._panel1.x) {
+    //             if (collisionPoint.x > this._panel1.x) {
     //                 this._vec.x -= 1;
     //             }
-    //             if (collisionPoint1.y < this._panel1.y) {
+    //             if (collisionPoint.y < this._panel1.y) {
     //                 this._vec.y += 1;
     //             }
-    //             if (collisionPoint1.y > this._panel1.y) {
+    //             if (collisionPoint.y > this._panel1.y) {
     //                 this._vec.y -= 1;
     //             }
     //             this._vec.x *= 1.1;
     //             this._vec.y *= 1.1;
-    //             console.log('충돌 지점:', collisionPoint1);
-    //         } else {
-    //             console.log("player2 win");
-    //             document.querySelector("#player2_score").innerHTML = ++this._player2Score;
-    //             if (this._player2Score === 1){
+    //             console.log('충돌 지점:', collisionPoint);
+    //         }
+    //         else {
+    //             document.querySelector("#player2_score").innerHTML = ++(winner.Score);
+    //             console.log(winner);
+    //             if (this._player2.Score === 2){
     //                 this._vec.set(0, 0, 0);
     //                 this._angularVec.set(0, 0, 0.1);
     //                 if (this._mode === "TOURNAMENT") {
@@ -292,10 +317,10 @@ export class PongGame {
     //                         <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
     //                     </button>`;
     //                     this._result = {
-    //                         "player1Nick": this._player1Nick,
-    //                         "player2Nick": this._player2Nick,
-    //                         "player1Score" : this._player1Score,
-    //                         "player2Score" : this._player2Score,
+    //                         "player1Nick": this._player1.Nick,
+    //                         "player2Nick": this._player2.Nick,
+    //                         "player1Score" : this._player1.Score,
+    //                         "player2Score" : this._player2.Score,
     //                         "mode": "TOURNAMENT"
     //                     }  
     //                     localStorage.setItem(`game${localStorage.getItem("match_count")}`, JSON.stringify(this._result));
@@ -304,7 +329,8 @@ export class PongGame {
     //                     this._nextButton.addEventListener("click", (event) => {
     //                         navigateTo("/match_schedules");
     //                     })
-    //                 } else { // 1vs1
+    //                 }
+    //                 else { //TODO: 1vs1
     //                     document.querySelector("#winner2").innerHTML = `
     //                     <div style="font-size: 100px; line-height: 100px; color: white;">WIN!</div>
     //                     <button id="next_button" type="button" style="
@@ -318,34 +344,13 @@ export class PongGame {
     //                         </span>
     //                         <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
     //                     </button>`;
-    //                     const result = JSON.stringify({
-    //                         "player1Nick": "1up",
-    //                         "player2Nick": "2up",
-    //                         "player1Score" : this._player1Score,
-    //                         "player2Score" : this._player2Score,
-    //                         "mode": "1VS1"
-    //                     });
-    //                     console.log(result);
+    //                     /////////////////////
+    //                     this.fetchResult();
+    //                     /////////////////////////////////////
     //                     this._nextButton = document.querySelector("#next_button");
-    //                     this._nextButton.addEventListener("click", async (event) => {
-    //                         const response = await fetch("http://localhost:8000/game-management/game", {
-    //                             method: "POST",
-    //                             headers: {
-    //                                 "Content-Type": "application/json",
-    //                                 "Authorization": `Bearer ${getCookie('jwt')}`,
-    //                             },
-    //                             body: result
-    //                         });
-    
-    //                         if (response.ok) {
-    //                             console.log("success");
-    //                         } else {
-    //                             console.log("response", response);
-    //                             const errorData = await response.json();
-    //                             console.log("errorData", errorData);
-    //                         }
-    //                         navigateTo("/match_schedules");
-    //                     });
+    //                     this._nextButton.addEventListener("click", (event) => {
+    //                         navigateTo("/main");
+    //                     })
     //                 }
     //             }
     //             console.log(this._player2Score);
@@ -355,145 +360,8 @@ export class PongGame {
     //             console.log("ball vec:", this._vec);
     //             this.pauseGame(1000);
     //         }
-            
-    //     } else if (collisionPoint2) {
-    //         if (Math.abs(collisionPoint2.x - this._panel2.position.x) < 4 && Math.abs(collisionPoint2.y - this._panel2.position.y) < 4 && this._flag == false) {
-    //             this._flag = true;
-    //             console.log('panel2 충돌 발생');
-    
-    //             this._ball.position.copy(collisionPoint2);
-    //             this._ball.position.add(this._panel2Plane.normal.clone().multiplyScalar(2)); //충돌시 반지름만큼 좌표를 더해준다
-    
-    //             this._angularVec.sub(this._panel2Vec.multiplyScalar(0.01));
-    //             this.updateVector(this._panel2Plane);
-    
-    //             if (collisionPoint2.x < this._panel2.x) {
-    //                 this._vec.x += 1;
-    //             }
-    //             if (collisionPoint2.x > this._panel2.x) {
-    //                 this._vec.x -= 1;
-    //             }
-    //             if (collisionPoint2.y < this._panel2.y) {
-    //                 this._vec.y += 1;
-    //             }
-    //             if (collisionPoint2.y > this._panel2.y) {
-    //                 this._vec.y -= 1;
-    //             }
-    
-    //             console.log('충돌 지점:', collisionPoint2);
-    //         } else {
-    //             console.log("player1 win");
-    //             document.querySelector("#player1_score").innerHTML = ++this._player1Score;
-    //             if (this._player1Score === 1){
-    //                 this._vec.set(0, 0, 0);
-    //                 this._angularVec.set(0, 0, 0.1);
-    //                 if (this._mode === "TOURNAMENT") {
-    //                     document.querySelector("#winner1").innerHTML = `
-    //                     <div style="font-size: 100px; line-height: 100px; color: white;">WIN!</div>
-    //                     <button id="next_button" type="button" style="
-    //                         background-color: black;
-    //                         width: 328px; height: 199px;
-    //                         margin-left: 20px;" 
-    //                         class="blue_outline">
-    //                         <span style="font-size: 50px; line-height: 50px;">
-    //                             >>NEXT
-    //                         </span>
-    //                         <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
-    //                     </button>`;
-    //                     const result = {
-    //                         "player1Nick": this._player1Nick,
-    //                         "player2Nick": this._player2Nick,
-    //                         "player1Score" : this._player1Score,
-    //                         "player2Score" : this._player2Score,
-    //                         "mode": "TOURNAMENT"
-    //                     }  
-    //                     localStorage.setItem(`game${localStorage.getItem("match_count")}`, JSON.stringify(result));
-    //                     localStorage.setItem("match_count", localStorage.getItem("match_count") + 1);
-    //                     this._nextButton = document.querySelector("#next_button");
-    //                     this._nextButton.addEventListener("click", (event) => {
-    //                         console.log("test");
-    //                         navigateTo("/match_schedules");
-    //                     });
-    //                 } else { // 1vs1
-    //                     document.querySelector("#winner1").innerHTML = `
-    //                     <div style="font-size: 100px; line-height: 100px; color: white;">WIN!</div>
-    //                     <button id="next_button" type="button" style="
-    //                         background-color: black;
-    //                         width: 328px; height: 199px;
-    //                         margin-left: 20px;" 
-    //                         class="blue_outline">
-    //                         <span style="font-size: 50px; line-height: 50px;">
-    //                             1 ON 1
-    //                             AGAIN?
-    //                         </span>
-    //                         <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
-    //                     </button>`;
-    //                     console.log(JSON.stringify({
-    //                         "player1Nick": "1up",
-    //                         "player2Nick": "2up",
-    //                         "player1Score" : this._player1Score,
-    //                         "player2Score" : this._player2Score,
-    //                         "mode": "1VS1"
-    //                     }));
-    //                     this._nextButton = document.querySelector("#next_button");
-    //                     this._nextButton.addEventListener("click", async (event) => {
-    //                         const response = await fetch("http://localhost:8000/game-management/game", {
-    //                             method: "POST",
-    //                             headers: {
-    //                                 "Content-Type": "application/json",
-    //                                 "Authorization": `Bearer ${getCookie('jwt')}`,
-    //                             },
-    //                             body: JSON.stringify({
-    //                                 "player1Nick": "1up",
-    //                                 "player2Nick": "2up",
-    //                                 "player1Score" : this._player1Score,
-    //                                 "player2Score" : this._player2Score,
-    //                                 "mode": "1VS1"
-    //                             })
-    //                         });
-    
-    //                         if (response.ok) {
-    //                             console.log("success");
-    //                         } else {
-    //                             console.log("response", response);
-    //                             const errorData = await response.json();
-    //                             console.log("errorData", errorData);
-    //                         }
-    //                         navigateTo("/match_schedules");
-    //                     });
-    //                 }
-    //             }
-    //             console.log(this._player1Score);
-    //             this._ball.position.x = 0;
-    //             this._ball.position.y = 0;
-    //             this._ball.position.z = 0;
-    //             console.log("ball vec:", this._vec);
-    //             this.pauseGame(1000);
-    //         }
     //     }
     // }
-    
-    async fetchResult() {
-        const response = await fetch("http://localhost:8000/game-management/game", {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${getCookie('jwt')}`,
-            },
-            body: JSON.stringify({
-                "player1Nick": "1up",
-                "player2Nick": "2up",
-                "player1Score" : this._player1Score,
-                "player2Score" : this._player2Score,
-                "mode": "1VS1"
-            })
-            });
-            if (response.ok) {
-                console.log("success");
-            }
-            else {
-                console.log(await response.json());
-            }
-    }
 
     collisionWithGoalArea() { //TODO: 문제발생지점
         const collisionPoint1 = this.getCollisionPointWithPlane(this._panel1Plane);
@@ -528,8 +396,8 @@ export class PongGame {
             }
             else {
                 console.log("player2 win");
-                document.querySelector("#player2_score").innerHTML = ++this._player2Score;
-                if (this._player2Score === 1){
+                document.querySelector("#player2_score").innerHTML = ++this._player2.Score;
+                if (this._player2.Score === 1){
                     this._vec.set(0, 0, 0);
                     this._angularVec.set(0, 0, 0.1);
                     if (this._mode === "TOURNAMENT") {
@@ -546,10 +414,10 @@ export class PongGame {
                             <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
                         </button>`;
                         this._result = {
-                            "player1Nick": this._player1Nick,
-                            "player2Nick": this._player2Nick,
-                            "player1Score" : this._player1Score,
-                            "player2Score" : this._player2Score,
+                            "player1Nick": this._player1.Nick,
+                            "player2Nick": this._player2.Nick,
+                            "player1Score" : this._player1.Score,
+                            "player2Score" : this._player2.Score,
                             "mode": "TOURNAMENT"
                         }  
                         localStorage.setItem(`game${localStorage.getItem("match_count")}`, JSON.stringify(this._result));
@@ -582,7 +450,7 @@ export class PongGame {
                         })
                     }
                 }
-                console.log(this._player2Score);
+                console.log(this._player2.Score);
                 this._ball.position.x = 0;
                 this._ball.position.y = 0;
                 this._ball.position.z = 0;
@@ -638,10 +506,10 @@ export class PongGame {
                             <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
                         </button>`;
                         const result = {
-                            "player1Nick": this._player1Nick,
-                            "player2Nick": this._player2Nick,
-                            "player1Score" : this._player1Score,
-                            "player2Score" : this._player2Score,
+                            "player1Nick": this._player1.Nick,
+                            "player2Nick": this._player2.Nick,
+                            "player1Score" : this._player1.Score,
+                            "player2Score" : this._player2.Score,
                             "mode": "TOURNAMENT"
                         }  
                         localStorage.setItem(`game${localStorage.getItem("match_count")}`, JSON.stringify(result));
