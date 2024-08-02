@@ -1,5 +1,5 @@
 import AbstractView from "./AbstractView.js";
-import { navigateTo, getCookie } from "../../router.js";
+import { navigateTo, baseUrl } from "../../router.js";
 
 export default class extends AbstractView {
     constructor() {
@@ -277,12 +277,10 @@ export default class extends AbstractView {
                     "mode": "TOURNAMENT"
                 },
             };
-            
-            const response = await fetch("http://localhost:8000/game-management/tournament", {
+            console.log(JSON.stringify(game_result));
+            const response = await fetch(baseUrl + "/api/game-management/tournament", {
                 method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${getCookie('jwt')}`,
-                },
+                credentials: 'include',
                 body: JSON.stringify(game_result),
             });
 
@@ -293,6 +291,7 @@ export default class extends AbstractView {
             else
             {
                 console.log("status:", response.status);
+                console.log(await response.json());
             }
         }
 
@@ -403,9 +402,10 @@ export default class extends AbstractView {
 
                 // 라우팅 이벤트 추가
                 // 비동기 이슈?
-                if (event.target.href === "http://localhost:5500/main") {
-                    navigateTo("/main");
-                }
+                const url = new URL(event.target.href);
+                const pathname = url.pathname;
+
+                navigateTo(pathname);
             });
 
             Button.addEventListener("mouseenter", (event) => {

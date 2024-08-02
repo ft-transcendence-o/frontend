@@ -1,5 +1,5 @@
 import AbstractView from "./AbstractView.js";
-import { navigateTo, getCookie } from "../../router.js";
+import { navigateTo, baseUrl } from "../../router.js";
 
 export default class extends AbstractView {
     constructor() {
@@ -234,9 +234,10 @@ export default class extends AbstractView {
 
                 // 라우팅 이벤트 추가
                 // 비동기 이슈?
-                if (event.target.href === "http://localhost:5500/main") {
-                    navigateTo("/main");
-                }
+                const url = new URL(event.target.href);
+                const pathname = url.pathname;
+
+                navigateTo(pathname);
             });
 
             Button.addEventListener("mouseenter", (event) => {
@@ -253,12 +254,10 @@ export default class extends AbstractView {
         });
 
         // 요청 할 페이지를 localStorage에서 관리하는식으로 시도
-        const response = await fetch(`http://localhost:8000/game-management/game?page=${localStorage.getItem("record_page")}`, {
+        // localStorage 변조에 대응하기 위해 미리 변수에 담아두고 리터럴 값을 이벤트 리스너로 넣어준다
+        const response = await fetch(baseUrl + `/api/game-management/game?page=${localStorage.getItem("record_page")}`, {
             method: "GET",
-            headers: {
-                "Authorization": `Bearer ${getCookie('jwt')}`,
-                'Content-Type': 'application/json',
-            },
+            credentials: 'include',
         });
         if (response.ok) {
             // 대전기록들을 table에 채워넣는다
@@ -276,7 +275,6 @@ export default class extends AbstractView {
             this.create_page_buttons(page);
 
             // 클릭 가능한 요소들에 이벤트 리스너를 등록한다
-            const baseUrl = "http://localhost:5500/";
             const Page_Buttons = document.querySelectorAll(".page-link");
 
             console.log(Page_Buttons);
@@ -290,7 +288,8 @@ export default class extends AbstractView {
                     // 라우팅 이벤트 추가
 
                     // page button 처리
-                    const button_href = event.target.href.split(baseUrl)[1];
+                    const url = new URL(event.target.href);
+                    const button_href = url.pathname;
                     const page_num = Number(button_href);
                     
                     // 숫자가 아닌경우 예외처리

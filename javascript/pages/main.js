@@ -1,4 +1,4 @@
-import { navigateTo } from "../../router.js";
+import { navigateTo, baseUrl } from "../../router.js";
 import AbstractView from "./AbstractView.js";
 
 function getCookie(name) {
@@ -170,12 +170,11 @@ export default class extends AbstractView {
 
             Button.addEventListener("click", (event) => {
                 event.preventDefault();
-                console.log(event.target.href);
 
-                if (event.target.href == "http://localhost:5500/match_record") {
-					localStorage.setItem("record_page", 1);
-					navigateTo("/match_record");
-				}
+                const url = new URL(event.target.href);
+                const pathname = url.pathname;
+
+                navigateTo(pathname);
             });
 
             Button.addEventListener("mouseenter", (event) => {
@@ -201,11 +200,9 @@ export default class extends AbstractView {
             }
 
             try {
-                const response = await fetch("http://localhost:8000/user-management/token", {
+                const response = await fetch(baseUrl + "/api/user-management/token", {
                     method: "DELETE",
-                    headers: {
-                        "Authorization": `Bearer ${jwt}`
-                    },
+                    credentials: 'include',
                 });
                 if (response.ok) {
                     localStorage.removeItem('jwt');
@@ -231,12 +228,9 @@ export default class extends AbstractView {
         // backend api를 통해 유저의 이름을 받아와서 요소에 집어넣는다
         const User_Name_Holder = document.querySelector("#top_item").querySelector("#user_name");
 
-        const response = await fetch("http://localhost:8000/user-management/info", {
+        const response = await fetch(baseUrl + "/api/user-management/info", {
             method: "GET",
-            headers: {
-                "Authorization": `Bearer ${getCookie('jwt')}`,
-                'Content-Type': 'application/json',
-            },
+            credentials: 'include',
         });
         if (response.ok) {
             const jsonResponse = await response.json();

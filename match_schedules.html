@@ -282,11 +282,9 @@
                 },
             };
             
-            const response = await fetch("http://localhost:8000/game-management/tournament", {
+            const response = await fetch("https://127.0.0.1/api/game-management/tournament", {
                 method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${getCookie('jwt')}`,
-                },
+                credentials: 'include',
                 body: JSON.stringify(game_result),
             });
 
