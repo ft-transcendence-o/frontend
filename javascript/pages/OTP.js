@@ -135,7 +135,7 @@ export default class extends AbstractView {
                         body: JSON.stringify({ "input_password": OTPNumber })
                     });
                     console.log("here");
-                    console.log(await response.json());
+                    // console.log(await response.json());
 
                     if (response.ok) {
                         // Set JWT as a cookie

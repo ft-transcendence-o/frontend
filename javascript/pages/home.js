@@ -105,7 +105,7 @@ export default class extends AbstractView {
             event.preventDefault(); // 기본 동작 방지
             // 사용자를 42 인증 페이지로 리다이렉트
             // query parameter(?다음) 부분을 환경변수로 대체해야 한다.
-            window.location.href = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-13da844ab09c30f81a4aac6f7f77bd34bfa89523fd00822876ca6c9ab86ac14f&redirect_uri=http%3A%2F%2F127.0.0.1%3A5500&response_type=code";
+            window.location.href = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-a5bdb34e3eb05da47e39b77dbaefa7cfff6e93aa4dc1cf67331530d37de17cd9&redirect_uri=http%3A%2F%2Flocalhost%3A5500&response_type=code";
         }
             
             const login_button = document.querySelector(".login");
@@ -160,6 +160,7 @@ export default class extends AbstractView {
                             navigateTo('/main');
                         }
                     } else {
+                        console.log(response.json());
                         console.log("error");
                     }
                 } catch (error) {
