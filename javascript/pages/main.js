@@ -172,7 +172,7 @@ export default class extends AbstractView {
                 event.preventDefault();
                 console.log(event.target.href);
 
-                if (event.target.href == "http://127.0.0.1:5500/match_record") {
+                if (event.target.href == "http://localhost:5500/match_record") {
 					localStorage.setItem("record_page", 1);
 					navigateTo("/match_record");
 				}
