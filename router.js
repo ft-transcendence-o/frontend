@@ -6,7 +6,8 @@ import OTP from "./javascript/pages/OTP.js"
 import main from "./javascript/pages/main.js"
 import match_record from "./javascript/pages/match_record.js"
 import nickname from "./javascript/pages/nickname.js"
-// import match_schedules from "./javascript/pages/match_schedules.js"
+import match_schedules from "./javascript/pages/match_schedules.js"
+import PongGame from "./javascript/pages/game.js"
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -21,6 +22,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     router();
 })
+
+export function getCookie(name) {
+    let matches = document.cookie.match(new RegExp(
+        "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+    ));
+    return matches ? decodeURIComponent(matches[1]) : undefined;
+}
 
 export const navigateTo = (url) => {
     history.pushState(null, null, url);
@@ -37,7 +45,8 @@ export const router = async () => {
         { path: "/main", view: main },
         { path: "/match_record", view: match_record },
         { path: "/nickname", view: nickname },
-        // { path: "/match_schedules", view: match_schedules},
+        { path: "/match_schedules", view: match_schedules},
+        { path: "/game", view: PongGame},
     ];
 
     const potentialMatches = routes.map((route) => {

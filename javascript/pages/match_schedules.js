@@ -1,154 +1,152 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href="./bootstrap-5.3.3-dist/css/bootstrap.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="css/style.css">
-	<title>Match Schedules</title>
-</head>
-<body>
-    <div class="container-fluid d-flex flex-column align-items-center">
-		<div style="background-color: black; position: absolute; width: 1440px; height: 1024px;">
+import AbstractView from "./AbstractView.js";
+import { navigateTo, getCookie } from "../../router.js";
 
-			<!-- backgound outline -->
-			<div class="blue_outline" style="background-color: black; position: absolute; width: 1408px; height: 992px; top: 16px; left: 16px; z-index: 1;"></div>
-			
-			<!-- top item -->
-			<div id="top_item" class="PS2P_font" style="position: relative; z-index: 2; margin-top: 50px; font-size: 30px; margin-top: 50px;">
+export default class extends AbstractView {
+    constructor() {
+        super();
+        this.setTitle("Match Schedules");
+    }
 
-				<!-- nav menu buttons -->
-				<ul class="nav justify-content-end">
-					<li style="margin-right: 40px;">
-						<a class="btn btn-primary" href="/main">>MAIN
-                            <p style="font-size: 20px; margin-top: -12px;">(ESC)</p>
-                        </a>
-					</li>
-				</ul>
+    /**
+     * @returns app div에 그려낼 해당 view의 html을 반환합니다.
+     */
+    async getHtml() {
+        return `
+            <div class="container-fluid d-flex flex-column align-items-center">
+            <div style="background-color: black; position: absolute; width: 1440px; height: 1024px;">
 
-			</div>
+                <!-- backgound outline -->
+                <div class="blue_outline" style="background-color: black; position: absolute; width: 1408px; height: 992px; top: 16px; left: 16px; z-index: 1;"></div>
+                
+                <!-- top item -->
+                <div id="top_item" class="PS2P_font" style="position: relative; z-index: 2; margin-top: 50px; font-size: 30px; margin-top: 50px;">
 
-            <!-- match schedules -->
-            <div class="PS2P_font" style="position: relative; z-index: 1; top: -50px;">
+                    <!-- nav menu buttons -->
+                    <ul class="nav justify-content-end">
+                        <li style="margin-right: 40px;">
+                            <a class="btn btn-primary" href="/main">>MAIN
+                                <p style="font-size: 20px; margin-top: -12px;">(ESC)</p>
+                            </a>
+                        </li>
+                    </ul>
 
-                <!-- TOURNAMENT text -->
-                <p style="text-align: center; font-size: 30px; margin-bottom: 0px;">TOURNAMENT</p>
-
-                <!-- trophy -->
-                <div style="margin-top: -23px;">
-                    <img src="./image/trophy.png" alt="" class="mx-auto d-block">
                 </div>
 
-                <!-- 1. boder left right 노가다 -->
+                <!-- match schedules -->
+                <div class="PS2P_font" style="position: relative; z-index: 1; top: -50px;">
 
-                <!-- 2. svg 노가다 -->
-                <div style="height: 360px;">
-                    <svg width="1040" height="360" class="mx-auto d-block">
+                    <!-- TOURNAMENT text -->
+                    <p style="text-align: center; font-size: 30px; margin-bottom: 0px;">TOURNAMENT</p>
 
-                        <!-- 모두 가운데 정렬되어 있기 때문에 선의 위치도 크기 / 2 로 계산한다 -->
+                    <!-- trophy -->
+                    <div style="margin-top: -23px;">
+                        <img src="./image/trophy.png" alt="" class="mx-auto d-block">
+                    </div>
 
-                        <!-- 1-1 -->
-                        <line class="line_1-1" x1="7" y1="276" x2="7" y2="360" style="stroke: white; stroke-width: 8;"/>
-                        <line class="line_1-1" x1="3" y1="276" x2="181" y2="276" style="stroke: white; stroke-width: 8;"/>
-                        <!-- 1-2 -->
-                        <line class="line_1-2" x1="360" y1="276" x2="360" y2="360" style="stroke: white; stroke-width: 8;"/>
-                        <line class="line_1-2" x1="189" y1="276" x2="364" y2="276" style="stroke: white; stroke-width: 8;"/>
-                        <!-- 1-common -->
-                        <line class="line_1-common" x1="185" y1="76" x2="185" y2="280" style="stroke: white; stroke-width: 8;"/>
+                    <!-- 1. boder left right 노가다 -->
 
-                        <!-- 2-1 -->
-                        <line class="line_2-1" x1="666" y1="276" x2="666" y2="360" style="stroke: white; stroke-width: 8;"/>
-                        <line class="line_2-1" x1="662" y1="276" x2="841" y2="276" style="stroke: white; stroke-width: 8;"/>
-                        <!-- 2-2 -->
-                        <line class="line_2-2" x1="1015" y1="276" x2="1015" y2="360" style="stroke: white; stroke-width: 8;"/>
-                        <line class="line_2-2" x1="849" y1="276" x2="1019" y2="276" style="stroke: white; stroke-width: 8;"/>
-                        <!-- 2-common -->
-                        <line class="line_2-common" x1="845" y1="76" x2="845" y2="280" style="stroke: white; stroke-width: 8;"/>
-                        
-                        <!-- 3-1 -->
-                        <line class="line_3-1" x1="189" y1="80" x2="516" y2="80" style="stroke: white; stroke-width: 8;"/>
-                        <!-- 3-2 -->
-                        <line class="line_3-2" x1="522" y1="80" x2="841" y2="80" style="stroke: white; stroke-width: 8;"/>
+                    <!-- 2. svg 노가다 -->
+                    <div style="height: 360px;">
+                        <svg width="1040" height="360" class="mx-auto d-block">
 
-                        <!-- final -->
-                        <line class="line_3-common" x1="519" y1="0" x2="519" y2="84" style="stroke: white; stroke-width: 8;"/>
+                            <!-- 모두 가운데 정렬되어 있기 때문에 선의 위치도 크기 / 2 로 계산한다 -->
 
-                    </svg>
+                            <!-- 1-1 -->
+                            <line class="line_1-1" x1="7" y1="276" x2="7" y2="360" style="stroke: white; stroke-width: 8;"/>
+                            <line class="line_1-1" x1="3" y1="276" x2="181" y2="276" style="stroke: white; stroke-width: 8;"/>
+                            <!-- 1-2 -->
+                            <line class="line_1-2" x1="360" y1="276" x2="360" y2="360" style="stroke: white; stroke-width: 8;"/>
+                            <line class="line_1-2" x1="189" y1="276" x2="364" y2="276" style="stroke: white; stroke-width: 8;"/>
+                            <!-- 1-common -->
+                            <line class="line_1-common" x1="185" y1="76" x2="185" y2="280" style="stroke: white; stroke-width: 8;"/>
 
-                    <span class="match_text" id="match_1" style="font-size: 30px; line-height: 30px; position: absolute; top: 650px; left: 310px; text-align: center; color: #14FF00;">
-                        MATCH<br>
-                        NO.1
-                    </span>
-                    <span class="match_text" id="match_2" style="font-size: 30px; line-height: 30px; position: absolute; top: 650px; left: 970px; text-align: center;">
-                        MATCH<br>
-                        NO.2
-                    </span>
-                    <span class="match_text" id="match_final" style="font-size: 30px; line-height: 30px; position: absolute; top: 334px; left: 646px; text-align: center; text-shadow:
+                            <!-- 2-1 -->
+                            <line class="line_2-1" x1="666" y1="276" x2="666" y2="360" style="stroke: white; stroke-width: 8;"/>
+                            <line class="line_2-1" x1="662" y1="276" x2="841" y2="276" style="stroke: white; stroke-width: 8;"/>
+                            <!-- 2-2 -->
+                            <line class="line_2-2" x1="1015" y1="276" x2="1015" y2="360" style="stroke: white; stroke-width: 8;"/>
+                            <line class="line_2-2" x1="849" y1="276" x2="1019" y2="276" style="stroke: white; stroke-width: 8;"/>
+                            <!-- 2-common -->
+                            <line class="line_2-common" x1="845" y1="76" x2="845" y2="280" style="stroke: white; stroke-width: 8;"/>
+                            
+                            <!-- 3-1 -->
+                            <line class="line_3-1" x1="189" y1="80" x2="516" y2="80" style="stroke: white; stroke-width: 8;"/>
+                            <!-- 3-2 -->
+                            <line class="line_3-2" x1="522" y1="80" x2="841" y2="80" style="stroke: white; stroke-width: 8;"/>
+
+                            <!-- final -->
+                            <line class="line_3-common" x1="519" y1="0" x2="519" y2="84" style="stroke: white; stroke-width: 8;"/>
+
+                        </svg>
+
+                        <span class="match_text" id="match_1" style="font-size: 30px; line-height: 30px; position: absolute; top: 650px; left: 310px; text-align: center; color: #14FF00;">
+                            MATCH<br>
+                            NO.1
+                        </span>
+                        <span class="match_text" id="match_2" style="font-size: 30px; line-height: 30px; position: absolute; top: 650px; left: 970px; text-align: center;">
+                            MATCH<br>
+                            NO.2
+                        </span>
+                        <span class="match_text" id="match_final" style="font-size: 30px; line-height: 30px; position: absolute; top: 334px; left: 646px; text-align: center; text-shadow:
+                        -1px -1px 0 #000000,  
+                        1px -1px 0 #000000,
+                        -1px 1px 0 #000000,
+                        1px 1px 0 #000000;">
+                            FINAL<br>
+                            MATCH
+                        </span>
+                    </div>
+
+                    <!-- ghost -->
+                    <div class="container" style="padding-top: 4px;">
+                        <div class="row">
+                            <div class="col-2 player_info" style="margin-left: 48px;">
+                                <img id="img_player1" class="mx-auto d-block" src="./image/ghost_blue.png" style="width: 100px; height: 97.8px;" alt="">
+                                <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player1</p>
+                            </div>
+                            <div class="col-2 player_info" style="margin-left: 133px;">
+                                <img id="img_player2" class="mx-auto d-block" src="./image/ghost_red.png" style="width: 100px; height: 97.8px;" alt="">
+                                <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player2</p>
+                            </div>
+                            <div class="col-2 player_info" style="margin-left: 86px;">
+                                <img id="img_player3" class="mx-auto d-block" src="./image/ghost_pink.png" style="width: 100px; height: 97.8px;" alt="">
+                                <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player3</p>
+                            </div>
+                            <div class="col-2 player_info" style="margin-left: 129px;">
+                                <img id="img_player4" class="mx-auto d-block" src="./image/ghost_orange.png" style="width: 100px; height: 97.8px;" alt="">
+                                <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player4</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- center button -->
+                    <div class="PS2P_font center_button blue_outline" style="position: absolute; width: 328px; height: 161.88px; max-width: 328px; max-height: 161.88px; top: 420px; left: 550px; display: flex; flex-direction: column; justify-content: center; cursor: pointer;">
+                        <!-- 세로로 가운데 정렬 -->
+                        <p style="font-size: 30px; margin-bottom: 0px; text-align: center; line-height: 34px;">START!</p>
+                        <p style="font-size: 20px; margin-bottom: 0px; text-align: center;">(ENTER)</p>
+                    </div>
+
+                    <!-- Champion -->
+                    <!-- 모든 경기가 끝났을때만 조건부로 표시한다 -->
+                    <div id="champion_text" class="PS2P_font" style="position: absolute; display: none; top: 170px; left: 274px; font-size: 100px; text-shadow:
                     -1px -1px 0 #000000,  
                     1px -1px 0 #000000,
                     -1px 1px 0 #000000,
                     1px 1px 0 #000000;">
-                        FINAL<br>
-                        MATCH
-                    </span>
-                </div>
-
-                <!-- ghost -->
-                <div class="container" style="padding-top: 4px;">
-                    <div class="row">
-                        <div class="col-2 player_info" style="margin-left: 48px;">
-                            <img id="img_player1" class="mx-auto d-block" src="./image/ghost_blue.png" style="width: 100px; height: 97.8px;" alt="">
-                            <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player1</p>
-                        </div>
-                        <div class="col-2 player_info" style="margin-left: 133px;">
-                            <img id="img_player2" class="mx-auto d-block" src="./image/ghost_red.png" style="width: 100px; height: 97.8px;" alt="">
-                            <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player2</p>
-                        </div>
-                        <div class="col-2 player_info" style="margin-left: 86px;">
-                            <img id="img_player3" class="mx-auto d-block" src="./image/ghost_pink.png" style="width: 100px; height: 97.8px;" alt="">
-                            <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player3</p>
-                        </div>
-                        <div class="col-2 player_info" style="margin-left: 129px;">
-                            <img id="img_player4" class="mx-auto d-block" src="./image/ghost_orange.png" style="width: 100px; height: 97.8px;" alt="">
-                            <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player4</p>
-                        </div>
+                        CHAMPION!
                     </div>
-                </div>
 
-                <!-- center button -->
-                <div class="PS2P_font center_button blue_outline" style="position: absolute; width: 328px; height: 161.88px; max-width: 328px; max-height: 161.88px; top: 420px; left: 550px; display: flex; flex-direction: column; justify-content: center; cursor: pointer;">
-                    <!-- 세로로 가운데 정렬 -->
-                    <p style="font-size: 30px; margin-bottom: 0px; text-align: center; line-height: 34px;">START!</p>
-                    <p style="font-size: 20px; margin-bottom: 0px; text-align: center;">(ENTER)</p>
                 </div>
-
-                <!-- Champion -->
-                <!-- 모든 경기가 끝났을때만 조건부로 표시한다 -->
-                <div id="champion_text" class="PS2P_font" style="position: absolute; display: none; top: 170px; left: 274px; font-size: 100px; text-shadow:
-                -1px -1px 0 #000000,  
-                1px -1px 0 #000000,
-                -1px 1px 0 #000000,
-                1px 1px 0 #000000;">
-                    CHAMPION!
-                </div>
-
             </div>
         </div>
-    </div>
+        `;
+    }
 
-	<script>
-        // temp function
-        function getCookie(name) {
-            let matches = document.cookie.match(new RegExp(
-                "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
-            ));
-            return matches ? decodeURIComponent(matches[1]) : undefined;
-        }
-
-
+    async init() {
         // player nickname을 적용시킨다
         const player_infos = document.querySelectorAll(".player_info");
         const nicknames = JSON.parse(localStorage.getItem("nicknames"));
+        console.log(nicknames);
         for (let idx = 0; idx < player_infos.length; idx++)
         {
             player_infos[idx].querySelector("p").innerText = nicknames[idx];
@@ -311,7 +309,7 @@
 
                 // 라우팅 이벤트 추가
                 // 비동기 이슈?
-                if (event.target.href === "http://127.0.0.1:5500/main") {
+                if (event.target.href === "http://localhost:5500/main") {
                     navigateTo("/main");
                 }
             });
@@ -409,8 +407,5 @@
             Center_Button.classList.remove("white_stroke_2_5px");
             Center_Button.classList.remove("blue_hover");
         });
-
-	</script>
-    <script src="./bootstrap-5.3.3-dist/js/bootstrap.min.js"></script>
-</body>
-<html>
+    }
+}

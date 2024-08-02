@@ -40,7 +40,7 @@ export default class extends AbstractView {
                 <!-- nav menu buttons -->
                 <ul class="nav justify-content-end">
                     <li>
-                        <a class="btn btn-primary" href="/MATCH-RECORD">>MATCH-RECORD</a>
+                        <a class="btn btn-primary" href="/match_record">>MATCH-RECORD</a>
                     </li>
                     <li style="margin-left: 20px;">
                         <a class="btn btn-primary" href="/LANGUAGE">>LANGUAGE</a>
@@ -145,6 +145,10 @@ export default class extends AbstractView {
                 {
                     navigateTo("/nickname");
                 }
+                else if (Button.dataset.href === "/1ON1")
+                {
+                    navigateTo("/game");
+                }
             });
 
             Button.addEventListener("mouseenter", (event) => {
@@ -167,6 +171,11 @@ export default class extends AbstractView {
             Button.addEventListener("click", (event) => {
                 event.preventDefault();
                 console.log(event.target.href);
+
+                if (event.target.href == "http://localhost:5500/match_record") {
+					localStorage.setItem("record_page", 1);
+					navigateTo("/match_record");
+				}
             });
 
             Button.addEventListener("mouseenter", (event) => {
@@ -222,6 +231,25 @@ export default class extends AbstractView {
         // backend api를 통해 유저의 이름을 받아와서 요소에 집어넣는다
         const User_Name_Holder = document.querySelector("#top_item").querySelector("#user_name");
 
-        // User_Name_Holder.innerHTML = "TEST_ID";
+        const response = await fetch("http://localhost:8000/user-management/info", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${getCookie('jwt')}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        if (response.ok) {
+            const jsonResponse = await response.json();
+            console.log("success");
+            console.log(response);
+            console.log(jsonResponse);
+            console.log(jsonResponse['login']); //await으로 해결
+            User_Name_Holder.innerHTML = jsonResponse['login'];
+        } else {
+            const jsonResponse = await response.json();
+            console.log("Fail");
+            console.log(response);
+            console.log(jsonResponse);
+        }
     }
 }

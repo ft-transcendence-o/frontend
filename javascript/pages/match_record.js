@@ -1,5 +1,5 @@
 import AbstractView from "./AbstractView.js";
-import { navigateTo } from "../../router.js";
+import { navigateTo, getCookie } from "../../router.js";
 
 export default class extends AbstractView {
     constructor() {
@@ -92,18 +92,6 @@ export default class extends AbstractView {
             let records = "";
 
             games.forEach((game) => {
-                // 점수 파싱
-                let scoreParse;
-                // 점수의 저장형태는 추후 논의에 따라 변할 수 있음
-                if (game['mode'] === "1vs1")
-                {
-                    scoreParse = game['score'].split(':');
-                }
-                else
-                {
-                    scoreParse = game['score'].split('-');
-                }
-
                 // 날짜 파싱
                 const dateParse = game['created_at'].split('T')[0];
                 let dateDisplay = '';
@@ -171,12 +159,12 @@ export default class extends AbstractView {
 
                 const record = `
                 <tr>
-                    <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">${game['player1']}</td>
-                    <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">${game['player2']}</td>
+                    <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">${game['player1Nick']}</td>
+                    <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">${game['player2Nick']}</td>
                     <td style="background-color: transparent; color: white; border: none; padding: 5px 0px; display: flex;">
-                        <span style="display: inline-block; width: 40px; text-align: right;">${scoreParse[0]}</span>
+                        <span style="display: inline-block; width: 40px; text-align: right;">${game['player1Score']}</span>
                         <span>:</span>
-                        <span style="display: inline-block; width: 40px; text-align: left;">${scoreParse[1]}</span>
+                        <span style="display: inline-block; width: 40px; text-align: left;">${game['player2Score']}</span>
                     </td>
                     <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">${game['mode']}</td>
                     <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">${dateDisplay}</td>
@@ -246,7 +234,7 @@ export default class extends AbstractView {
 
                 // 라우팅 이벤트 추가
                 // 비동기 이슈?
-                if (event.target.href === "http://127.0.0.1:5500/main") {
+                if (event.target.href === "http://localhost:5500/main") {
                     navigateTo("/main");
                 }
             });
@@ -265,10 +253,10 @@ export default class extends AbstractView {
         });
 
         // 요청 할 페이지를 localStorage에서 관리하는식으로 시도
-        const response = await fetch(`http://10.19.218.225:8000/game-management/game?page=${localStorage.getItem("record_page")}`, {
+        const response = await fetch(`http://localhost:8000/game-management/game?page=${localStorage.getItem("record_page")}`, {
             method: "GET",
             headers: {
-                "Authorization": `Bearer ${localStorage.getItem('jwt')}`,
+                "Authorization": `Bearer ${getCookie('jwt')}`,
                 'Content-Type': 'application/json',
             },
         });
@@ -288,7 +276,7 @@ export default class extends AbstractView {
             this.create_page_buttons(page);
 
             // 클릭 가능한 요소들에 이벤트 리스너를 등록한다
-            const baseUrl = "http://127.0.0.1:5500/";
+            const baseUrl = "http://localhost:5500/";
             const Page_Buttons = document.querySelectorAll(".page-link");
 
             console.log(Page_Buttons);

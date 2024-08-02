@@ -156,6 +156,7 @@ export default class extends AbstractView {
                             navigateTo('/main');
                         }
                     } else {
+                        console.log(response.json());
                         console.log("error");
                     }
                 } catch (error) {
