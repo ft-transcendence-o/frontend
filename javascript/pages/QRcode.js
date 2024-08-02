@@ -18,27 +18,28 @@ export default class extends AbstractView {
 	
 		<div class="container-fluid d-flex flex-column align-items-center">
 			
-			<img class="backimg" src="./image/background_2.png" alt="">
+			<!-- blue outline background -->
+			<div class="row justify-content-center blue_outline" style="background-color: black; margin-top: 20px; position: absolute; width: 1408px; height: 992px; top: 0px; z-index: 1;">
 	
-			<!-- QR Code -->
-			<div id="qrcode" style="position:absolute; top: 171px; z-index: 1;">
-			</div>
-
-
-			<!-- 넥스트 Button -->
-			<button id="next_button" type="button" style="background-color: black; z-index: 4; margin-top: 600px; width: 280px; height: 139px;" class="blue_outline PS2P_font">
-				<span style="font-size: 50px; line-height: 50px;">NEXT</span>
-				<span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
-			</button>
-	
-	
-			<!-- footer -->
-			<div class="row" style="position:absolute; margin-top:824px; z-index: 3;">
-				<div class="col-12">
-					<p class="m-0 text-center text-white PS2P_font" style="padding-bottom: 34px; font-size: 30px;">SCAN THE QR-CODE</p>
-					<p class="m-0 text-center text-white PS2P_font" style="padding-bottom: 0px; font-size: 30px;">VIA GOOGLE OTP/AUTHENTICATOR</p>
+				<!-- QR Code -->
+				<div id="qrcode" class="d-flex justify-content-center" style="position:absolute; top: 171px; z-index: 2;">
 				</div>
-			</div>
+
+
+				<!-- 넥스트 Button -->
+				<button id="next_button" type="button" style="background-color: black; z-index: 4; margin-top: 600px; width: 280px; height: 139px;" class="blue_outline PS2P_font">
+					<span style="font-size: 50px; line-height: 50px;">NEXT</span>
+					<span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
+				</button>
+		
+		
+				<!-- footer -->
+				<div class="row" style="position:absolute; margin-top:824px; z-index: 3;">
+					<div class="col-12">
+						<p class="m-0 text-center text-white PS2P_font" style="padding-bottom: 34px; font-size: 30px;">SCAN THE QR-CODE</p>
+						<p class="m-0 text-center text-white PS2P_font" style="padding-bottom: 0px; font-size: 30px;">VIA GOOGLE OTP/AUTHENTICATOR</p>
+					</div>
+				</div>
 				
 		</div>
 	

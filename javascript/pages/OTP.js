@@ -14,13 +14,14 @@ export default class extends AbstractView {
         return `
 		<div class="container-fluid d-flex flex-column align-items-center">
         
-        <img class="backimg" src="./image/background_2.png" alt="">
+        <!-- blue outline background -->
+			<div class="row justify-content-center blue_outline" style="background-color: black; margin-top: 20px; position: absolute; width: 1408px; height: 992px; top: 0px; z-index: 1;">
 
         <!-- Start DEMO HTML (Use the following code into your project)-->
         <!-- <body class="container-fluid bg-body-tertiary d-block"> -->
     <div class="row justify-content-center">
         <div class="col-12">
-        <div class="card bg-black" style="z-index: 4; margin-top: 262px;">
+        <div class="card bg-black" style="z-index: 4; margin-top: 200px;">
             <div class="card-body p-5 text-center">
 
 				<div class="otp-field mb-4">
@@ -66,9 +67,9 @@ export default class extends AbstractView {
         const inputs = document.querySelectorAll(".otp-field > input");
         const invalid_input = document.querySelector("#invalid_input");
 
-        document.addEventListener("DOMContentLoaded", () => {
-            inputs[0].focus();
-        });
+        requestAnimationFrame(() => inputs[0].focus());
+
+        invalid_input.setAttribute("disabled", "disabled");
     
         inputs[0].addEventListener("paste", function (event) {
             event.preventDefault();
@@ -147,10 +148,10 @@ export default class extends AbstractView {
                         if (response.status === 400) { // n번 틀렸어
                             const jsonResponse = await response.json();
                             const attempts_number = jsonResponse['remain_attempts'];
-                            invalid_input.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 20px; z-index:4">Incorrect password. Remaining attempts: ${attempts_number}</p>`;
+                            invalid_input.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">Incorrect password. Remaining attempts: ${attempts_number}</p>`;
                         }
                         else if (response.status === 403) { // 잠겼습니다(15분)
-                            invalid_input.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 20px; z-index:4">Account is locked for 15 minutes.<br>try later</p>`;
+                            invalid_input.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">Account is locked for 15 minutes.<br>try later</p>`;
                         }
                         else {	// , 500 등 기타 에러
                             localStorage.removeItem('jwt');
