@@ -26,7 +26,7 @@ export default class extends AbstractView {
 				</div>
 
 
-				<!-- 넥스트 Button -->
+				<!-- NEXT Button -->
 				<button id="next_button" type="button" style="background-color: black; z-index: 4; margin-top: 600px; width: 280px; height: 139px;" class="blue_outline PS2P_font">
 					<span style="font-size: 50px; line-height: 50px;">NEXT</span>
 					<span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
@@ -51,23 +51,34 @@ export default class extends AbstractView {
 		/* 넥스트 Button */
         const Next_Button = document.querySelector("#next_button");
 
-        Next_Button.addEventListener("click", (event) => {
-            event.preventDefault();
-            console.log("next button clicked!");
-            navigateTo('/OTP');
-        });
+		const handleNextButtonClick = (event) => {
+			event.preventDefault();
+			console.log("next button clicked!");
+			navigateTo('/OTP');
+		};
 
-        Next_Button.addEventListener("mouseenter", () => {
-            Next_Button.classList.remove("blue_outline");
-            Next_Button.classList.add("green_outline");
-            Next_Button.classList.add("blue_font_white_stroke_3px");
-        });
+		const handleMouseEnter = () => {
+			Next_Button.classList.remove("blue_outline");
+			Next_Button.classList.add("green_outline");
+			Next_Button.classList.add("blue_font_white_stroke_3px");
+		};
 
-        Next_Button.addEventListener("mouseleave", () => {
-            Next_Button.classList.add("blue_outline");
-            Next_Button.classList.remove("green_outline");
-            Next_Button.classList.remove("blue_font_white_stroke_3px");
-        });
+		const handleMouseLeave = () => {
+			Next_Button.classList.add("blue_outline");
+			Next_Button.classList.remove("green_outline");
+			Next_Button.classList.remove("blue_font_white_stroke_3px");
+		};
+
+		const handleKeyDown = (event) => {
+			if (event.key === "Enter") {
+				Next_Button.click();
+			}
+		};
+
+		Next_Button.addEventListener("click", handleNextButtonClick);
+		Next_Button.addEventListener("mouseenter", handleMouseEnter);
+		Next_Button.addEventListener("mouseleave", handleMouseLeave);
+		document.addEventListener("keydown", handleKeyDown);
 
 		function generateQRcode(otpUri) {
 			const qrCodeDiv = document.getElementById('qrcode');
@@ -79,7 +90,7 @@ export default class extends AbstractView {
 				colorLight: "#000000", // QR 코드의 배경색
 				correctLevel: QRCode.CorrectLevel.H // 오류 수정 수준
 			});
-		console.log("generated");
+			console.log("generated");
 		};
 
 		console.log(localStorage.getItem('jwt'));
@@ -91,19 +102,35 @@ export default class extends AbstractView {
 						'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
                         'Content-Type': 'application/json',
                     },
-                });
-                if (response.ok) {
-                    const jsonResponse = await response.json();
-                    console.log("success");
-                    console.log(response);
-                    console.log(jsonResponse);
-                    console.log(jsonResponse['otpauth_uri']); //await으로 해결
-					generateQRcode(jsonResponse['otpauth_uri']);
-				} else {
-                    const jsonResponse = await response.json();
-					console.log("Fail");
-					console.log(response);
-					console.log(jsonResponse);
-				}
+        });
+		if (response.ok) {
+			const jsonResponse = await response.json();
+			console.log("success");
+			console.log(response);
+			console.log(jsonResponse);
+			console.log(jsonResponse['otpauth_uri']); //await으로 해결
+			generateQRcode(jsonResponse['otpauth_uri']);
+		} else {
+			const jsonResponse = await response.json();
+			console.log("Fail");
+			console.log(response);
+			console.log(jsonResponse);
+		}
+
+		// 제거할 이벤트 리스터들을 한곳에 저장
+		this.cleanup = () => {
+			Next_Button.removeEventListener("click", handleNextButtonClick);
+			Next_Button.removeEventListener("mouseenter", handleMouseEnter);
+			Next_Button.removeEventListener("mouseleave", handleMouseLeave);
+			document.removeEventListener("keydown", handleKeyDown);
+		};
 	}
+
+	destroy() {
+		if (this.cleanup) {
+			this.cleanup();
+		}
+	}
+
+
 }
