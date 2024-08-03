@@ -171,7 +171,7 @@ export default class extends AbstractView {
             Button.addEventListener("click", (event) => {
                 event.preventDefault();
 
-                const url = new URL(event.target.href);
+                const url = new URL(event.currentTarget.href);
                 const pathname = url.pathname;
 
                 navigateTo(pathname);

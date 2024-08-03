@@ -166,7 +166,7 @@ export default class extends AbstractView {
         let match1_winner;
         let match2_winner;
 
-        if (game1)
+        if (match_count > 1 && game1)
         {
             match_textes[0].style.color = "gray";
             match_textes[1].style.color = "#14FF00";
@@ -195,7 +195,7 @@ export default class extends AbstractView {
             line.style.stroke = "#14FF00";
         }
 
-        if (game2)
+        if (match_count > 2 && game2)
         {
             match_textes[1].style.color = "gray";
             match_textes[2].style.color = "#14FF00";
@@ -224,7 +224,7 @@ export default class extends AbstractView {
             line.style.stroke = "#14FF00";
         }
 
-        if (game3)
+        if (match_count > 3 && game3)
         {
             match_textes[2].style.color = "gray";
 
@@ -402,7 +402,7 @@ export default class extends AbstractView {
 
                 // 라우팅 이벤트 추가
                 // 비동기 이슈?
-                const url = new URL(event.target.href);
+                const url = new URL(event.currentTarget.href);
                 const pathname = url.pathname;
 
                 navigateTo(pathname);
