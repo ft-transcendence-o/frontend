@@ -100,19 +100,19 @@ export default class extends AbstractView {
                     <!-- ghost -->
                     <div class="container" style="padding-top: 4px;">
                         <div class="row">
-                            <div class="col-2 player_info" style="margin-left: 48px;">
+                            <div class="col-2 player_info" style="margin-left: 46px;">
                                 <img id="img_player1" class="mx-auto d-block" src="./image/ghost_blue.png" style="width: 100px; height: 97.8px;" alt="">
                                 <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player1</p>
                             </div>
-                            <div class="col-2 player_info" style="margin-left: 133px;">
+                            <div class="col-2 player_info" style="margin-left: 104px;">
                                 <img id="img_player2" class="mx-auto d-block" src="./image/ghost_red.png" style="width: 100px; height: 97.8px;" alt="">
                                 <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player2</p>
                             </div>
-                            <div class="col-2 player_info" style="margin-left: 86px;">
+                            <div class="col-2 player_info" style="margin-left: 58px;">
                                 <img id="img_player3" class="mx-auto d-block" src="./image/ghost_pink.png" style="width: 100px; height: 97.8px;" alt="">
                                 <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player3</p>
                             </div>
-                            <div class="col-2 player_info" style="margin-left: 129px;">
+                            <div class="col-2 player_info" style="margin-left: 102px;">
                                 <img id="img_player4" class="mx-auto d-block" src="./image/ghost_orange.png" style="width: 100px; height: 97.8px;" alt="">
                                 <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player4</p>
                             </div>
@@ -120,7 +120,7 @@ export default class extends AbstractView {
                     </div>
 
                     <!-- center button -->
-                    <div class="PS2P_font center_button blue_outline" style="position: absolute; width: 328px; height: 161.88px; max-width: 328px; max-height: 161.88px; top: 420px; left: 550px; display: flex; flex-direction: column; justify-content: center; cursor: pointer;">
+                    <div class="PS2P_font center_button blue_outline" style="position: absolute; width: 300px; height: 133.88px; max-width: 328px; max-height: 161.88px; top: 420px; left: 550px; display: flex; flex-direction: column; justify-content: center; cursor: pointer;">
                         <!-- 세로로 가운데 정렬 -->
                         <p style="font-size: 30px; margin-bottom: 0px; text-align: center; line-height: 34px;">START!</p>
                         <p style="font-size: 20px; margin-bottom: 0px; text-align: center;">(ENTER)</p>
