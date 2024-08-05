@@ -244,7 +244,8 @@ export class PongGame {
         // 생성자의 코드와 동일: 계속 렌더 메소드가 무한히 반복되어 호출되도록 만든다
     }
 
-    collisionWithSide() { //충돌이 발생한 plane을 반환한다
+    // 충돌이 발생한 plane(평면)을 반환한다
+    collisionWithSide() {
         for (const plane of this._planes){
             const collisionPoint = this.getCollisionPointWithPlane(plane);
             if (collisionPoint) {
@@ -256,6 +257,7 @@ export class PongGame {
         return null;
     }
     
+    // 게임 한판의 결과를 서버에 POST -> 현재는 1VS1에서만 사용중
     async fetchResult() {
         const response = await fetch(baseUrl + "/api/game-management/tournament", {
             method: "POST",
@@ -276,6 +278,7 @@ export class PongGame {
         }
     }
 
+    // 토너먼트가 끝나면 하는 동작들
     tournamentGameSet() {
         localStorage.setItem(`game${localStorage.getItem("match_count")}`, JSON.stringify({
             "player1Nick": this._player1.Nick,
@@ -304,31 +307,34 @@ export class PongGame {
         this.pauseGame(1000);
     }
 
-    collisionWithGoalArea() { //TODO: 문제발생지점
+    // GoalArea와 ball이 충돌했을때 동작하는 함수
+    collisionWithGoalArea() {
         const collisionPoint1 = this.getCollisionPointWithPlane(this._panel1Plane);
         const collisionPoint2 = this.getCollisionPointWithPlane(this._panel2Plane);
 
         if (collisionPoint1){
             if (Math.abs(collisionPoint1.x  - this._panel1.position.x) < 4 && Math.abs(collisionPoint1.y - this._panel1.position.y) < 4 && this._flag == true) {
-                this._flag = false;
+                this._flag = false; // 공의 방향이 올바른지를 판별하는 flag로 false인 경우만 panel1Plane과 충돌한다
                 console.log('panel1 충돌 발생');
-                // 구체 중심과 PlaneMesh의 경계 상자 내에서의 최소 거리 계산
 
-                this._ball.position.copy(collisionPoint1);
-                this._ball.position.add(this._panel1Plane.normal.clone().multiplyScalar(2));
+                // 공의 좌표를 보정하는 작업들
+                this._ball.position.copy(collisionPoint1); // 공의 좌표를 충돌한 벽의 좌표로 넣고
+                this._ball.position.add(this._panel1Plane.normal.clone().multiplyScalar(2)); // 충돌점에 반지름만큼 더한 좌표를 공의 중심좌표로 설정함으로써 좌표를 보정한다
 
+                // 공의 회전벡터와 공의 방향벡터를 업데이트한다
                 this._angularVec.sub(this._panel1Vec.multiplyScalar(0.01));
                 this.updateVector(this._panel1Plane);
                 this.updateVectorByPanel(this._panel1, collisionPoint1);
                 console.log('충돌 지점:', collisionPoint1);
             }
-            else {
+            else { // panel과 부딪히지 않은 경우
                 console.log("player2 win");
                 document.querySelector("#player2_score").innerHTML = ++this._player2.Score;
-                if (this._player2.Score === 1){
+                if (this._player2.Score === 1){ // 승리점수가 일정 점수에 도달하면 게임을 끝낸다
+                    // 공의 위치를 중간에 위치시키고, 회전을 준다
                     this._vec.set(0, 0, 0);
                     this._angularVec.set(0, 0, 0.1);
-                    if (this._mode === "TOURNAMENT") {
+                    if (this._mode === "TOURNAMENT") { // 토너먼트의 경우
                         document.querySelector("#winner2").innerHTML = `
                         <div style="font-size: 100px; line-height: 100px; color: white;">WIN!</div>
                         <button id="next_button" type="button" style="
@@ -343,7 +349,7 @@ export class PongGame {
                         </button>`;
                         this.tournamentGameSet();
                     }
-                    else { //TODO: 1vs1
+                    else { // 1VS1의 경우
                         document.querySelector("#winner2").innerHTML = `
                         <div style="font-size: 100px; line-height: 100px; color: white;">WIN!</div>
                         <button id="next_button" type="button" style="
@@ -357,9 +363,10 @@ export class PongGame {
                             </span>
                             <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
                         </button>`;
-                        /////////////////////
+                        // 결과를 backend에 POST
                         this.fetchResult();
-                        /////////////////////////////////////
+                        
+                        // 
                         document.querySelector("#next_button").addEventListener("click", (event) => {
                             this._isRunning = false;
                             navigateTo("/game");
