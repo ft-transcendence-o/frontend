@@ -2,16 +2,26 @@ import * as THREE from '../build/three.module.js';
 import { GLTFLoader } from '../build/GLTFLoader.js';
 import { navigateTo, baseUrl, router} from "../../router.js";
 
+
+/*
+게임 동작 순서
+1. PongGame클래스의 생성자 호출
+2. 카메라, 조명, 모델을 초기화, 렌더링
+3. 카운트 다운 후 게임시작
+4. update함수의 로직대로 모델들의 좌표와 이동방향을 계산하여 렌더링하고 게임을 진행함
+*/
 export class PongGame {
     // constructor : renderer, scene, 함수들 정의
     constructor() {
+        // 캔버스의 크기를 설정한다 // 백엔드에서는 신경쓰지말것
         const canvas1 = document.querySelector("#canvas1");
         const canvas2 = document.querySelector("#canvas2");
         this._divCanvas1 = canvas1;
         this._divCanvas2 = canvas2;
         this._canvasWidth = 712;
         this._canvasHeight = 700;
-        this._isRunning = true;
+        this._isRunning = true; //백엔드에서는 신경쓰지말것 //game페이지가 로드되면 클래스의 생성자를 호출해서 게임을 렌더링하는데 뒤로가기 버튼을 누르면 다른 페이지임에도 브라우저내부적으로는 게임이 진행되고 있으므로 이를 막기 구분하기 위한 플래그
+        this._keyState = {}; // 키보드 입력 상태를 추적하는 변수
 
         // game_status_var
         this._gameVar = document.querySelector("#game_var");
@@ -27,14 +37,13 @@ export class PongGame {
         document.querySelector("#player1_nick").innerHTML = this._player1.Nick;
         document.querySelector("#player2_nick").innerHTML = this._player2.Nick;
 
-        //게임에 사용할 변수들
-        this._vec = new THREE.Vector3(0, 0, 2); //공의 방향벡터 //0.5일때 터짐
+        //게임에 사용할 변수들 // 백엔드에서 관리해야하는 변수들
+        this._vec = new THREE.Vector3(0, 0, 2); // 공의 방향 벡터
         this._angularVec = new THREE.Vector3(0, 0, 0); //공의 각속도 회전 벡터
         this._flag = true; //공이 player1의 방향인지 player2의 방향인지 여부
-        this._keyState = {}; // 키보드 입력 상태를 추적하는 변수
-        this._panel1Vec = new THREE.Vector3(0, 0, 0);
-        this._panel2Vec = new THREE.Vector3(0, 0, 0);
-        this._isPaused = false;
+        this._panel1Vec = new THREE.Vector3(0, 0, 0); //panel1의 법선벡터
+        this._panel2Vec = new THREE.Vector3(0, 0, 0); //panel2의 법선벡터
+        this._isPaused = false; // 게임을 pause해야할때 사용하는 플래그변수 -> 카운트다운, 골먹힘 등
 
         let renderer1 = new THREE.WebGLRenderer({
             canvas: canvas1,
@@ -82,6 +91,7 @@ export class PongGame {
         // requestAnimationFrame(this.render.bind(this));
     }
 
+    // 카메라 설정
     _setupCamera() {
         const width = this._canvasWidth;
         const height = this._canvasHeight;
@@ -106,6 +116,7 @@ export class PongGame {
         this._camera2 = camera2;
     }
 
+    // 조명 설정 | 전체조명사용하도록 수정예정
     _setupLight() {
         const PLight = new THREE.PointLight();
         const ALight = new THREE.AmbientLight();
@@ -115,6 +126,7 @@ export class PongGame {
         this._scene.add(PLight, ALight);
     }
 
+    // 렌더링할 Mesh들을 정의하고 생성하는 함수
     _setupModel() {
         const loader = new GLTFLoader();
 
@@ -128,7 +140,7 @@ export class PongGame {
             let size = new THREE.Vector3();
             box.getSize(size);
             console.log("size: ", size);
-            this._radius = Math.max(size.x, size.y, size.z) / 2; // 반지름 계산
+            this._radius = Math.max(size.x, size.y, size.z) / 2; // 반지름 계산 하면 대충 2쯤 나옴
             console.log("radius : ", this._radius);
             this._ball.traverse((child) => {
                 if (child.isMesh) {
@@ -178,7 +190,7 @@ export class PongGame {
         this._scene.add(stadium);
         this._stadium = stadium;
 
-        // BoxGeometry의 6개 면 정의
+        // BoxGeometry의 4개 면 정의
         this._planes = [
             new THREE.Plane(new THREE.Vector3(1, 0, 0), this._stadium.geometry.parameters.width / 2),  // Left
             new THREE.Plane(new THREE.Vector3(-1, 0, 0), this._stadium.geometry.parameters.width / 2), // Right
@@ -233,6 +245,7 @@ export class PongGame {
         this._scene.add(panel2);
     }
 
+    // 렌더링함수
     render(time) { // 렌더링이 시작된 이후 경과된 밀리초를 받는다
         if (!this._isRunning)
             return ;
@@ -257,7 +270,7 @@ export class PongGame {
         return null;
     }
     
-    // 게임 한판의 결과를 서버에 POST -> 현재는 1VS1에서만 사용중
+    // 게임 한판의 결과를 서버에 POST -> 현재는 1VS1에서만 사용
     async fetchResult() {
         const response = await fetch(baseUrl + "/api/game-management/tournament", {
             method: "POST",
@@ -278,7 +291,7 @@ export class PongGame {
         }
     }
 
-    // 토너먼트가 끝나면 하는 동작들
+    // 토너먼트경기가 끝나면 하는 동작들
     tournamentGameSet() {
         localStorage.setItem(`game${localStorage.getItem("match_count")}`, JSON.stringify({
             "player1Nick": this._player1.Nick,
@@ -299,6 +312,7 @@ export class PongGame {
         this.pauseGame(1000);
     }
 
+    // 골먹히면 공의 위치를 초기화하고 1초정도 정지하도록 만든 함수
     setGame() {
         this._ball.position.x = 0;
         this._ball.position.y = 0;
@@ -309,17 +323,18 @@ export class PongGame {
 
     // GoalArea와 ball이 충돌했을때 동작하는 함수
     collisionWithGoalArea() {
-        const collisionPoint1 = this.getCollisionPointWithPlane(this._panel1Plane);
-        const collisionPoint2 = this.getCollisionPointWithPlane(this._panel2Plane);
+        const collisionPoint1 = this.getCollisionPointWithPlane(this._panel1Plane); //panel1이 위치한 평면과 공의 충돌좌표 //충돌하지 않았다면 null을 반환한다
+        const collisionPoint2 = this.getCollisionPointWithPlane(this._panel2Plane); //panel2가 위치한 평면과 공의 출돌좌표 //충돌하지 않았다면 null을 반환한다
 
         if (collisionPoint1){
+            // 충돌한 좌표가 panel내부에 있다면
             if (Math.abs(collisionPoint1.x  - this._panel1.position.x) < 4 && Math.abs(collisionPoint1.y - this._panel1.position.y) < 4 && this._flag == true) {
                 this._flag = false; // 공의 방향이 올바른지를 판별하는 flag로 false인 경우만 panel1Plane과 충돌한다
                 console.log('panel1 충돌 발생');
 
                 // 공의 좌표를 보정하는 작업들
                 this._ball.position.copy(collisionPoint1); // 공의 좌표를 충돌한 벽의 좌표로 넣고
-                this._ball.position.add(this._panel1Plane.normal.clone().multiplyScalar(2)); // 충돌점에 반지름만큼 더한 좌표를 공의 중심좌표로 설정함으로써 좌표를 보정한다
+                this._ball.position.add(this._panel1Plane.normal.clone().multiplyScalar(2)); // 충돌점에 반지름만큼 더한 좌표를 공의 중심좌표로 설정함으로써 좌표를 보정한다 //매우중요
 
                 // 공의 회전벡터와 공의 방향벡터를 업데이트한다
                 this._angularVec.sub(this._panel1Vec.multiplyScalar(0.01));
@@ -327,7 +342,8 @@ export class PongGame {
                 this.updateVectorByPanel(this._panel1, collisionPoint1);
                 console.log('충돌 지점:', collisionPoint1);
             }
-            else { // panel과 부딪히지 않은 경우
+            // panel과 부딪히지 않은 경우
+            else { 
                 console.log("player2 win");
                 document.querySelector("#player2_score").innerHTML = ++this._player2.Score;
                 if (this._player2.Score === 1){ // 승리점수가 일정 점수에 도달하면 게임을 끝낸다
@@ -365,8 +381,6 @@ export class PongGame {
                         </button>`;
                         // 결과를 backend에 POST
                         this.fetchResult();
-                        
-                        // 
                         document.querySelector("#next_button").addEventListener("click", (event) => {
                             this._isRunning = false;
                             navigateTo("/game");
@@ -376,6 +390,7 @@ export class PongGame {
                 this.setGame();
             }
         }
+        // panel2쪽 평면과 충돌한 경우
         else if (collisionPoint2){
             if (Math.abs(collisionPoint2.x  - this._panel2.position.x) < 4 && Math.abs(collisionPoint2.y - this._panel2.position.y) < 4 && this._flag == false) {
                 this._flag = true;
@@ -392,7 +407,7 @@ export class PongGame {
             else {
                 console.log("player1 win");
                 document.querySelector("#player1_score").innerHTML = ++(this._player1.Score);
-                if (this._player1.Score === 1){
+                if (this._player1.Score === 1){ // 일정점수에 도달하면 game set
                     this._vec.set(0, 0, 0);
                     this._angularVec.set(0, 0, 0.1);
                     if (this._mode === "TOURNAMENT") {
@@ -424,9 +439,8 @@ export class PongGame {
                             </span>
                             <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
                         </button>`;
-                        /////////////////////
+                        // post API
                         this.fetchResult();
-                        /////////////////////////////////////
                         document.querySelector("#next_button").addEventListener("click", (event) => { 
                             this._isRunning = false;
                             navigateTo("/game");
@@ -438,9 +452,10 @@ export class PongGame {
         }
     }
 
+    // 평면을 인자로 받아서 평면과 충돌했는지 여부를 판별하고, 충돌시 좌표를 (x, y, z)로 반환하는 함수
     getCollisionPointWithPlane(plane) {
         const ballCenter = this._ball.position; //공의 중심좌표
-        const ballRadius = this._radius; // 공의 반지름(대충 1.99999인데 2쯤임)
+        const ballRadius = this._radius; // 공의 반지름(1.99999인데 대충 2쯤임)
         const distanceToPlane = plane.distanceToPoint(ballCenter); // 공 중심으로부터 평면까지의 거리
 
         if (Math.abs(distanceToPlane) <= ballRadius) { // 공과 평면사이의 거리가 반지름보다 작거나 같으면
@@ -450,70 +465,73 @@ export class PongGame {
         return null; // 벽에 충돌하지 않으면 null반환
     }
 
+    // 평면과 구의 반지름을 받아서 각속도벡터를 업데이트하는 함수 -> 아래의 updateVector함수에서 사용한다
     updateAngularVelocity(plane, radius) {
-        const n = plane.normal.clone();
-        const w = this._angularVec.clone();
+        const n = plane.normal.clone(); // 충돌한 평면의 법선벡터
+        const w = this._angularVec.clone(); // 충돌 직전의 각속도 벡터
 
         // 충격 모멘트 계산 (τ = r × F)
-        const F = this._angularVec.clone().multiplyScalar(-0.1); //마찰력
-        // console.log("F: ", F);
-        const r = n.clone();
-        const tau = r.clone().cross(F);
-        // console.log("Torque (τ):", tau);
+        const F = this._angularVec.clone().multiplyScalar(-0.1); //마찰력 // TODO: 마찰계수는 -0.1로 설정했지만 게임성에 맞게 값을 변경해야한다
+        const r = n.clone(); // 충돌한 평면의 법선벡터
+        const tau = r.clone().cross(F); // 평면의 법선벡터와 마찰방향의 외적인 tau를 구한다
     
-        // 관성 모멘트 텐서의 역행렬 계산
+        // 관성 모멘트 텐서의 역행렬 계산 //3x3행렬
         const I_inv = new THREE.Matrix3().set(
             1 / (0.4 * radius * radius), 0, 0,
             0, 1 / (0.4 * radius * radius), 0,
             0, 0, 1 / (0.4 * radius * radius)
         );
-    
+
         // 각속도 변화 계산 (Δω = I^(-1) * τ)
         const delta_w = new THREE.Vector3().copy(tau).applyMatrix3(I_inv);
-        // console.log("Angular Velocity Change (Δω):", delta_w);
     
         // 최종 각속도 벡터 계산 (ω' = ω + Δω)
         const w_prime = w.clone().add(delta_w);
-        console.log("Final Angular Velocity (ω'):", w_prime);
         
+        // 회전속도가 계속 증가해서 너무 빠르지 않도록 제한하는 부분
         const spinSpeed = w_prime.length();
         if (spinSpeed > 0.1)
             w_prime.multiplyScalar(spinSpeed / 2);
-        // 각속도 벡터 업데이트
+
+        // 새로 구한 각속도 벡터 적용
         this._angularVec.copy(w_prime);
     }
 
+    // 평면을 인자로 받아서 방향벡터와 각속도 벡터를 갱신하는 함수
     updateVector(plane) {
-        //초기벡터 임시저장
+        // 이전벡터값을 임시저장
         const previousVec = this._vec.clone();
 
-        // ball의 방향벡터
-        // v = v - 2(v dot plane.normal)plane.normal + w cross (radius * plane.normal)
+        //충돌 후 공의 방향벡터 변환 공식 : vec = vec - 2(vec dot plane.normal)plane.normal + w cross (radius * plane.normal)
+
+        // 현재 벡터와 충돌한 평면의 법선벡터의 내적
         const dotProduct = this._vec.dot(plane.normal);
-        // console.log("Dot Product:", dotProduct);
 
+        // 평면의 법선 벡터와 위에서 구한 내적 * 2를 곱하여 반사 벡터를 구한다
         const reflection = plane.normal.clone().multiplyScalar(dotProduct * 2);
-        // console.log("Reflection:", reflection);
 
+        // 공의 각속도 벡터(회전벡터)와 충돌한 평면의 법선벡터*반지름의 외적으로 각속도 벡터(회전벡터)로 인한 방향벡터의 변화를 구한다 
         const angularComponent = this._angularVec.clone().cross(plane.normal.clone().multiplyScalar(this._radius));
-        // console.log("angularComponent:", angularComponent);
 
+        // 현재 벡터에 반사 벡터를 빼고, 각속도 벡터의 영향으로 인한 변화를 더한다
         this._vec.sub(reflection).add(angularComponent);
 
-        // ball의 각속도 벡터
+        // ball의 각속도 벡터를 갱신한다
         this.updateAngularVelocity(plane, this._radius, previousVec);
     }
 
+    // 공 튕기는걸 재미나게 바꾸기 위해 추가한 함수 // 없어도 좋고, 내용을 바꿔도 좋음
     updateVectorByPanel(panel, collisionPoint) {
         this._vec.x += (collisionPoint.x - panel.position.x) >> 4;
         this._vec.y += (collisionPoint.y - panel.position.y) >> 4;
         console.log(this._vec);
     }
 
-    update(time) { // TODO: 앞으로 동작에 대해서 함수를 들어서 정의해야함
+    // 렌더링마다 mesh들의 상태를 업데이트하는 함수
+    update(time) {
         if (this._ball && !this._isPaused) {
             // 공의 이동 업데이트를 작은 시간 간격으로 나누어 수행
-            const steps = 10; // 충돌 체크 빈도
+            const steps = 10; // 충돌 체크 빈도를 설정한다 // 충돌을 미세하게 감지하기 위해서 한번의 업데이트에 10번 수행한다
             for (let i = 0; i < steps; i++) {
                 const movement = new THREE.Vector3().copy(this._vec).multiplyScalar(0.4 / steps); //이게 뭐였더라
                 this._ball.position.add(movement);
@@ -522,14 +540,20 @@ export class PongGame {
                 this._ball.rotation.z += this._angularVec.z;
 
                 // 충돌 감지 및 처리
-                const collisionPlane = this.collisionWithSide();
+                const collisionPlane = this.collisionWithSide(); // 옆의 벽들과의 충돌을 감지
                 if (collisionPlane) {
                     this.updateVector(collisionPlane);
                     break; // 충돌이 발생하면 반복문을 중지합니다.
                 }
+
+                // 골구역과의 충돌을 감지
                 this.collisionWithGoalArea();
             }
+
+            // 사용자의 입력에 따라 panel의 좌표를 업데이트한다
             this.updatePanel();
+
+            // 공의 원근감을 알기 위한 사각형모양의 링의 z좌표 변경
             this._perspectiveLineEdges.position.z = this._ball.position.z;
         }
     }
