@@ -1,6 +1,13 @@
 import { navigateTo } from "../../router.js";
 import AbstractView from "./AbstractView.js";
 
+// 소독 Sanitize input
+function sanitizeInput(input) {
+    const element = document.createElement('div');
+    element.textContent = input;
+    return element.innerHTML;
+}
+
 export default class extends AbstractView {
     constructor() {
         super();
@@ -111,7 +118,7 @@ export default class extends AbstractView {
             let allFieldsFilled = true;
 
             document.querySelectorAll(".nickname-input-field").forEach(input => {
-                const trimmedValue = input.value.trim();
+                const trimmedValue = sanitizeInput(input.value.trim());
                 if (trimmedValue.length === 0) {
                     allFieldsFilled = false;
                     input.focus();
@@ -123,17 +130,17 @@ export default class extends AbstractView {
             });
 
             if (!allFieldsFilled) {
-                invalidInputElement.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">NO EMPTY INPUT FIELD!</p>`;
+                invalidInputElement.innerHTML = sanitizeInput(`<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">NO EMPTY INPUT FIELD!</p>`);
                 return;
             }
 
             const hasDuplicates = new Set(nicknames).size !== nicknames.length;
             if (hasDuplicates) {
-                invalidInputElement.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">NICKNAME DUPLICATION NOT ALLOWED!</p>`;
+                invalidInputElement.innerHTML = sanitizeInput(`<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">NICKNAME DUPLICATION NOT ALLOWED!</p>`);
                 return;
             }
 
-            let storedNicknames = [];
+            let storedNicknames = JSON.parse(localStorage.getItem('nicknames')) || [];
 
             storedNicknames = [...storedNicknames, ...nicknames].slice(-10);
 
