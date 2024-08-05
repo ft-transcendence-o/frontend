@@ -1,6 +1,13 @@
 import { navigateTo } from "../../router.js";
 import AbstractView from "./AbstractView.js";
 
+// 소독 Sanitize input
+function sanitizeInput(input) {
+    const element = document.createElement('div');
+    element.textContent = input;
+    return element.innerHTML;
+}
+
 export default class extends AbstractView {
     constructor() {
         super();
@@ -79,49 +86,41 @@ export default class extends AbstractView {
     }
 
     async init() {
-
         const mainButtons = document.querySelectorAll("#main_button a");
-
-        mainButtons.forEach((button) => {
-            button.addEventListener("click", (event) => {
-                event.preventDefault();
-                console.log(event.target.href);
-                navigateTo('/main');
-            });
-
-            button.addEventListener("mouseenter", () => {
-                button.classList.remove("blue_outline");
-                button.classList.add("green_outline");
-                button.classList.add("white_stroke_2_5px");
-            });
-
-            button.addEventListener("mouseleave", () => {
-                button.classList.add("blue_outline");
-                button.classList.remove("green_outline");
-                button.classList.remove("white_stroke_2_5px");
-            });
-        });
-
-        localStorage.removeItem('nicknames');
-
-        /* READY 버튼 */
         const readyButton = document.querySelector("#ready_button");
 
-        readyButton.addEventListener("click", (event) => {
+        const handleMainButtonClick = (event) => {
+            event.preventDefault();
+            console.log(event.target.href);
+            navigateTo('/main');
+        };
+
+        const handleMainMouseEnter = (event) => {
+            event.target.classList.remove("blue_outline");
+            event.target.classList.add("green_outline");
+            event.target.classList.add("white_stroke_2_5px");
+        };
+
+        const handleMainMouseLeave = (event) => {
+            event.target.classList.add("blue_outline");
+            event.target.classList.remove("green_outline");
+            event.target.classList.remove("white_stroke_2_5px");
+        };
+
+        const handleReadyButtonClick = (event) => {
             event.preventDefault();
             console.log("ready button clicked!");
 
             const invalidInputElement = document.getElementById("invalid_input");
             invalidInputElement.innerHTML = "";
 
-            // input filed에 입력된 닉네임을 변수 nicknames에 주워 담기
             const nicknames = [];
-            let allFlieldsFilled = true;
+            let allFieldsFilled = true;
 
             document.querySelectorAll(".nickname-input-field").forEach(input => {
-                const trimmedValue = input.value.trim();
+                const trimmedValue = sanitizeInput(input.value.trim());
                 if (trimmedValue.length === 0) {
-                    allFlieldsFilled = false;
+                    allFieldsFilled = false;
                     input.focus();
                     return;
                 }
@@ -130,68 +129,97 @@ export default class extends AbstractView {
                 }
             });
 
-            if (!allFlieldsFilled) {
-                invalidInputElement.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">NO EMPTY INPUT FIELD!</p>`;
+            if (!allFieldsFilled) {
+                invalidInputElement.innerHTML = sanitizeInput(`<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">NO EMPTY INPUT FIELD!</p>`);
                 return;
             }
 
-            // 중복 확인
             const hasDuplicates = new Set(nicknames).size !== nicknames.length;
             if (hasDuplicates) {
-                invalid_input.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">NICKNAME DUPLICAION NOT ALLOWED!</p>`;
+                invalidInputElement.innerHTML = sanitizeInput(`<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">NICKNAME DUPLICATION NOT ALLOWED!</p>`);
                 return;
             }
 
-            // 변수 storedNicknames를 선언하면서 localStorage에 저장
-            let storedNicknames = [];
+            let storedNicknames = JSON.parse(localStorage.getItem('nicknames')) || [];
 
-            // Add new nicknames and ensure no more than 10 entries
             storedNicknames = [...storedNicknames, ...nicknames].slice(-10);
 
-            // 닉네임을 local storage에 저장
             localStorage.setItem('nicknames', JSON.stringify(storedNicknames));
             localStorage.setItem('match_count', 1);
             localStorage.setItem('match_mode', 'TOURNAMENT');
 
-            navigateTo('/');
+            navigateTo('/match_schedules');
+        };
+
+        const handleReadyMouseEnter = (event) => {
+            event.target.classList.remove("blue_outline");
+            event.target.classList.add("green_outline");
+            event.target.classList.add("blue_font_white_stroke_3px");
+        };
+
+        const handleReadyMouseLeave = (event) => {
+            event.target.classList.add("blue_outline");
+            event.target.classList.remove("green_outline");
+            event.target.classList.remove("blue_font_white_stroke_3px");
+        };
+
+        mainButtons.forEach((button) => {
+            button.addEventListener("click", handleMainButtonClick);
+            button.addEventListener("mouseenter", handleMainMouseEnter);
+            button.addEventListener("mouseleave", handleMainMouseLeave);
         });
 
-        readyButton.addEventListener("mouseenter", () => {
-            readyButton.classList.remove("blue_outline");
-            readyButton.classList.add("green_outline");
-            readyButton.classList.add("blue_font_white_stroke_3px");
-        });
+        readyButton.addEventListener("click", handleReadyButtonClick);
+        readyButton.addEventListener("mouseenter", handleReadyMouseEnter);
+        readyButton.addEventListener("mouseleave", handleReadyMouseLeave);
 
-        readyButton.addEventListener("focus", () => {
-            readyButton.classList.remove("blue_outline");
-            readyButton.classList.add("green_outline");
-            readyButton.classList.add("blue_font_white_stroke_3px");
-        });
-
-        readyButton.addEventListener("mouseleave", () => {
-            readyButton.classList.add("blue_outline");
-            readyButton.classList.remove("green_outline");
-            readyButton.classList.remove("blue_font_white_stroke_3px");
-        });
-
-        // input fileds 엔터키로 다음 입력필드 이동 이벤트
-        const inputFields = document.querySelectorAll(".nickname-input-field");
-        inputFields.forEach((input, index) => {
-            input.addEventListener("keydown", (event) => {
-                if (event.key === "Enter") {
-                    event.preventDefault();
-                    const nextInput = inputFields[index + 1];
+        const handleKeyDown = (event) => {
+            if (event.key === "Enter") {
+                const currentInput = document.activeElement;
+                if (currentInput.classList.contains("nickname-input-field")) {
+                    const inputFields = Array.from(document.querySelectorAll(".nickname-input-field"));
+                    const currentIndex = inputFields.indexOf(currentInput);
+                    const nextInput = inputFields[currentIndex + 1];
                     if (nextInput) {
                         nextInput.focus();
                     } else {
-                        // 마지막 입력필드에서 엔터 누르면 레디 버튼에 focus 활성
-                        readyButton.focus();
+                        const allFieldsFilled = inputFields.every(input => input.value.trim() !== "");
+                        if (allFieldsFilled) {
+                            readyButton.click();
+                        } else {
+                            event.preventDefault();
+                        }
                     }
                 }
-            });
+            } else if (event.key === "Escape") {
+                event.preventDefault();
+                navigateTo('/main');
+            }
+        };
+
+        document.addEventListener("keydown", handleKeyDown);
+
+        requestAnimationFrame(() => {
+            const inputFields = document.querySelectorAll(".nickname-input-field");
+            inputFields[0].focus();
         });
 
-        // Ensure the first input field gets focused when the page is opened
-        requestAnimationFrame(() => inputFields[0].focus());
+        this.cleanup = () => {
+            mainButtons.forEach((button) => {
+                button.removeEventListener("click", handleMainButtonClick);
+                button.removeEventListener("mouseenter", handleMainMouseEnter);
+                button.removeEventListener("mouseleave", handleMainMouseLeave);
+            });
+            readyButton.removeEventListener("click", handleReadyButtonClick);
+            readyButton.removeEventListener("mouseenter", handleReadyMouseEnter);
+            readyButton.removeEventListener("mouseleave", handleReadyMouseLeave);
+            document.removeEventListener("keydown", handleKeyDown);
+        };
+    }
+
+    destroy() {
+        if (this.cleanup) {
+            this.cleanup();
+        }
     }
 }

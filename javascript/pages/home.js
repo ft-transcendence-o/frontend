@@ -1,5 +1,5 @@
 import AbstractView from "./AbstractView.js";
-import { navigateTo } from "../../router.js";
+import { navigateTo, baseUrl } from "../../router.js";
 
 function getCookie(name) {
     let matches = document.cookie.match(new RegExp(
@@ -7,6 +7,8 @@ function getCookie(name) {
     ));
     return matches ? decodeURIComponent(matches[1]) : undefined;
 }
+
+// 소독
 
 export default class extends AbstractView {
     constructor() {
@@ -101,7 +103,7 @@ export default class extends AbstractView {
             event.preventDefault(); // 기본 동작 방지
             // 사용자를 42 인증 페이지로 리다이렉트
             // query parameter(?다음) 부분을 환경변수로 대체해야 한다.
-            window.location.href = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-a5bdb34e3eb05da47e39b77dbaefa7cfff6e93aa4dc1cf67331530d37de17cd9&redirect_uri=http%3A%2F%2Flocalhost%3A5500&response_type=code";
+            window.location.href = "https://127.0.0.1/api/user-management/login";
         }
             
             const login_button = document.querySelector(".login");
@@ -131,11 +133,9 @@ export default class extends AbstractView {
                 // 여기서 백엔드로 코드를 보내 액세스 토큰을 얻는 로직을 구현할 수 있습니다.
                 // authorization code를 백엔드에 전송하고 백엔드로부터 응답 받기
                 try {
-                    const response = await fetch("http://localhost:8000/user-management/token", {
+                    const response = await fetch(baseUrl + "/api/user-management/token", {
                         method: "POST",
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
+                        credentials: 'include',
                         body: JSON.stringify({"code": code})
                     });
                     if (response.ok) {
