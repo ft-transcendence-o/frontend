@@ -1,6 +1,8 @@
 import { navigateTo, baseUrl } from "../../router.js";
 import AbstractView from "./AbstractView.js";
 
+let myVar = "hi~";
+
 function getCookie(name) {
     let matches = document.cookie.match(new RegExp(
         "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
@@ -47,13 +49,13 @@ export default class extends AbstractView {
                 <!-- nav menu buttons -->
                 <ul class="nav justify-content-end">
                     <li>
-                        <a class="btn btn-primary" href="/match_record">>MATCH-RECORD</a>
+                        <a id="tr_1" class="btn btn-primary" href="/match_record">>MATCH-RECORD</a>
                     </li>
                     <li style="margin-left: 20px;">
-                        <a class="btn btn-primary" href="/LANGUAGE">>LANGUAGE</a>
+                        <a id="tr_2" class="btn btn-primary" href="/LANGUAGE">>LANGUAGE</a>
                     </li>
                     <li style="margin-left: 20px; margin-right: 40px;">
-                        <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#logoutModal">>LOGOUT</a>
+                        <a id="tr_3" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#logoutModal">>LOGOUT</a>
                     </li>
                 </ul>
 
@@ -181,7 +183,23 @@ export default class extends AbstractView {
                 const url = new URL(event.currentTarget.href);
                 const pathname = url.pathname;
 
-                navigateTo(pathname);
+                if (pathname !== "/LANGUAGE")
+                {
+                    navigateTo(pathname);
+                }
+                else
+                {
+                    document.querySelector("#tr_1").innerText = ">대전기록";
+                    document.querySelector("#tr_1").style.fontSize = "34px";
+                    document.querySelector("#tr_1").classList.remove("PS2P_font");
+                    document.querySelector("#tr_1").classList.add("PS2P_font_kor");
+                    document.querySelector("#tr_2").innerText = ">げんご";
+                    document.querySelector("#tr_2").style.fontSize = "34px";
+                    document.querySelector("#tr_2").classList.remove("PS2P_font");
+                    document.querySelector("#tr_2").classList.add("PS2P_font_jpn");
+                    document.querySelector("#tr_3").innerText = ">LOGOUT";
+                    document.querySelector("#tr_3").style.fontSize = "30px";
+                }
             });
 
             Button.addEventListener("mouseenter", (event) => {
@@ -241,5 +259,13 @@ export default class extends AbstractView {
             console.log(response);
             console.log(jsonResponse);
         }
+        myVar = "bye~";
+
+        // 언어 변경에 따라 현재 페이지의 text를 모두 변경해야하는건 main뿐이다
+        // 다른 페이지는 이미 변경되어있는 언어 기반으로 getHtml에서 렌더링된다
+        // localStorage를 수정하고 현재 페이지로 다시 라우팅 시키기?
+        // 언어별 font 마다 사이즈가 다르다............
+        // 미리 텍스트를 써놓고 display를 변경하기...?
+        // 언어를 모두 가지고있는 dictionary 변수를 가진 js를 export한다?
     }
 }
