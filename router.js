@@ -23,6 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
     router();
 })
 
+export const baseUrl = "https://127.0.0.1";
+
 export function getCookie(name) {
     let matches = document.cookie.match(new RegExp(
         "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
