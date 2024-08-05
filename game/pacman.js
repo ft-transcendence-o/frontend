@@ -10,6 +10,7 @@ import { navigateTo, baseUrl, router} from "../../router.js";
 3. 카운트 다운 후 게임시작
 4. update함수의 로직대로 모델들의 좌표와 이동방향을 계산하여 렌더링하고 게임을 진행함
 */
+// ball과 panel의 움직임 변화는 update함수에서 사용하는 함수들이 수행하므로 update함수를 살펴보면 좋을듯합니다
 
 export class PongGame {
     // constructor : renderer, scene, 함수들 정의
