@@ -553,8 +553,8 @@ export class PongGame {
             // 공의 이동 업데이트를 작은 시간 간격으로 나누어 수행
             const steps = 10; // 충돌 체크 빈도를 설정한다 // 충돌을 미세하게 감지하기 위해서 한번의 업데이트에 10번 수행한다
             for (let i = 0; i < steps; i++) {
-                const movement = new THREE.Vector3().copy(this._vec).multiplyScalar(0.4 / steps); //이게 뭐였더라
-                this._ball.position.add(movement);
+                const movement = new THREE.Vector3().copy(this._vec).multiplyScalar(0.4 / steps); //1회 렌더링(업데이트)마다 충돌감지는 10번 수행한다
+                this._ball.position.add(movement); // 공을 미세하게 움직인다
                 this._ball.rotation.x += this._angularVec.x;
                 this._ball.rotation.y += this._angularVec.y;
                 this._ball.rotation.z += this._angularVec.z;
