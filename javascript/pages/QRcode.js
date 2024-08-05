@@ -99,12 +99,12 @@ export default class extends AbstractView {
 			console.log("generated");
 		};
 
-		const jwt = sanitizeInput(localStorage.getItem('jwt'));
-        if (!jwt) {
-            console.error("JWT not found in local storage");
-            navigateTo('/');
-            return;
-        }
+		// const jwt = sanitizeInput(localStorage.getItem('jwt'));
+        // if (!jwt) {
+        //     console.error("JWT not found in local storage");
+        //     navigateTo('/');
+        //     return;
+        // }
 
         try {
             const response = await fetch(baseUrl + "/api/user-management/otp/qrcode", {
