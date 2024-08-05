@@ -1,4 +1,4 @@
-import { navigateTo } from "../../router.js";
+import { navigateTo, baseUrl } from "../../router.js";
 import AbstractView from "./AbstractView.js";
 
 function getCookie(name) {
@@ -11,6 +11,13 @@ function getCookie(name) {
 // Utility function to delete a cookie by name
 function deleteCookie(name) {
     document.cookie = name + '=; Max-Age=-99999999;';
+}
+
+// 소독 Sanitize input
+function sanitizeInput(input) {
+    const element = document.createElement('div');
+    element.textContent = input;
+    return element.innerHTML;
 }
 
 export default class extends AbstractView {
@@ -170,12 +177,11 @@ export default class extends AbstractView {
 
             Button.addEventListener("click", (event) => {
                 event.preventDefault();
-                console.log(event.target.href);
 
-                if (event.target.href == "http://localhost:5500/match_record") {
-					localStorage.setItem("record_page", 1);
-					navigateTo("/match_record");
-				}
+                const url = new URL(event.currentTarget.href);
+                const pathname = url.pathname;
+
+                navigateTo(pathname);
             });
 
             Button.addEventListener("mouseenter", (event) => {
@@ -192,31 +198,19 @@ export default class extends AbstractView {
         });
 
         // 로그아웃 Modal
+        // 추후 세션 삭제 api 추가 예정
         document.getElementById("confirmLogout").addEventListener("click", async () => {
-            const jwt = getCookie('jwt');
-            if (!jwt) {
-                console.error("No JWT found in cookies");
-                navigateTo('/');
-                return;
-            }
-
             try {
-                const response = await fetch("http://localhost:8000/user-management/token", {
+                const response = await fetch(baseUrl + "/api/user-management/token", {
                     method: "DELETE",
-                    headers: {
-                        "Authorization": `Bearer ${jwt}`
-                    },
+                    credentials: 'include',
                 });
                 if (response.ok) {
-                    localStorage.removeItem('jwt');
-                    deleteCookie('jwt');
                     // Close the modal
                     const logoutModal = bootstrap.Modal.getInstance(document.getElementById('logoutModal'));
                     logoutModal.hide();
                     navigateTo('/');
                 } else if (response.status === 401) {
-                    localStorage.removeItem('jwt');
-                    deleteCookie('jwt');
                     navigateTo('/');
                 } else {
                     const jsonResponse = await response.json();
@@ -231,20 +225,16 @@ export default class extends AbstractView {
         // backend api를 통해 유저의 이름을 받아와서 요소에 집어넣는다
         const User_Name_Holder = document.querySelector("#top_item").querySelector("#user_name");
 
-        const response = await fetch("http://localhost:8000/user-management/info", {
+        const response = await fetch(baseUrl + "/api/user-management/info", {
             method: "GET",
-            headers: {
-                "Authorization": `Bearer ${getCookie('jwt')}`,
-                'Content-Type': 'application/json',
-            },
+            credentials: 'include',
         });
         if (response.ok) {
             const jsonResponse = await response.json();
             console.log("success");
             console.log(response);
             console.log(jsonResponse);
-            console.log(jsonResponse['login']); //await으로 해결
-            User_Name_Holder.innerHTML = jsonResponse['login'];
+            User_Name_Holder.innerHTML = sanitizeInput(jsonResponse['login']);      // 이부분 추가
         } else {
             const jsonResponse = await response.json();
             console.log("Fail");

@@ -1,5 +1,5 @@
 import AbstractView from "./AbstractView.js";
-import { navigateTo, getCookie } from "../../router.js";
+import { navigateTo, baseUrl } from "../../router.js";
 
 export default class extends AbstractView {
     constructor() {
@@ -213,7 +213,7 @@ export default class extends AbstractView {
             }
             const page_button = `
                 <li class="page-item">
-                    <a class="page-link${is_active}" href="/${button_idx_start}">${button_idx_start}</a>
+                    <a class="page-link page-link-button${is_active}" href="${button_idx_start}">${button_idx_start}</a>
                 </li>
             `
             page_buttons += page_button;
@@ -230,13 +230,14 @@ export default class extends AbstractView {
 
             Button.addEventListener("click", (event) => {
                 event.preventDefault();
-                console.log(event.target.href);
+                console.log(event.currentTarget.href);
 
                 // 라우팅 이벤트 추가
                 // 비동기 이슈?
-                if (event.target.href === "http://localhost:5500/main") {
-                    navigateTo("/main");
-                }
+                const url = new URL(event.currentTarget.href);
+                const pathname = url.pathname;
+
+                navigateTo(pathname);
             });
 
             Button.addEventListener("mouseenter", (event) => {
@@ -253,18 +254,18 @@ export default class extends AbstractView {
         });
 
         // 요청 할 페이지를 localStorage에서 관리하는식으로 시도
-        const response = await fetch(`http://localhost:8000/game-management/game?page=${localStorage.getItem("record_page")}`, {
+        // localStorage 변조에 대응하기 위해 미리 변수에 담아두고 리터럴 값을 이벤트 리스너로 넣어준다
+        const response = await fetch(baseUrl + `/api/game-management/game?page=${localStorage.getItem("record_page")}`, {
             method: "GET",
-            headers: {
-                "Authorization": `Bearer ${getCookie('jwt')}`,
-                'Content-Type': 'application/json',
-            },
+            credentials: 'include',
         });
         if (response.ok) {
             // 대전기록들을 table에 채워넣는다
             const jsonResponse = await response.json();
             const games = jsonResponse['games'];
-            const page = jsonResponse['page']; 
+            const page = jsonResponse['page'];
+            const button_idx_start = Math.floor((page['current'] - 1) / 5) * 5 + 1;
+            const button_idx_end = button_idx_start + 4;
             console.log("success");
             console.log(response);
             console.log(jsonResponse);
@@ -276,8 +277,25 @@ export default class extends AbstractView {
             this.create_page_buttons(page);
 
             // 클릭 가능한 요소들에 이벤트 리스너를 등록한다
-            const baseUrl = "http://localhost:5500/";
-            const Page_Buttons = document.querySelectorAll(".page-link");
+
+            // record 페이지 뒤로가기 버튼
+            document.querySelector("#record_backward_button").addEventListener("click", (event) => {
+                event.preventDefault();
+                const page_num = button_idx_start - 5;
+                localStorage.setItem("record_page", page_num);
+                console.log("page_num", page_num);
+                navigateTo("/match_record");
+            })
+            // record 페이지 앞으로가기 버튼
+            document.querySelector("#record_forward_button").addEventListener("click", (event) => {
+                event.preventDefault();
+                const page_num = button_idx_start + 5;
+                localStorage.setItem("record_page", page_num);
+                console.log("page_num", page_num);
+                navigateTo("/match_record");
+            })
+
+            const Page_Buttons = document.querySelectorAll(".page-link-button");
 
             console.log(Page_Buttons);
 
@@ -290,51 +308,44 @@ export default class extends AbstractView {
                     // 라우팅 이벤트 추가
 
                     // page button 처리
-                    const button_href = event.target.href.split(baseUrl)[1];
-                    const page_num = Number(button_href);
-                    
+                    const url = new URL(event.currentTarget.href);
+                    const button_href = url.pathname;
+                    const page_num = Number(button_href.split("/")[1]);
+
                     // 숫자가 아닌경우 예외처리
                     // scope를 벗어나서 page 객체를 볼 수 없다
-                    if (page_num === NaN)
-                    {
-                        if (button_href === "backward")
-                        {
-                            page_num = page['current'] - 1;
-                        }
-                        else if (button_href === "forward")
-                        {
-                            page_num = page['current'] + 1;
-                        }
-                        else
-                        {
-                            console.log("href error");
-                        }
-                    }
-                    else
+                    // 인위적으로 backward, forward를 써줄수 있으니 id를 달아놓고 따로 이벤트 리스너를 등록한다
+
+                    if (isNaN(page_num) === false)
                     {
                         // 페이지의 범위가 db의 범위를 벗어났다면? (개발자도구로 값을 변경시켰다면...)
                         // db에 저장되어있는 페이지값을 참고하여 보정한다
-                        if (page_num < 1)
+                        // 다시 생각해볼것...
+                        // 현재 페이지의 범위가 있을것이다...
+
+                        // 현재 페이지의 범위로 보정
+                        if (page_num < button_idx_start)
                         {
-                            page_num = 1;
+                            page_num = button_idx_start;
                         }
-                        else if (page_num > page['total_pages'])
+                        else if (page_num > button_idx_end)
                         {
-                            page_num = page['total_pages'];
+                            page_num = button_idx_end;
                         }
+
+                        // 버튼에서 담고있는 페이지 값으로 localStorage의 값을 변경
+                        localStorage.setItem("record_page", page_num);
+    
+                        // 1. 현재 페이지를 다시 라우팅한다
+                        navigateTo("/match_record");
+    
+                        // 2. 테이블의 아이템 문자열을 반환하는 함수를 만들고 테이블의 innerHtml을 변경한다, 버튼도 동적으로 다시 만들어준다
+                            // 테이블 아이템과 버튼을 만들어내는 함수들을 만들어야 한다
+                        // this.create_record_table_itmes(games);
+                        // this.create_page_buttons(page);
+                        // 이벤트 리스너를 다시 등록해야 한다...보류...
                     }
                     
-                    // 버튼에서 담고있는 페이지 값으로 localStorage의 값을 변경
-                    localStorage.setItem("record_page", page_num);
-
-                    // 1. 현재 페이지를 다시 라우팅한다
-                    navigateTo("/match_record");
-
-                    // 2. 테이블의 아이템 문자열을 반환하는 함수를 만들고 테이블의 innerHtml을 변경한다, 버튼도 동적으로 다시 만들어준다
-                        // 테이블 아이템과 버튼을 만들어내는 함수들을 만들어야 한다
-                    // this.create_record_table_itmes(games);
-                    // this.create_page_buttons(page);
-                    // 이벤트 리스너를 다시 등록해야 한다...보류...
                 });
 
                 Button.addEventListener("mouseenter", (event) => {
