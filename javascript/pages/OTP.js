@@ -1,5 +1,12 @@
-import { navigateTo } from "../../router.js";
+import { navigateTo, baseUrl } from "../../router.js";
 import AbstractView from "./AbstractView.js";
+
+// 소독 sanitize input
+function sanitizeInput(input) {
+	const element = document.createElement('div');
+	element.textContent = input;	// The textContent property will convert the input into a text node, escaping the special characters.
+	return element.innerHTML;
+}
 
 export default class extends AbstractView {
     constructor() {
@@ -73,10 +80,7 @@ export default class extends AbstractView {
     
         inputs[0].addEventListener("paste", function (event) {
             event.preventDefault();
-            console.log("addEventListener called");
-    
-            const pastedValue = (event.clipboardData || window.clipboardData).getData("text"); //입력된 값을 저장하는 변수
-            copiedvalue = pastedValue;
+            const pastedValue = sanitizeInput((event.clipboardData || window.clipboardData).getData("text")); //입력된 값을 저장하는 변수
             const otpLength = inputs.length;
     
             for (let i = 0; i < otpLength; i++) {
@@ -126,44 +130,48 @@ export default class extends AbstractView {
                     for (let i = 0; i < 6; i++) {
                         OTPNumber += inputs[i].value.toString();
                     }
-                    console.log(OTPNumber);
-                    console.log(localStorage.getItem('jwt'));
-                    const response = await fetch("http://localhost:8000/user-management/otp/verify", {
-                        method: "POST",
-                        headers: {
-                            "Authorization": `Bearer ${localStorage.getItem('jwt')}`,
-                        },
-                        body: JSON.stringify({ "input_password": OTPNumber })
-                    });
-                    console.log("here");
-                    // console.log(await response.json());
 
-                    if (response.ok) {
-                        // Set JWT as a cookie
-                        document.cookie = `jwt=${localStorage.getItem('jwt')}; path=/; secure`;
-                        // Remove JWT from local storage
-                        localStorage.removeItem('jwt');
-                        navigateTo('/main');
-                    } else {
-                        if (response.status === 400) { // n번 틀렸어
-                            const jsonResponse = await response.json();
-                            const attempts_number = jsonResponse['remain_attempts'];
-                            invalid_input.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">Incorrect password. Remaining attempts: ${attempts_number}</p>`;
+                    // const jwt = sanitizeInput(localStorage.getItem('jwt'));
+                    // if (!jwt) {
+                    //     console.error("JWT not found in local storage");
+                    //     navigateTo('/');
+                    //     return;
+                    // }
+
+                    try {
+                        const response = await fetch(baseUrl + "/api/user-management/otp/verify", {
+                            method: "POST",
+                            credentials: 'include',
+                            body: JSON.stringify({ "input_password": OTPNumber })
+                        });
+
+                        if (response.ok) {
+                            // document.cookie = `jwt=${jwt}; path=/; secure; HttpOnly; SameSite=Strict`;
+                            // localStorage.removeItem('jwt');
+                            navigateTo('/main');
+                        } else {
+                            if (response.status === 400) {
+                                const jsonResponse = await response.json();
+                                const attempts_number = sanitizeInput(jsonResponse['remain_attempts']);
+                                invalid_input.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">Incorrect password. Remaining attempts: ${attempts_number}</p>`;
+                            } else if (response.status === 403) {
+                                invalid_input.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">Account is locked for 15 minutes.<br>try later</p>`;
+                            } else {
+                                // localStorage.removeItem('jwt');
+                                navigateTo('/');
+                            }
+
+                            inputs.forEach(input => {
+                                input.value = "";
+                                input.setAttribute("disabled", "disabled");
+                            });
+                            inputs[0].removeAttribute("disabled");
+                            inputs[0].focus();
                         }
-                        else if (response.status === 403) { // 잠겼습니다(15분)
-                            invalid_input.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">Account is locked for 15 minutes.<br>try later</p>`;
-                        }
-                        else {	// , 500 등 기타 에러
-                            localStorage.removeItem('jwt');
-                            navigateTo('/');
-                        }
-                        const otpLength = inputs.length;
-                        for (let i = 0; i < otpLength; i++) {
-                            inputs[i].value = "";
-                            inputs[i].setAttribute("disabled", "disabled");
-                        }
-                        inputs[0].removeAttribute("disabled");
-                        inputs[0].focus();
+                    } catch (error) {
+                        console.error("Fetch error:", error);
+                        // localStorage.removeItem('jwt');
+                        navigateTo('/');
                     }
                 }
             });

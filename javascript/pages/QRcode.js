@@ -1,5 +1,12 @@
-import { navigateTo } from "../../router.js";
+import { navigateTo, baseUrl } from "../../router.js";
 import AbstractView from "./AbstractView.js";
+
+// 소독 sanitize input
+function sanitizeInput(input) {
+	const element = document.createElement('div');
+	element.textContent = input;	// The textContent property will convert the input into a text node, escaping the special characters.
+	return element.innerHTML;
+}
 
 export default class extends AbstractView {
     constructor() {
@@ -26,7 +33,7 @@ export default class extends AbstractView {
 				</div>
 
 
-				<!-- 넥스트 Button -->
+				<!-- NEXT Button -->
 				<button id="next_button" type="button" style="background-color: black; z-index: 4; margin-top: 600px; width: 280px; height: 139px;" class="blue_outline PS2P_font">
 					<span style="font-size: 50px; line-height: 50px;">NEXT</span>
 					<span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
@@ -42,7 +49,6 @@ export default class extends AbstractView {
 				</div>
 				
 		</div>
-	
 		`;
     }
 
@@ -51,59 +57,93 @@ export default class extends AbstractView {
 		/* 넥스트 Button */
         const Next_Button = document.querySelector("#next_button");
 
-        Next_Button.addEventListener("click", (event) => {
-            event.preventDefault();
-            console.log("next button clicked!");
-            navigateTo('/OTP');
-        });
+		const handleNextButtonClick = (event) => {
+			event.preventDefault();
+			console.log("next button clicked!");
+			navigateTo('/OTP');
+		};
 
-        Next_Button.addEventListener("mouseenter", () => {
-            Next_Button.classList.remove("blue_outline");
-            Next_Button.classList.add("green_outline");
-            Next_Button.classList.add("blue_font_white_stroke_3px");
-        });
+		const handleMouseEnter = () => {
+			Next_Button.classList.remove("blue_outline");
+			Next_Button.classList.add("green_outline");
+			Next_Button.classList.add("blue_font_white_stroke_3px");
+		};
 
-        Next_Button.addEventListener("mouseleave", () => {
-            Next_Button.classList.add("blue_outline");
-            Next_Button.classList.remove("green_outline");
-            Next_Button.classList.remove("blue_font_white_stroke_3px");
-        });
+		const handleMouseLeave = () => {
+			Next_Button.classList.add("blue_outline");
+			Next_Button.classList.remove("green_outline");
+			Next_Button.classList.remove("blue_font_white_stroke_3px");
+		};
+
+		const handleKeyDown = (event) => {
+			if (event.key === "Enter") {
+				Next_Button.click();
+			}
+		};
+
+		Next_Button.addEventListener("click", handleNextButtonClick);
+		Next_Button.addEventListener("mouseenter", handleMouseEnter);
+		Next_Button.addEventListener("mouseleave", handleMouseLeave);
+		document.addEventListener("keydown", handleKeyDown);
 
 		function generateQRcode(otpUri) {
 			const qrCodeDiv = document.getElementById('qrcode');
 			new QRCode(qrCodeDiv, {
-				text: otpUri,
+				text: sanitizeInput(otpUri),
 				width: 300, // QR 코드의 너비
 				height: 300, // QR 코드의 높이
 				colorDark: "#14FF00", // QR 코드의 색상
 				colorLight: "#000000", // QR 코드의 배경색
 				correctLevel: QRCode.CorrectLevel.H // 오류 수정 수준
 			});
-		console.log("generated");
+			console.log("generated");
 		};
 
-		console.log(localStorage.getItem('jwt'));
-		// qr uri -> local storage에서 불러오기
-		// generateQRcode(불러온 uri)
-		const response = await fetch("http://localhost:8000/user-management/otp/qrcode", {
-                    method: "GET",
-                    headers: {
-						'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
-                        'Content-Type': 'application/json',
-                    },
-                });
-                if (response.ok) {
-                    const jsonResponse = await response.json();
-                    console.log("success");
-                    console.log(response);
-                    console.log(jsonResponse);
-                    console.log(jsonResponse['otpauth_uri']); //await으로 해결
-					generateQRcode(jsonResponse['otpauth_uri']);
-				} else {
-                    const jsonResponse = await response.json();
-					console.log("Fail");
-					console.log(response);
-					console.log(jsonResponse);
-				}
+		// const jwt = sanitizeInput(localStorage.getItem('jwt'));
+        // if (!jwt) {
+        //     console.error("JWT not found in local storage");
+        //     navigateTo('/');
+        //     return;
+        // }
+
+        try {
+            const response = await fetch(baseUrl + "/api/user-management/otp/qrcode", {
+				method: "GET",
+				credentials: 'include',
+			});
+
+            if (response.ok) {
+                const jsonResponse = await response.json();
+                console.log("success", jsonResponse);
+                generateQRcode(jsonResponse['otpauth_uri']);
+            } else {
+                const jsonResponse = await response.json();
+                console.log("Fail", jsonResponse);
+                if (response.status === 401) {
+                    localStorage.removeItem('jwt');
+                    navigateTo('/');
+                }
+            }
+        } catch (error) {
+            console.error("Fetch error:", error);
+            localStorage.removeItem('jwt');
+            navigateTo('/');
+        }
+
+		// 제거할 이벤트 리스터들을 한곳에 저장
+		this.cleanup = () => {
+			Next_Button.removeEventListener("click", handleNextButtonClick);
+			Next_Button.removeEventListener("mouseenter", handleMouseEnter);
+			Next_Button.removeEventListener("mouseleave", handleMouseLeave);
+			document.removeEventListener("keydown", handleKeyDown);
+		};
 	}
+
+	destroy() {
+		if (this.cleanup) {
+			this.cleanup();
+		}
+	}
+
+
 }
