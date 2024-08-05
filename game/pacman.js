@@ -1,6 +1,6 @@
 import * as THREE from '../build/three.module.js';
 import { GLTFLoader } from '../build/GLTFLoader.js';
-import { navigateTo, getCookie, router } from "../../router.js";
+import { navigateTo, baseUrl, router} from "../../router.js";
 
 export class PongGame {
     // constructor : renderer, scene, 함수들 정의
@@ -257,25 +257,23 @@ export class PongGame {
     }
     
     async fetchResult() {
-        const response = await fetch("http://localhost:8000/game-management/game", {
+        const response = await fetch(baseUrl + "/api/game-management/tournament", {
             method: "POST",
-            headers: {
-                "Authorization": `Bearer ${getCookie('jwt')}`,
-            },
+            credentials: 'include',
             body: JSON.stringify({
                 "player1Nick": "1up",
                 "player2Nick": "2up",
                 "player1Score" : this._player1.Score,
                 "player2Score" : this._player2.Score,
                 "mode": "1VS1"
-            })
-            });
-            if (response.ok) {
-                console.log("success");
-            }
-            else {
-                console.log(await response.json());
-            }
+            }),
+        });
+        if (response.ok) {
+            console.log("success");
+        }
+        else {
+            console.log(await response.json());
+        }
     }
 
     tournamentGameSet() {
@@ -434,16 +432,15 @@ export class PongGame {
     }
 
     getCollisionPointWithPlane(plane) {
-        const ballCenter = this._ball.position;
-        const ballRadius = this._radius;
+        const ballCenter = this._ball.position; //공의 중심좌표
+        const ballRadius = this._radius; // 공의 반지름(대충 1.99999인데 2쯤임)
+        const distanceToPlane = plane.distanceToPoint(ballCenter); // 공 중심으로부터 평면까지의 거리
 
-        const distanceToPlane = plane.distanceToPoint(ballCenter);
-
-        if (Math.abs(distanceToPlane) <= ballRadius) {
+        if (Math.abs(distanceToPlane) <= ballRadius) { // 공과 평면사이의 거리가 반지름보다 작거나 같으면
             const collisionPoint = ballCenter.clone().sub(plane.normal.clone().multiplyScalar(distanceToPlane));
-            return collisionPoint;
+            return collisionPoint; // 벽과 충돌한 좌표를 연산해서 vector3(x, y, z)의 형태로 반환한다
         }
-        return null;
+        return null; // 벽에 충돌하지 않으면 null반환
     }
 
     updateAngularVelocity(plane, radius) {
@@ -520,8 +517,6 @@ export class PongGame {
                 // 충돌 감지 및 처리
                 const collisionPlane = this.collisionWithSide();
                 if (collisionPlane) {
-                    // console.log("collision plane return");
-                    // console.log(collisionPlane.normal);
                     this.updateVector(collisionPlane);
                     break; // 충돌이 발생하면 반복문을 중지합니다.
                 }
