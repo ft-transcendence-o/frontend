@@ -429,33 +429,20 @@ export class PongGame {
     }
 
     // 렌더링마다 mesh들의 상태를 업데이트하는 함수
-    update(time) {
-        if (this._ball && !this._isPaused) {
-            // 공의 이동 업데이트를 작은 시간 간격으로 나누어 수행
-            this._ballPosition;
-            const steps = 10; // 충돌 체크 빈도를 설정한다 // 충돌을 미세하게 감지하기 위해서 한번의 업데이트에 10번 수행한다
-            for (let i = 0; i < steps; i++) {
-                this._ballPosition = this._socket()
-                this._ball.position.x = 0;
-                this._ball.position.y = 0;
-                this._ball.position.z = 0;
-                // 충돌 감지 및 처리
-                const collisionPlane = this.collisionWithSide(); // 옆의 벽들과의 충돌을 감지
-                if (collisionPlane) {
-                    this.updateVector(collisionPlane);
-                    break; // 충돌이 발생하면 반복문을 중지합니다.
-                }
-
-                // 골구역과의 충돌을 감지
-                this.collisionWithGoalArea();
-            }
-
+    async update(time) {
+        this._socket.onmessage = function (event) {
+            //TODO: 서버에서 받은 값을 토대로 객체들의 위치를 갱신한다
+        }
+        if (this._socket.onopen && this._ball && !this._isPaused) {
             // 사용자의 입력에 따라 panel의 좌표를 업데이트한다
             this.updatePanel();
 
             // 공의 원근감을 알기 위한 사각형모양의 링의 z좌표 변경
             this._perspectiveLineEdges.position.z = this._ball.position.z;
         }
+        this._socket.send(JSON.stringify({
+            //TODO: JSON형식으로 백엔드에 입력받은 키상태를 보낸다
+        }))
     }
 
     // 게임 일시정지
