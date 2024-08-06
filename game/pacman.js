@@ -2,7 +2,6 @@ import * as THREE from '../build/three.module.js';
 import { GLTFLoader } from '../build/GLTFLoader.js';
 import { navigateTo, baseUrl, router} from "../../router.js";
 
-
 /*
 게임 동작 순서
 1. PongGame클래스의 생성자 호출
@@ -430,19 +429,17 @@ export class PongGame {
 
     // 렌더링마다 mesh들의 상태를 업데이트하는 함수
     async update(time) {
-        this._socket.onmessage = function (event) {
-            //TODO: 서버에서 받은 값을 토대로 객체들의 위치를 갱신한다
-        }
         if (this._socket.onopen && this._ball && !this._isPaused) {
-            // 사용자의 입력에 따라 panel의 좌표를 업데이트한다
-            this.updatePanel();
-
+            this._socket.onmessage = function (event) {
+                //TODO: 서버에서 받은 값을 토대로 객체들의 위치를 갱신한다
+                const received = JSON.parse(event.data); //ball좌표, panel1좌표, panel2좌표가 순서대로 들어온다고 가정
+                this._ball.position.set(received[0][0], received[0][1], received[0][2]);
+                this._panel1.position.set(received[1][0], received[1][1], received[1][2]);
+                this._panel2.position.set(received[2][0], received[2][1], received[2][2]);
+            }
             // 공의 원근감을 알기 위한 사각형모양의 링의 z좌표 변경
             this._perspectiveLineEdges.position.z = this._ball.position.z;
         }
-        this._socket.send(JSON.stringify({
-            //TODO: JSON형식으로 백엔드에 입력받은 키상태를 보낸다
-        }))
     }
 
     // 게임 일시정지
@@ -454,12 +451,17 @@ export class PongGame {
     }
 
     keydown(event) {
-        this._keyState[event.code] = true;
+        // this._keyState[event.code] = true;
+        this._socket.send(JSON.stringify({
+            //@
+        }))
     }
 
     keyup(event){
-        // console.log("test");
-        this._keyState[event.code] = false;
+        // this._keyState[event.code] = false;
+        this._socket.send(JSON.stringify({
+            //@
+        }))
     }
 
     // panel좌표 업데이트
@@ -467,34 +469,26 @@ export class PongGame {
         if (this._keyState['KeyW']) {
             this._socket.send('KeyW');
             this._panel1.position.y += 0.6;
-            this._panel1Vec.y = 0.6;
         }
         if (this._keyState['KeyS']) {
             this._panel1.position.y -= 0.6;
-            this._panel1Vec.y = -0.6;
         }
         if (this._keyState['KeyA']) {
             this._panel1.position.x -= 0.6;
-            this._panel2Vec.x = -0.6;
         }
         if (this._keyState['KeyD']) {
             this._panel1.position.x += 0.6;
-            this._panel2Vec.x = 0.6;
         }
         if (this._keyState['ArrowUp']) {
-            this._panel2Vec.y = 0.6;
             this._panel2.position.y += 0.6;
         }
         if (this._keyState['ArrowDown']) {
-            this._panel2Vec.y = -0.6;
             this._panel2.position.y -= 0.6;
         }
         if (this._keyState['ArrowLeft']) {
-            this._panel2Vec.x = 0.6;
             this._panel2.position.x += 0.6;
         }
         if (this._keyState['ArrowRight']) {
-            this._panel2Vec.x = -0.6;
             this._panel2.position.x -= 0.6;
         }
     }
