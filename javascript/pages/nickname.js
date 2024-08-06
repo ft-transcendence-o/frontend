@@ -174,8 +174,19 @@ export default class extends AbstractView {
         readyButton.addEventListener("mouseenter", handleReadyMouseEnter);
         readyButton.addEventListener("mouseleave", handleReadyMouseLeave);
 
+        // chrome에서 한글입력 시 씹히거나 입력필드 두 칸씩 넘어가는 등 문제 해결법
+        let isComposing = false;
+
+        const handleCompositionStart = () => {
+            isComposing = true;
+        }
+
+        const handleCompositionEnd = () => {
+            isComposing = false;
+        }
+
         const handleKeyDown = (event) => {
-            if (event.key === "Enter") {
+            if (event.key === "Enter" && !isComposing) {
                 const inputFields = Array.from(document.querySelectorAll(".nickname-input-field"));
                 const currentInput = document.activeElement;
 
@@ -184,8 +195,8 @@ export default class extends AbstractView {
                     const nextInput = inputFields[currentIndex + 1];
 
                     if (nextInput) {
-                        console.log("goes next input filed!");
                         nextInput.focus();
+                        console.log("goes next input filed!");
                     } else {
                         console.log("focus ready button!");
                         readyButton.focus();
@@ -206,6 +217,11 @@ export default class extends AbstractView {
 
         document.addEventListener("keydown", handleKeyDown);
 
+        document.querySelectorAll(".nickname-input-field").forEach((input) => {
+            input.addEventListener("compositionstart", handleCompositionStart);
+            input.addEventListener("compositionend", handleCompositionEnd);
+        });
+
         requestAnimationFrame(() => {
             const inputFields = document.querySelectorAll(".nickname-input-field");
             inputFields[0].focus();
@@ -221,6 +237,10 @@ export default class extends AbstractView {
             readyButton.removeEventListener("mouseenter", handleReadyMouseEnter);
             readyButton.removeEventListener("mouseleave", handleReadyMouseLeave);
             document.removeEventListener("keydown", handleKeyDown);
+            document.querySelectorAll(".nickname-input-field").forEach((input) => {
+                input.removeEventListener("compositionstart", handleCompositionStart);
+                input.removeEventListener("compositionend", handleCompositionEnd);
+            });
         };
     }
 

@@ -143,9 +143,9 @@ export default class extends AbstractView {
                             if (response.status === 400) {
                                 const jsonResponse = await response.json();
                                 const attempts_number = sanitizeInput(jsonResponse['remain_attempts']);
-                                invalid_input.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">Incorrect password. Remaining attempts: ${attempts_number}</p>`;
+                                invalid_input.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">INCORRECT PASSWORD. REMAINING ATTEMPS : ${attempts_number}</p>`;
                             } else if (response.status === 403) {
-                                invalid_input.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">Account is locked for 15 minutes.<br>try later</p>`;
+                                invalid_input.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">ACCOUNT IS LOCKED FOR 15 MINUTES.<br>TRY LATER</p>`;
                             } else {
                                 navigateTo('/');
                             }
