@@ -63,7 +63,7 @@ export default class extends AbstractView {
                 <img src="./image/ghost_pink.gif" style="width: 100px; height: auto; margin-right:32px;" alt="3UP">
                 <input type="text" class="PS2P_font nickname-input-field" maxlength="10" style="width:600px; height:100px; border: solid; border-color: #14FF00; border-width: 10px; background-color:black; color:white; font-size: 30px; outline: none; padding-left: 20px;" />
             </div>
-            <div class="nickname-input d-flex align-items-center">
+            <div class="nickname-input d-flex	align-items-center">
                 <span style="color: white; margin-right: 58px;">4UP</span>
                 <img src="./image/ghost_orange.gif" style="width: 100px; height: auto; margin-right:32px;" alt="4UP">
                 <input type="text" class="PS2P_font nickname-input-field" maxlength="10" style="width:600px; height:100px; border: solid; border-color: #14FF00; border-width: 10px; background-color:black; color:white; font-size: 30px; outline: none; padding-left: 20px;" />
@@ -130,17 +130,18 @@ export default class extends AbstractView {
             });
 
             if (!allFieldsFilled) {
-                invalidInputElement.innerHTML = sanitizeInput(`<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">NO EMPTY INPUT FIELD!</p>`);
+                invalidInputElement.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">NO EMPTY INPUT FIELD!</p>`;
                 return;
             }
 
             const hasDuplicates = new Set(nicknames).size !== nicknames.length;
             if (hasDuplicates) {
-                invalidInputElement.innerHTML = sanitizeInput(`<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">NICKNAME DUPLICATION NOT ALLOWED!</p>`);
+                invalidInputElement.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">NICKNAME DUPLICATION NOT ALLOWED!</p>`;
                 return;
             }
 
-            let storedNicknames = JSON.parse(localStorage.getItem('nicknames')) || [];
+            let storedNicknames = [];
+            // storedNicknames = JSON.parse(localStorage.getItem('nicknames')) || []; // JSON으로 파싱(보안처리)
 
             storedNicknames = [...storedNicknames, ...nicknames].slice(-10);
 
@@ -175,20 +176,26 @@ export default class extends AbstractView {
 
         const handleKeyDown = (event) => {
             if (event.key === "Enter") {
+                const inputFields = Array.from(document.querySelectorAll(".nickname-input-field"));
                 const currentInput = document.activeElement;
+
                 if (currentInput.classList.contains("nickname-input-field")) {
-                    const inputFields = Array.from(document.querySelectorAll(".nickname-input-field"));
                     const currentIndex = inputFields.indexOf(currentInput);
                     const nextInput = inputFields[currentIndex + 1];
+
                     if (nextInput) {
+                        console.log("goes next input filed!");
                         nextInput.focus();
                     } else {
-                        const allFieldsFilled = inputFields.every(input => input.value.trim() !== "");
-                        if (allFieldsFilled) {
-                            readyButton.click();
-                        } else {
-                            event.preventDefault();
-                        }
+                        console.log("focus ready button!");
+                        readyButton.focus();
+                    }
+                } else if (currentInput === readyButton) {
+                    const allFieldsFilled = inputFields.every(input => input.value.trim() !== "");
+                    if (allFieldsFilled) {
+                        readyButton.click();
+                    } else {
+                        inputFields.find(input => input.value.trim() === "").focus();
                     }
                 }
             } else if (event.key === "Escape") {

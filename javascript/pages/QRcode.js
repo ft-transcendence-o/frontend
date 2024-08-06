@@ -99,13 +99,6 @@ export default class extends AbstractView {
 			console.log("generated");
 		};
 
-		// const jwt = sanitizeInput(localStorage.getItem('jwt'));
-        // if (!jwt) {
-        //     console.error("JWT not found in local storage");
-        //     navigateTo('/');
-        //     return;
-        // }
-
         try {
             const response = await fetch(baseUrl + "/api/user-management/otp/qrcode", {
 				method: "GET",
@@ -120,13 +113,11 @@ export default class extends AbstractView {
                 const jsonResponse = await response.json();
                 console.log("Fail", jsonResponse);
                 if (response.status === 401) {
-                    localStorage.removeItem('jwt');
                     navigateTo('/');
                 }
             }
         } catch (error) {
             console.error("Fetch error:", error);
-            localStorage.removeItem('jwt');
             navigateTo('/');
         }
 
@@ -144,6 +135,5 @@ export default class extends AbstractView {
 			this.cleanup();
 		}
 	}
-
 
 }

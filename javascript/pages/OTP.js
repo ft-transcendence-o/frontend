@@ -125,18 +125,10 @@ export default class extends AbstractView {
                 const inputsNo = inputs.length;
                 if (!inputs[inputsNo - 1].disabled && inputs[inputsNo - 1].value !== "") {
                     // Clear all inputs and reset the form
-                    // 여기서 백엔드에 보내는 api호출
                     let OTPNumber = "";
                     for (let i = 0; i < 6; i++) {
                         OTPNumber += inputs[i].value.toString();
                     }
-
-                    // const jwt = sanitizeInput(localStorage.getItem('jwt'));
-                    // if (!jwt) {
-                    //     console.error("JWT not found in local storage");
-                    //     navigateTo('/');
-                    //     return;
-                    // }
 
                     try {
                         const response = await fetch(baseUrl + "/api/user-management/otp/verify", {
@@ -146,8 +138,6 @@ export default class extends AbstractView {
                         });
 
                         if (response.ok) {
-                            // document.cookie = `jwt=${jwt}; path=/; secure; HttpOnly; SameSite=Strict`;
-                            // localStorage.removeItem('jwt');
                             navigateTo('/main');
                         } else {
                             if (response.status === 400) {
@@ -157,7 +147,6 @@ export default class extends AbstractView {
                             } else if (response.status === 403) {
                                 invalid_input.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">Account is locked for 15 minutes.<br>try later</p>`;
                             } else {
-                                // localStorage.removeItem('jwt');
                                 navigateTo('/');
                             }
 
@@ -170,7 +159,6 @@ export default class extends AbstractView {
                         }
                     } catch (error) {
                         console.error("Fetch error:", error);
-                        // localStorage.removeItem('jwt');
                         navigateTo('/');
                     }
                 }

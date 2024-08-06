@@ -1,15 +1,6 @@
 import AbstractView from "./AbstractView.js";
 import { navigateTo, baseUrl } from "../../router.js";
 
-function getCookie(name) {
-    let matches = document.cookie.match(new RegExp(
-        "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
-    ));
-    return matches ? decodeURIComponent(matches[1]) : undefined;
-}
-
-// 소독
-
 export default class extends AbstractView {
     constructor() {
         super();
@@ -90,80 +81,73 @@ export default class extends AbstractView {
     }
 
     async init() {
-        //  쿠키에 `jwt` 즉, 토큰 유효성 확인. 유효성 확인은 home이 아니라 main 페이지에서 Intra_id를 받는 과정에서 쏘는 API에서 하므로 아래 코드 정도만 필요하고 api를 쏘는 행위는 하지 않아도 될 것 같다. (토큰은 현재 OTP페이지에서 로그인 완료 시 쿠키에 담고 있다)
-        const cookie_jwt = getCookie('jwt');
-        if (getCookie('jwt')) { //
-            console.log(cookie_jwt);
-            console.log("COOKIE CONFIRM");
-            navigateTo('/main');    // main에 보내면 main에서는 intra_id를 받기 위한 API를 백엔드에 쏘고, 이때 토큰의 유효성 검사가 이루어져 유효하지 않으면 main에서 home으로 보낸다.
-            return;
-        }
+
+        // 페이지 로드 할 때는 spinner 돌지 않도록 하기
+        const spinner = document.getElementById("spinner");
+        spinner.style.display = "none";
+
+        // Hide spinner before page unload
+        window.addEventListener("pageshow", () => {
+            spinner.style.display = "none";
+        });
 
         function login_click(event) {
-            event.preventDefault(); // 기본 동작 방지
-            // 사용자를 42 인증 페이지로 리다이렉트
-            // query parameter(?다음) 부분을 환경변수로 대체해야 한다.
+            event.preventDefault();
+            spinner.style.display = "flex"; // 뺑글이 시작
             window.location.href = "https://127.0.0.1/api/user-management/login";
         }
             
-            const login_button = document.querySelector(".login");
-            const login_arrow = login_button.querySelector("span");
-            const login_text = login_button.querySelector("span:last-child");
-            login_button.addEventListener("click", login_click);
-            login_button.addEventListener("mouseenter", (event) => {
-                login_text.classList.add("green_hover");
-                login_text.classList.add("white_stroke_5px");
-                login_arrow.classList.add("red_hover");
-                console.log("hovering");
-            });
-            login_button.addEventListener("mouseleave", (event) => {
-                login_text.classList.remove("green_hover");
-                login_text.classList.remove("white_stroke_5px");
-                login_arrow.classList.remove("red_hover");
-                console.log("hover out");
-            });
+        const login_button = document.querySelector(".login");
+        const login_arrow = login_button.querySelector("span");
+        const login_text = login_button.querySelector("span:last-child");
 
-            // URL에서 코드 파라미터 확인
-            const urlParams = new URLSearchParams(window.location.search);
-            const code = urlParams.get("code");
-            if (code) {
-                console.log("Received authorization code:", code);
-                const spinner = document.getElementById("spinner");
-                spinner.style.display = "flex"; // 뺑글이 범위 시작
-                // 여기서 백엔드로 코드를 보내 액세스 토큰을 얻는 로직을 구현할 수 있습니다.
-                // authorization code를 백엔드에 전송하고 백엔드로부터 응답 받기
-                try {
-                    const response = await fetch(baseUrl + "/api/user-management/token", {
-                        method: "POST",
-                        credentials: 'include',
-                        body: JSON.stringify({"code": code})
-                    });
-                    if (response.ok) {
-                        const jsonResponse = await response.json();
-                        console.log("success");
-                        console.log(response);
-                        console.log(jsonResponse);
-                        console.log(jsonResponse['jwt']); //await으로 해결
-    
-                        localStorage.setItem('jwt', jsonResponse['jwt']);
-                        console.log("JWT saved to local storage");
-    
-                        if (jsonResponse['show_otp_qr'] === false) {
-                            navigateTo('/QRcode');
-                        } else if (jsonResponse['otp_verified'] === false) {
-                            navigateTo('/OTP');
-                        } else {
-                            navigateTo('/main');
-                        }
+        login_button.addEventListener("click", login_click);
+        
+        login_button.addEventListener("mouseenter", (event) => {
+            login_text.classList.add("green_hover");
+            login_text.classList.add("white_stroke_5px");
+            login_arrow.classList.add("red_hover");
+            console.log("hovering");
+        });
+        login_button.addEventListener("mouseleave", (event) => {
+            login_text.classList.remove("green_hover");
+            login_text.classList.remove("white_stroke_5px");
+            login_arrow.classList.remove("red_hover");
+            console.log("hover out");
+        });
+
+        // URL에서 코드 파라미터 확인
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get("code");
+        if (code) {
+            console.log("Received authorization code:", code);
+            // spinner.style.display = "flex"; 
+            // 여기서 백엔드로 코드를 보내 액세스 토큰을 얻는 로직을 구현할 수 있습니다.
+            // authorization code를 백엔드에 전송하고 백엔드로부터 응답 받기
+            try {
+                const response = await fetch(baseUrl + "/api/user-management/token", {
+                    method: "POST",
+                    credentials: 'include',
+                    body: JSON.stringify({"code": code})
+                });
+                if (response.ok) {
+                    const jsonResponse = await response.json();
+                    if (jsonResponse['show_otp_qr'] === false) {
+                        navigateTo('/QRcode');
+                    } else if (jsonResponse['otp_verified'] === false) {
+                        navigateTo('/OTP');
                     } else {
-                        console.log(response.json());
-                        console.log("error");
+                        navigateTo('/main');
                     }
-                } catch (error) {
-                    console.log("Fetch error:", error);
-                } finally {
-                    spinner.style.display = "none"; // 뺑글이 범위 끝
+                } else {
+                    console.log(response.json());
+                    console.log("error");
                 }
+            } catch (error) {
+                console.log("Fetch error:", error);
+            } finally {
+                spinner.style.display = "none"; // 뺑글이 범위 끝
             }
+        }
     }
 }
