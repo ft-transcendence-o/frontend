@@ -18,7 +18,7 @@ export default class extends AbstractView {
 			<!-- nav menu buttons -->
 			<ul class="nav justify-content-end">
 				<li style="margin-right: 40px;">
-					<a class="btn btn-primary" href="/main">>MAIN
+					<a id="mainButton" class="btn btn-primary" href="/main">>MAIN
 						<p style="font-size: 20px;">(ESC)</p>
 					</a>
 				</li>

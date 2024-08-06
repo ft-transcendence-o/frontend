@@ -45,6 +45,14 @@ export class PongGame {
         this._panel2Vec = new THREE.Vector3(0, 0, 0); //panel2의 법선벡터
         this._isPaused = false; // 게임을 pause해야할때 사용하는 플래그변수 -> 카운트다운, 골먹힘 등
 
+        // mainButton에 대한 이벤트 등록
+        const mainButton = document.querySelector("#mainButton");
+		mainButton.addEventListener("click", (event) => {
+			this._isRunning = false;
+			navigateTo("/main");
+		})       
+
+        //renderer설정
         let renderer1 = new THREE.WebGLRenderer({
             canvas: canvas1,
             antialias: true,
@@ -566,6 +574,11 @@ export class PongGame {
     }
 
     keydown(event) {
+        if (event.key === "Escape") {
+            event.preventDefault();
+            this._isRunning = false;
+            navigateTo('/main');
+        }
         this._keyState[event.code] = true;
     }
 
