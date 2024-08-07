@@ -25,7 +25,16 @@ export class PongGame {
         this._canvasWidth = 712;
         this._canvasHeight = 700;
         this._isRunning = true; //백엔드에서는 신경쓰지말것 //game페이지가 로드되면 클래스의 생성자를 호출해서 게임을 렌더링하는데 뒤로가기 버튼을 누르면 다른 페이지임에도 브라우저내부적으로는 게임이 진행되고 있으므로 이를 막기 구분하기 위한 플래그
-        this._keyState = {}; // 키보드 입력 상태를 추적하는 변수
+        this._keyState = {
+            KeyW: false,
+            KeyA: false,
+            KeyS: false,
+            KeyD: false,
+            ArrowUp: false,
+            ArrowDown: false,
+            ArrowLeft: false,
+            ArrowRight: false,
+        }; // 키보드 입력 상태를 추적하는 변수
 
         // game_status_var
         this._gameVar = document.querySelector("#game_var");
@@ -72,7 +81,7 @@ export class PongGame {
         window.addEventListener('keydown', this.keydown.bind(this));
 
         // keyup 이벤트 핸들러를 추가
-        // window.addEventListener('keyup', this.keyup.bind(this));
+        window.addEventListener('keyup', this.keyup.bind(this));
 
         // main 버튼 이벤트 핸들러를 추가
         this.mainButtonEvent();
@@ -470,39 +479,39 @@ export class PongGame {
     }
 
     keydown(event) {
-        // this._keyState[event.code] = true;
-        if (event.code === "KeyW") {
-            this._socket.send("W");
-        }
-        if (event.code === "KeyS") {
-            this._socket.send("S");
-        }
-        if (event.code === "KeyA") {
-            this._socket.send("A");
-        }
-        if (event.code === "KeyD") {
-            this._socket.send("D");
-        }
-        if (event.code === "ArrowUp") {
-            this._socket.send("Up");
-        }
-        if (event.code === "ArrowDown") {
-            this._socket.send("Down");
-        }
-        if (event.code === "ArrowLeft") {
-            this._socket.send("Left");
-        }
-        if (event.code === "ArrowRight") {
-            this._socket.send("Right");
-        }
+        this._keyState[event.code] = true;
+        this._socket.send(JSON.stringify(this._keyState));
+        console.log(this._keyState);
+        // if (event.code === "KeyW") {
+        //     this._socket.send("W");
+        // }
+        // if (event.code === "KeyS") {
+        //     this._socket.send("S");
+        // }
+        // if (event.code === "KeyA") {
+        //     this._socket.send("A");
+        // }
+        // if (event.code === "KeyD") {
+        //     this._socket.send("D");
+        // }
+        // if (event.code === "ArrowUp") {
+        //     this._socket.send("Up");
+        // }
+        // if (event.code === "ArrowDown") {
+        //     this._socket.send("Down");
+        // }
+        // if (event.code === "ArrowLeft") {
+        //     this._socket.send("Left");
+        // }
+        // if (event.code === "ArrowRight") {
+        //     this._socket.send("Right");
+        // }
     }
 
-    // keyup(event){
-    //     // this._keyState[event.code] = false;
-    //     this._socket.send(JSON.stringify({
-    //         //@
-    //     }))
-    // }
+    keyup(event){
+        this._keyState[event.code] = false;
+        this._socket.send(JSON.stringify(this._keyState));
+    }
 
     countdown() {
         let countdownElement = document.querySelector("#countDown");
