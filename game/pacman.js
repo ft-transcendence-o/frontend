@@ -1,6 +1,6 @@
 import * as THREE from '../build/three.module.js';
 import { GLTFLoader } from '../build/GLTFLoader.js';
-import { navigateTo, baseUrl, router} from "../../router.js";
+// import { navigateTo, baseUrl, router} from "../../router.js";
 
 /*
 게임 동작 순서
@@ -15,7 +15,7 @@ export class PongGame {
     // constructor : renderer, scene, 함수들 정의
     constructor() {
         // socket
-        this._socket = new WebSocket("ws://localhost/game/gs:8000"); //TODO: 추후에 변경해야한다
+        this._socket = new WebSocket("ws://127.0.0.1:8000/ws/game"); //TODO: 추후에 변경해야한다
 
         // 캔버스의 크기를 설정한다 // 백엔드에서는 신경쓰지말것
         const canvas1 = document.querySelector("#canvas1");
@@ -72,13 +72,25 @@ export class PongGame {
         window.addEventListener('keydown', this.keydown.bind(this));
 
         // keyup 이벤트 핸들러를 추가
-        window.addEventListener('keyup', this.keyup.bind(this));
+        // window.addEventListener('keyup', this.keyup.bind(this));
 
         // main 버튼 이벤트 핸들러를 추가
         this.mainButtonEvent();
 
         // 뒤로가기 앞으로가기 이벤트 핸들러를 추가
         window.addEventListener('popstate', this.gameRoute.bind(this));
+
+        // socket에 들어온 입력에 대한 이벤트 등록
+        this._socket.onopen = () => {
+            console.log("Socket is open");
+        };
+        this._socket.onclose = (event) => {
+            console.log("WebSocket is closed now.", event);
+        };
+        this._socket.onerror = (error) => {
+            console.log("WebSocket error observed:", error);
+        };
+        this._socket.onmessage = (event) => this.handleSocketMessage(event); //이벤트 등록
 
         // 게임시작시 카운트 다운
         this.countdown();
@@ -92,6 +104,7 @@ export class PongGame {
 
     // 카메라 설정
     _setupCamera() {
+        console.log("camera");
         const width = this._canvasWidth;
         const height = this._canvasHeight;
         const camera1 = new THREE.PerspectiveCamera(
@@ -117,6 +130,7 @@ export class PongGame {
 
     // 조명 설정 | 전체조명사용하도록 수정예정
     _setupLight() {
+        console.log("light");
         const PLight = new THREE.PointLight();
         const ALight = new THREE.AmbientLight();
         this._PLight = PLight;
@@ -127,10 +141,11 @@ export class PongGame {
 
     // 렌더링할 Mesh들을 정의하고 생성하는 함수
     _setupModel() {
+        console.log("model");
         const loader = new GLTFLoader();
 
         //Mesh: pacman ball
-        loader.load("./game/pac/scene.gltf", (gltf) => {
+        loader.load("./pac/scene.gltf", (gltf) => {
             this._ball = gltf.scene;
             this._scene.add(this._ball);
         
@@ -266,7 +281,7 @@ export class PongGame {
                 "player2Nick": "2up",
                 "player1Score" : this._player1.Score,
                 "player2Score" : this._player2.Score,
-                "mode": "1VS1"
+                "mode": "1 ON 1"
             }),
         });
         if (response.ok) {
@@ -428,18 +443,22 @@ export class PongGame {
     }
 
     // 렌더링마다 mesh들의 상태를 업데이트하는 함수
-    async update(time) {
-        if (this._socket.onopen && this._ball && !this._isPaused) {
-            this._socket.onmessage = function (event) {
-                //TODO: 서버에서 받은 값을 토대로 객체들의 위치를 갱신한다
-                const received = JSON.parse(event.data); //ball좌표, panel1좌표, panel2좌표가 순서대로 들어온다고 가정
-                this._ball.position.set(received[0][0], received[0][1], received[0][2]);
-                this._panel1.position.set(received[1][0], received[1][1], received[1][2]);
-                this._panel2.position.set(received[2][0], received[2][1], received[2][2]);
-            }
+    update(time) {
+        // if (this._socket.onopen && this._ball && !this._isPaused) {
+            if (this._socket.onopen && !this._isPaused) {
             // 공의 원근감을 알기 위한 사각형모양의 링의 z좌표 변경
             this._perspectiveLineEdges.position.z = this._ball.position.z;
         }
+    }
+
+    handleSocketMessage(event) {
+        console.log("get socket msg");
+        const received = JSON.parse(event.data); // ball 좌표, panel1 좌표, panel2 좌표가 순서대로 들어온다고 가정
+        console.log(received);
+
+        this._ball.position.set(received.game.ball[0], received.game.ball[1], received.game.ball[2]);
+        this._panel1.position.set(received.game.panel1[0], received.game.panel1[1], received.game.panel1[2]);
+        this._panel2.position.set(received.game.panel2[0], received.game.panel2[1], received.game.panel2[2]);
     }
 
     // 게임 일시정지
@@ -452,44 +471,38 @@ export class PongGame {
 
     keydown(event) {
         // this._keyState[event.code] = true;
-        this._socket.send(JSON.stringify({
-            //@
-        }))
-    }
-
-    keyup(event){
-        // this._keyState[event.code] = false;
-        this._socket.send(JSON.stringify({
-            //@
-        }))
-    }
-
-    // panel좌표 업데이트
-    updatePanel(){
-        if (this._keyState['KeyW']) {
+        if (event.code === "KeyW") {
             this._socket.send("W");
         }
-        if (this._keyState['KeyS']) {
+        if (event.code === "KeyS") {
+            this._socket.send("S");
         }
-        if (this._keyState['KeyA']) {
+        if (event.code === "KeyA") {
             this._socket.send("A");
         }
-        if (this._keyState['KeyD']) {
+        if (event.code === "KeyD") {
             this._socket.send("D");
         }
-        if (this._keyState['ArrowUp']) {
+        if (event.code === "ArrowUp") {
             this._socket.send("Up");
         }
-        if (this._keyState['ArrowDown']) {
+        if (event.code === "ArrowDown") {
             this._socket.send("Down");
         }
-        if (this._keyState['ArrowLeft']) {
+        if (event.code === "ArrowLeft") {
             this._socket.send("Left");
         }
-        if (this._keyState['ArrowRight']) {
+        if (event.code === "ArrowRight") {
             this._socket.send("Right");
         }
     }
+
+    // keyup(event){
+    //     // this._keyState[event.code] = false;
+    //     this._socket.send(JSON.stringify({
+    //         //@
+    //     }))
+    // }
 
     countdown() {
         let countdownElement = document.querySelector("#countDown");
@@ -500,6 +513,7 @@ export class PongGame {
     
             if (countdownValue === 0) {
                 countdownElement.innerText = "START";
+                this._socket.send("start");
             }
             else if (countdownValue === -1) {
                 clearInterval(countdownInterval);
@@ -546,6 +560,6 @@ export class PongGame {
     }
 }
 
-// window.onload = function() {
-//     new PongGame();
-// }
+window.onload = function() {
+    new PongGame();
+}
