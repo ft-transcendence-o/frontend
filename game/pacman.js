@@ -467,29 +467,27 @@ export class PongGame {
     // panel좌표 업데이트
     updatePanel(){
         if (this._keyState['KeyW']) {
-            this._socket.send('KeyW');
-            this._panel1.position.y += 0.6;
+            this._socket.send("W");
         }
         if (this._keyState['KeyS']) {
-            this._panel1.position.y -= 0.6;
         }
         if (this._keyState['KeyA']) {
-            this._panel1.position.x -= 0.6;
+            this._socket.send("A");
         }
         if (this._keyState['KeyD']) {
-            this._panel1.position.x += 0.6;
+            this._socket.send("D");
         }
         if (this._keyState['ArrowUp']) {
-            this._panel2.position.y += 0.6;
+            this._socket.send("Up");
         }
         if (this._keyState['ArrowDown']) {
-            this._panel2.position.y -= 0.6;
+            this._socket.send("Down");
         }
         if (this._keyState['ArrowLeft']) {
-            this._panel2.position.x += 0.6;
+            this._socket.send("Left");
         }
         if (this._keyState['ArrowRight']) {
-            this._panel2.position.x -= 0.6;
+            this._socket.send("Right");
         }
     }
 
