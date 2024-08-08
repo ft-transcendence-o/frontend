@@ -1,7 +1,6 @@
 import { navigateTo, baseUrl } from "../../router.js";
 import AbstractView from "./AbstractView.js";
-
-let myVar = "hi~";
+import { get_translated_value } from "../../language.js"
 
 function getCookie(name) {
     let matches = document.cookie.match(new RegExp(
@@ -49,13 +48,13 @@ export default class extends AbstractView {
                 <!-- nav menu buttons -->
                 <ul class="nav justify-content-end">
                     <li>
-                        <a id="tr_1" class="btn btn-primary" href="/match_record">>MATCH-RECORD</a>
+                        <a id="tr_1" class="btn btn-primary transItem" href="/match_record" data-trans_id="main_match_record">>MATCH-RECORD</a>
                     </li>
                     <li style="margin-left: 20px;">
-                        <a id="tr_2" class="btn btn-primary" href="/LANGUAGE">>LANGUAGE</a>
+                        <a id="tr_2" class="btn btn-primary transItem" href="/LANGUAGE" data-trans_id="main_language">>LANGUAGE</a>
                     </li>
                     <li style="margin-left: 20px; margin-right: 40px;">
-                        <a id="tr_3" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#logoutModal">>LOGOUT</a>
+                        <a id="tr_3" class="btn btn-primary transItem" href="/LOGOUT" data-bs-toggle="modal" data-bs-target="#logoutModal" data-trans_id="main_logout">>LOGOUT</a>
                     </li>
                 </ul>
 
@@ -71,12 +70,12 @@ export default class extends AbstractView {
                     <!-- PacMans && VS text -->
                     <div style="padding-top: 80px; padding-bottom: 110px;">
                         <img src="./image/pacman_right.gif" alt="" style="width: 100px; height: 107.18px;">
-                        <span style="color: white; text-shadow: none;">VS</span>
+                        <span class="transItem" style="color: white; text-shadow: none;" data-trans_id="main_vs">VS</span>
                         <img src="./image/pacman_left.gif" alt="" style="width: 100px; height: 107.18px;">
                     </div>
 
                     <!-- 1 ON 1 text -->
-                    <div style="padding-top: 10px; padding-bottom: 10px;">
+                    <div class="transItem" style="padding-top: 10px; padding-bottom: 10px;" data-trans_id="main_1ON1">
                         1 ON 1
                     </div>
 
@@ -101,7 +100,7 @@ export default class extends AbstractView {
                     </div>
 
                     <!-- TOURNAMENT -->
-                    <div style="padding-top: 20px; padding-bottom: 20px;">
+                    <div class="transItem" style="padding-top: 20px; padding-bottom: 20px;" data-trans_id="main_TOURNAMENT">
                         TOURNAMENT
                     </div>
                 </button>
@@ -109,7 +108,7 @@ export default class extends AbstractView {
 
             <!-- text -->
             <div class="col-12" style="display: flex; justify-content: center; position: relative; z-index: 2; padding-top: 100px;">
-                <p class="PS2P_font" style="font-size: 30px;">SELECT GAME MODE</p>
+                <p class="PS2P_font transItem" style="font-size: 30px;" data-trans_id="main_select_mode">SELECT GAME MODE</p>
             </div>
         </div>
     </div>
@@ -119,17 +118,17 @@ export default class extends AbstractView {
         <div class="modal-dialog">
             <div class="modal-content blue_outline">
                 <div class="modal-header custom-modal-header" style="border: none;">
-                    <div class="modal-title custom-modal-title" id="logoutModalLabel">OH, <br><br> YOU ARE LEAVING...</div>
+                    <div class="modal-title custom-modal-title transItem" id="logoutModalLabel" data-trans_id="logout_question1">OH, <br><br> YOU ARE LEAVING...</div>
                     <button type="button" class="btn-close custom-btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body custom-modal-body" style="font-size: 30px;" style="border: none;">
+                <div class="modal-body custom-modal-body transItem" style="font-size: 30px;" style="border: none;" data-trans_id="logout_question2">
                     ARE YOU SURE?
                 </div>
                 <div class="modal-footer custom-modal-footer" style="border: none;">
 
-                    <button type="button" class="custom-btn-left blue_outline PS2P_font" style="margin: 20px 20px; width: 425px; height: 162px; font-size: 30px" data-bs-dismiss="modal">NO,<br> JUST KIDDING</button>
+                    <button type="button" class="custom-btn-left blue_outline PS2P_font transItem" style="margin: 20px 20px; width: 425px; height: 162px; font-size: 30px" data-bs-dismiss="modal" data-trans_id="logout_no">NO,<br> JUST KIDDING</button>
 
-                    <button type="button" id="confirmLogout" class=" custom-btn-right blue_outline PS2P_font" style="margin: 20px 20px; width: 425px; height: 162px; font-size: 30px" data-bs-dismiss="modal">YES,<br> LOG ME OUT</button>
+                    <button type="button" id="confirmLogout" class=" custom-btn-right blue_outline PS2P_font transItem" style="margin: 20px 20px; width: 425px; height: 162px; font-size: 30px" data-bs-dismiss="modal" data-trans_id="logout_yes">YES,<br> LOG ME OUT</button>
 
                 </div>
             </div>
@@ -139,6 +138,12 @@ export default class extends AbstractView {
     }
 
     async init() {
+        // translate 적용 테스트
+        const transItems = document.querySelectorAll(".transItem");
+        transItems.forEach( (transItem) => {
+            transItem.innerHTML = get_translated_value(transItem.dataset.trans_id);
+        } )
+
         // 클릭 가능한 요소들에 이벤트 리스너를 등록한다
         // button tag 들은 dataset 를 통해 Custom Attribute 를 받아온다
         const Mode_Buttons = document.querySelector("#game_mode_button").querySelectorAll("button");
@@ -183,22 +188,33 @@ export default class extends AbstractView {
                 const url = new URL(event.currentTarget.href);
                 const pathname = url.pathname;
 
-                if (pathname !== "/LANGUAGE")
+                console.log("pathname:", pathname);
+
+                if (pathname === "/match_record")
                 {
+                    localStorage.setItem("record_page", 1);
                     navigateTo(pathname);
                 }
-                else
+                else if (pathname === "/LANGUAGE")
                 {
-                    document.querySelector("#tr_1").innerText = ">대전기록";
-                    document.querySelector("#tr_1").style.fontSize = "34px";
-                    document.querySelector("#tr_1").classList.remove("PS2P_font");
-                    document.querySelector("#tr_1").classList.add("PS2P_font_kor");
-                    document.querySelector("#tr_2").innerText = ">げんご";
-                    document.querySelector("#tr_2").style.fontSize = "34px";
-                    document.querySelector("#tr_2").classList.remove("PS2P_font");
-                    document.querySelector("#tr_2").classList.add("PS2P_font_jpn");
-                    document.querySelector("#tr_3").innerText = ">LOGOUT";
-                    document.querySelector("#tr_3").style.fontSize = "30px";
+                    let cur_locale = localStorage.getItem("locale");
+
+                    if (cur_locale === "en")
+                    {
+                        cur_locale = "ko";
+                    }
+                    else if (cur_locale === "ko")
+                    {
+                        cur_locale = "jp";
+                    }
+                    else
+                    {
+                        cur_locale = "en";
+                    }
+                    localStorage.setItem("locale", cur_locale);
+                    transItems.forEach( (transItem) => {
+                        transItem.innerHTML = get_translated_value(transItem.dataset.trans_id);
+                    } )
                 }
             });
 
@@ -259,7 +275,6 @@ export default class extends AbstractView {
             console.log(response);
             console.log(jsonResponse);
         }
-        myVar = "bye~";
 
         // 언어 변경에 따라 현재 페이지의 text를 모두 변경해야하는건 main뿐이다
         // 다른 페이지는 이미 변경되어있는 언어 기반으로 getHtml에서 렌더링된다

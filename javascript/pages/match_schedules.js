@@ -1,5 +1,6 @@
 import AbstractView from "./AbstractView.js";
 import { navigateTo, baseUrl } from "../../router.js";
+import { get_translated_value } from "../../language.js"
 
 export default class extends AbstractView {
     constructor() {
@@ -24,7 +25,7 @@ export default class extends AbstractView {
                     <!-- nav menu buttons -->
                     <ul class="nav justify-content-end">
                         <li style="margin-right: 40px;">
-                            <a class="btn btn-primary" href="/main">>MAIN
+                            <a class="btn btn-primary transItem" href="/main" data-trans_id="main_button">>MAIN
                                 <p style="font-size: 20px; margin-top: -12px;">(ESC)</p>
                             </a>
                         </li>
@@ -36,7 +37,7 @@ export default class extends AbstractView {
                 <div class="PS2P_font" style="position: relative; z-index: 1; top: -50px;">
 
                     <!-- TOURNAMENT text -->
-                    <p style="text-align: center; font-size: 30px; margin-bottom: 0px;">TOURNAMENT</p>
+                    <p class="transItem" style="text-align: center; font-size: 30px; margin-bottom: 0px;" data-trans_id="match_schedules_TOURNAMENT">TOURNAMENT</p>
 
                     <!-- trophy -->
                     <div style="margin-top: -23px;">
@@ -122,13 +123,13 @@ export default class extends AbstractView {
                     <!-- center button -->
                     <div class="PS2P_font center_button blue_outline" style="position: absolute; width: 300px; height: 133.88px; max-width: 328px; max-height: 161.88px; top: 420px; left: 550px; display: flex; flex-direction: column; justify-content: center; cursor: pointer;">
                         <!-- 세로로 가운데 정렬 -->
-                        <p style="font-size: 30px; margin-bottom: 0px; text-align: center; line-height: 34px;">START!</p>
+                        <p class="transItem" style="font-size: 30px; margin-bottom: 0px; text-align: center; line-height: 34px;" data-trans_id="match_schedules_start">START!</p>
                         <p style="font-size: 20px; margin-bottom: 0px; text-align: center;">(ENTER)</p>
                     </div>
 
                     <!-- Champion -->
                     <!-- 모든 경기가 끝났을때만 조건부로 표시한다 -->
-                    <div id="champion_text" class="PS2P_font" style="position: absolute; display: none; top: 170px; left: 274px; font-size: 100px; text-shadow:
+                    <div id="champion_text" class="PS2P_font transItem" data-trans_id="match_schedules_champion" style="position: absolute; display: none; width: 100%; top: 170px; left: 5px; font-size: 100px; text-align: center; text-shadow:
                     -1px -1px 0 #000000,  
                     1px -1px 0 #000000,
                     -1px 1px 0 #000000,
@@ -143,6 +144,12 @@ export default class extends AbstractView {
     }
 
     async init() {
+        // translate 적용 테스트
+        const transItems = document.querySelectorAll(".transItem");
+        transItems.forEach( (transItem) => {
+            transItem.innerHTML = get_translated_value(transItem.dataset.trans_id);
+        } )
+
         // localStorage 변조에 대응하기 위해 미리 변수에 담아두고 리터럴 값을 이벤트 리스너로 넣어준다
 
         // player nickname을 적용시킨다
@@ -250,7 +257,8 @@ export default class extends AbstractView {
             line.style.stroke = "#14FF00";
 
             document.querySelector("#champion_text").style.display = "block";
-            document.querySelector(".center_button").querySelector("p").innerHTML = "TOURNAMENT<br>AGAIN?";
+            // document.querySelector(".center_button").querySelector("p").innerHTML = "TOURNAMENT<br>AGAIN?";
+            document.querySelector(".center_button").querySelector("p").innerHTML = get_translated_value("again_TOURNAMENT");
 
             // 여기서 백엔드로 게임기록 일괄 전송?
             // game_result 객체 만들기
@@ -391,6 +399,18 @@ export default class extends AbstractView {
             Center_Button.classList.remove("blue_hover");
         });
 
+        const handleKeyDown = (event) => {
+            const Main_Button = document.querySelector("#top_item").querySelector("a");
+			if (event.key === "Escape") {
+				Main_Button.click();
+			}
+            else if (event.key === "Enter")
+            {
+                Center_Button.click();
+            }
+		};
+        document.addEventListener("keydown", handleKeyDown);
+
         // 클릭 가능한 요소들에 이벤트 리스너를 등록한다
         const Top_Buttons = document.querySelector("#top_item").querySelectorAll("a");
 
@@ -420,5 +440,15 @@ export default class extends AbstractView {
                 Button.classList.remove("white_stroke_2_5px");
             });
         });
+
+        this.cleanup = () => {
+			document.removeEventListener("keydown", handleKeyDown);
+		};
     }
+
+    destroy() {
+		if (this.cleanup) {
+			this.cleanup();
+		}
+	}
 }
