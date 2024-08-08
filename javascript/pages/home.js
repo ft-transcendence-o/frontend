@@ -61,7 +61,7 @@ export default class extends AbstractView {
                 <!-- spinner -->
                 <div id="spinner" class="spinner-container" style="display: none;">
                     <img src="../image/pacman_right.gif" alt="Loading..." class="custom-spinner" />
-                    <div class="spinner-message PS2P_font">Loading...</div>
+                    <div class="spinner-message PS2P_font">LOADING...</div>
                 </div>
                     
 
