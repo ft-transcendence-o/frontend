@@ -40,11 +40,13 @@ export class PongGame {
         // game_status_var
         this._gameVar = document.querySelector("#game_var");
         this._player1 = {
-            Nick: localStorage.getItem("match_1up"),
+            // Nick: localStorage.getItem("match_1up"),
+            Nick: "1UP",
             Score : 0,
         }
         this._player2 = {
-            Nick: localStorage.getItem("match_2up"),
+            // Nick: localStorage.getItem("match_2up"),
+            Nick: "2UP",
             Score : 0,
         }
         this._mode = localStorage.getItem('mode');
@@ -335,10 +337,8 @@ export class PongGame {
     // player1이 점수를 딴 경우
     player1Win() {
         console.log("player1 win");
-        document.querySelector("#player1_score").innerHTML = ++(this._player1.Score);
+        document.querySelector("#player1_score").innerHTML = this._player1.Score;
         if (this._player1.Score === 1){ // 일정점수에 도달하면 game set
-            this._vec.set(0, 0, 0);
-            this._angularVec.set(0, 0, 0.1);
             if (this._mode === "TOURNAMENT") {
                 document.querySelector("#winner1").innerHTML = `
                 <div style="font-size: 100px; line-height: 100px; color: white;">${get_translated_value("game_win")}!</div>
@@ -348,7 +348,7 @@ export class PongGame {
                     margin-left: 20px;" 
                     class="blue_outline">
                     <span style="font-size: 50px; line-height: 50px;">
-                        >>${get_translated_value(QR_next)}
+                        >>${get_translated_value("QR_next")}
                     </span>
                     <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
                 </button>`;
@@ -363,12 +363,12 @@ export class PongGame {
                     margin-left: 20px;" 
                     class="blue_outline">
                     <span style="font-size: 50px; line-height: 50px;">
-                        ${get_translated_value(again_1ON1)}
+                        ${get_translated_value("again_1ON1")}
                     </span>
                     <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
                 </button>`;
                 // post API
-                this.fetchResult();
+                // this.fetchResult();
                 document.querySelector("#next_button").addEventListener("click", (event) => { 
                     this._isRunning = false;
                     navigateTo("/game");
@@ -381,10 +381,8 @@ export class PongGame {
     // player2가 점수를 딴 경우
     player2Win() {
         console.log("player2 win");
-        document.querySelector("#player2_score").innerHTML = ++this._player2.Score;
+        document.querySelector("#player2_score").innerHTML = this._player2.Score;
         if (this._player2.Score === 1){ // 승리점수가 일정 점수에 도달하면 게임을 끝낸다
-            this._vec.set(0, 0, 0);
-            this._angularVec.set(0, 0, 0.1);
             if (this._mode === "TOURNAMENT") { // 토너먼트
                 document.querySelector("#winner2").innerHTML = `
                 <div style="font-size: 100px; line-height: 100px; color: white;">${get_translated_value("game_win")}!</div>
@@ -394,7 +392,7 @@ export class PongGame {
                     margin-left: 20px;" 
                     class="blue_outline">
                     <span style="font-size: 50px; line-height: 50px;">
-                        >>${get_translated_value(QR_next)}
+                        >>${get_translated_value("QR_next")}
                     </span>
                     <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
                 </button>`;
@@ -409,12 +407,12 @@ export class PongGame {
                     margin-left: 20px;" 
                     class="blue_outline">
                     <span style="font-size: 50px; line-height: 50px;">
-                        ${get_translated_value(again_1ON1)}
+                        ${get_translated_value("again_1ON1")}
                     </span>
                     <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
                 </button>`;
                 // 결과를 backend에 POST
-                this.fetchResult();
+                // this.fetchResult();
                 document.querySelector("#next_button").addEventListener("click", (event) => {
                     this._isRunning = false;
                     navigateTo("/game");
@@ -453,10 +451,14 @@ export class PongGame {
     // 렌더링마다 mesh들의 상태를 업데이트하는 함수
     update(time) {
         // if (this._socket.onopen && this._ball && !this._isPaused) {
-            if (this._socket.onopen && !this._isPaused) {
+        if (this._socket.onopen && !this._isPaused) {
             // 공의 원근감을 알기 위한 사각형모양의 링의 z좌표 변경
             this._perspectiveLineEdges.position.z = this._ball.position.z;
         }
+        if (this._player1.Score == 1)
+            this.player1Win();
+        else if (this._player2.Score == 1)
+        this.player2Win();
     }
 
     handleSocketMessage(event) {
@@ -467,6 +469,8 @@ export class PongGame {
         this._ball.position.set(received.game.ball[0], received.game.ball[1], received.game.ball[2]);
         this._panel1.position.set(received.game.panel1[0], received.game.panel1[1], received.game.panel1[2]);
         this._panel2.position.set(received.game.panel2[0], received.game.panel2[1], received.game.panel2[2]);
+        this._player1.Score = received.game.score[0];
+        this._player2.Score = received.game.score[1];
     }
 
     // 게임 일시정지
@@ -482,31 +486,6 @@ export class PongGame {
             this._keyState[event.code] = true;
             this._socket.send(JSON.stringify(this._keyState));
         }
-        // console.log(this._keyState);
-        // if (event.code === "KeyW") {
-        //     this._socket.send("W,True");
-        // }
-        // if (event.code === "KeyS") {
-        //     this._socket.send("S,True");
-        // }
-        // if (event.code === "KeyA") {
-        //     this._socket.send("A,True");
-        // }
-        // if (event.code === "KeyD") {
-        //     this._socket.send("D,True");
-        // }
-        // if (event.code === "ArrowUp") {
-        //     this._socket.send("Up,True");
-        // }
-        // if (event.code === "ArrowDown") {
-        //     this._socket.send("Down,True");
-        // }
-        // if (event.code === "ArrowLeft") {
-        //     this._socket.send("Left,True");
-        // }
-        // if (event.code === "ArrowRight") {
-        //     this._socket.send("Right,True");
-        // }
     }
 
     keyup(event){
@@ -514,30 +493,6 @@ export class PongGame {
             this._keyState[event.code] = false;
             this._socket.send(JSON.stringify(this._keyState));
         }
-        // if (event.code === "KeyW") {
-        //     this._socket.send("W,False");
-        // }
-        // if (event.code === "KeyS") {
-        //     this._socket.send("S,False");
-        // }
-        // if (event.code === "KeyA") {
-        //     this._socket.send("A,False");
-        // }
-        // if (event.code === "KeyD") {
-        //     this._socket.send("D,False");
-        // }
-        // if (event.code === "ArrowUp") {
-        //     this._socket.send("Up,False");
-        // }
-        // if (event.code === "ArrowDown") {
-        //     this._socket.send("Down,False");
-        // }
-        // if (event.code === "ArrowLeft") {
-        //     this._socket.send("Left,False");
-        // }
-        // if (event.code === "ArrowRight") {
-        //     this._socket.send("Right,False");
-        // }
     }
 
     countdown() {
