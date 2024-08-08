@@ -479,62 +479,66 @@ export class PongGame {
     }
 
     keydown(event) {
-        // this._keyState[event.code] = true;
-        // this._socket.send(JSON.stringify(this._keyState));
+        if (event.code in this._keyState){
+            this._keyState[event.code] = true;
+            this._socket.send(JSON.stringify(this._keyState));
+        }
         // console.log(this._keyState);
-        if (event.code === "KeyW") {
-            this._socket.send("W,True");
-        }
-        if (event.code === "KeyS") {
-            this._socket.send("S,True");
-        }
-        if (event.code === "KeyA") {
-            this._socket.send("A,True");
-        }
-        if (event.code === "KeyD") {
-            this._socket.send("D,True");
-        }
-        if (event.code === "ArrowUp") {
-            this._socket.send("Up,True");
-        }
-        if (event.code === "ArrowDown") {
-            this._socket.send("Down,True");
-        }
-        if (event.code === "ArrowLeft") {
-            this._socket.send("Left,True");
-        }
-        if (event.code === "ArrowRight") {
-            this._socket.send("Right,True");
-        }
+        // if (event.code === "KeyW") {
+        //     this._socket.send("W,True");
+        // }
+        // if (event.code === "KeyS") {
+        //     this._socket.send("S,True");
+        // }
+        // if (event.code === "KeyA") {
+        //     this._socket.send("A,True");
+        // }
+        // if (event.code === "KeyD") {
+        //     this._socket.send("D,True");
+        // }
+        // if (event.code === "ArrowUp") {
+        //     this._socket.send("Up,True");
+        // }
+        // if (event.code === "ArrowDown") {
+        //     this._socket.send("Down,True");
+        // }
+        // if (event.code === "ArrowLeft") {
+        //     this._socket.send("Left,True");
+        // }
+        // if (event.code === "ArrowRight") {
+        //     this._socket.send("Right,True");
+        // }
     }
 
     keyup(event){
-        // this._keyState[event.code] = false;
-        // this._socket.send(JSON.stringify(this._keyState));
-        if (event.code === "KeyW") {
-            this._socket.send("W,False");
+        if (event.code in this._keyState){
+            this._keyState[event.code] = false;
+            this._socket.send(JSON.stringify(this._keyState));
         }
-        if (event.code === "KeyS") {
-            this._socket.send("S,False");
-        }
-        if (event.code === "KeyA") {
-            this._socket.send("A,False");
-        }
-        if (event.code === "KeyD") {
-            this._socket.send("D,False");
-        }
-        if (event.code === "ArrowUp") {
-            this._socket.send("Up,False");
-        }
-        if (event.code === "ArrowDown") {
-            this._socket.send("Down,False");
-        }
-        if (event.code === "ArrowLeft") {
-            this._socket.send("Left,False");
-        }
-        if (event.code === "ArrowRight") {
-            this._socket.send("Right,False");
-        }
+        // if (event.code === "KeyW") {
+        //     this._socket.send("W,False");
+        // }
+        // if (event.code === "KeyS") {
+        //     this._socket.send("S,False");
+        // }
+        // if (event.code === "KeyA") {
+        //     this._socket.send("A,False");
+        // }
+        // if (event.code === "KeyD") {
+        //     this._socket.send("D,False");
+        // }
+        // if (event.code === "ArrowUp") {
+        //     this._socket.send("Up,False");
+        // }
+        // if (event.code === "ArrowDown") {
+        //     this._socket.send("Down,False");
+        // }
+        // if (event.code === "ArrowLeft") {
+        //     this._socket.send("Left,False");
+        // }
+        // if (event.code === "ArrowRight") {
+        //     this._socket.send("Right,False");
+        // }
     }
 
     countdown() {
