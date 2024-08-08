@@ -1,6 +1,7 @@
 import * as THREE from '../build/three.module.js';
 import { GLTFLoader } from '../build/GLTFLoader.js';
 // import { navigateTo, baseUrl, router} from "../../router.js";
+import { get_translated_value } from "../../language.js"
 
 /*
 게임 동작 순서
@@ -340,14 +341,14 @@ export class PongGame {
             this._angularVec.set(0, 0, 0.1);
             if (this._mode === "TOURNAMENT") {
                 document.querySelector("#winner1").innerHTML = `
-                <div style="font-size: 100px; line-height: 100px; color: white;">WIN!</div>
+                <div style="font-size: 100px; line-height: 100px; color: white;">${get_translated_value("game_win")}!</div>
                 <button id="next_button" type="button" style="
                     background-color: black;
                     width: 328px; height: 199px;
                     margin-left: 20px;" 
                     class="blue_outline">
                     <span style="font-size: 50px; line-height: 50px;">
-                        >>NEXT
+                        >>${get_translated_value(QR_next)}
                     </span>
                     <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
                 </button>`;
@@ -355,15 +356,14 @@ export class PongGame {
             }
             else { //1vs1
                 document.querySelector("#winner1").innerHTML = `
-                <div style="font-size: 100px; line-height: 100px; color: white;">WIN!</div>
+                <div style="font-size: 100px; line-height: 100px; color: white;">${get_translated_value("game_win")}!</div>
                 <button id="next_button" type="button" style="
                     background-color: black;
                     width: 328px; height: 199px;
                     margin-left: 20px;" 
                     class="blue_outline">
                     <span style="font-size: 50px; line-height: 50px;">
-                        1 ON 1
-                        AGAIN?
+                        ${get_translated_value(again_1ON1)}
                     </span>
                     <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
                 </button>`;
@@ -387,14 +387,14 @@ export class PongGame {
             this._angularVec.set(0, 0, 0.1);
             if (this._mode === "TOURNAMENT") { // 토너먼트
                 document.querySelector("#winner2").innerHTML = `
-                <div style="font-size: 100px; line-height: 100px; color: white;">WIN!</div>
+                <div style="font-size: 100px; line-height: 100px; color: white;">${get_translated_value("game_win")}!</div>
                 <button id="next_button" type="button" style="
                     background-color: black;
                     width: 328px; height: 199px;
                     margin-left: 20px;" 
                     class="blue_outline">
                     <span style="font-size: 50px; line-height: 50px;">
-                        >>NEXT
+                        >>${get_translated_value(QR_next)}
                     </span>
                     <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
                 </button>`;
@@ -402,15 +402,14 @@ export class PongGame {
             }
             else { // 1VS1의 경우
                 document.querySelector("#winner2").innerHTML = `
-                <div style="font-size: 100px; line-height: 100px; color: white;">WIN!</div>
+                <div style="font-size: 100px; line-height: 100px; color: white;">${get_translated_value("game_win")}!</div>
                 <button id="next_button" type="button" style="
                     background-color: black;
                     width: 328px; height: 199px;
                     margin-left: 20px;" 
                     class="blue_outline">
                     <span style="font-size: 50px; line-height: 50px;">
-                        1 ON 1
-                        AGAIN?
+                        ${get_translated_value(again_1ON1)}
                     </span>
                     <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
                 </button>`;
