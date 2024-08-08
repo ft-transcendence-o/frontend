@@ -338,7 +338,7 @@ export class PongGame {
     player1Win() {
         console.log("player1 win");
         document.querySelector("#player1_score").innerHTML = this._player1.Score;
-        if (this._player1.Score === 1){ // 일정점수에 도달하면 game set
+        if (this._player1.Score === 10){ // 일정점수에 도달하면 game set
             if (this._mode === "TOURNAMENT") {
                 document.querySelector("#winner1").innerHTML = `
                 <div style="font-size: 100px; line-height: 100px; color: white;">${get_translated_value("game_win")}!</div>
@@ -373,6 +373,7 @@ export class PongGame {
                     this._isRunning = false;
                     navigateTo("/game");
                 })
+                this._socket.send("start");
             }
         }
         this.setGame();
@@ -382,7 +383,7 @@ export class PongGame {
     player2Win() {
         console.log("player2 win");
         document.querySelector("#player2_score").innerHTML = this._player2.Score;
-        if (this._player2.Score === 1){ // 승리점수가 일정 점수에 도달하면 게임을 끝낸다
+        if (this._player2.Score === 10){ // 승리점수가 일정 점수에 도달하면 게임을 끝낸다
             if (this._mode === "TOURNAMENT") { // 토너먼트
                 document.querySelector("#winner2").innerHTML = `
                 <div style="font-size: 100px; line-height: 100px; color: white;">${get_translated_value("game_win")}!</div>
@@ -455,10 +456,6 @@ export class PongGame {
             // 공의 원근감을 알기 위한 사각형모양의 링의 z좌표 변경
             this._perspectiveLineEdges.position.z = this._ball.position.z;
         }
-        if (this._player1.Score == 1)
-            this.player1Win();
-        else if (this._player2.Score == 1)
-        this.player2Win();
     }
 
     handleSocketMessage(event) {
@@ -466,11 +463,35 @@ export class PongGame {
         const received = JSON.parse(event.data); // ball 좌표, panel1 좌표, panel2 좌표가 순서대로 들어온다고 가정
         console.log(received);
 
-        this._ball.position.set(received.game.ball[0], received.game.ball[1], received.game.ball[2]);
-        this._panel1.position.set(received.game.panel1[0], received.game.panel1[1], received.game.panel1[2]);
-        this._panel2.position.set(received.game.panel2[0], received.game.panel2[1], received.game.panel2[2]);
-        this._player1.Score = received.game.score[0];
-        this._player2.Score = received.game.score[1];
+        if (received.game){
+            this._ball.position.set(received.game.ball[0], received.game.ball[1], received.game.ball[2]);
+            this._panel1.position.set(received.game.panel1[0], received.game.panel1[1], received.game.panel1[2]);
+            this._panel2.position.set(received.game.panel2[0], received.game.panel2[1], received.game.panel2[2]);
+            this._perspectiveLineEdges.position.z = this._ball.position.z;
+        }
+        
+        //이하의 메시지는 확인해야한다
+        if (received.score){
+            console.log("test");
+            this._player1.Score = received.score.score[0];
+            this._player2.Score = received.score.score[1];
+            this.refreshScore();
+        }
+    }
+
+    async refreshScore() {
+        document.querySelector("#player1_score").innerHTML = this._player1.Score;
+        document.querySelector("#player2_score").innerHTML = this._player2.Score;
+        // this._isRunning = false;
+        this._ball
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        this._ball.position.set(0, 0, 0);
+        this._panel1.position.set(0, 0, 50);
+        this._panel2.position.set(0, 0, -50);
+        this._perspectiveLineEdges.position.z = 0;
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        // this._isRunning = true;
+        this._socket.send("start");
     }
 
     // 게임 일시정지
@@ -504,7 +525,7 @@ export class PongGame {
     
             if (countdownValue === 0) {
                 countdownElement.innerText = "START";
-                this._socket.send("start");
+                this._socket.send("first");
             }
             else if (countdownValue === -1) {
                 clearInterval(countdownInterval);
