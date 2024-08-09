@@ -577,3 +577,5 @@ export class PongGame {
 window.onload = function() {
     new PongGame();
 }
+
+
