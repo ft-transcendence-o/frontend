@@ -1,5 +1,6 @@
 import { navigateTo } from "../../router.js";
 import AbstractView from "./AbstractView.js";
+import { get_translated_value } from "../../language.js"
 
 // 소독 Sanitize input
 function sanitizeInput(input) {
@@ -26,22 +27,22 @@ export default class extends AbstractView {
             <div class="blue_outline" style="background-color: black; position: absolute; width: 1405px; height: 984px; top: 20px; z-index: 1;"></div>
             
             <!-- top item -->
-            <div id="main_button" class="PS2P_font" style="position: absolute; top: 63px; right: 50px; font-size: 30px; z-index: 2">
+            <div id="main_button" class="PS2P_font" style="position: absolute; top: 50px; right: 50px; font-size: 30px; z-index: 2">
                 
-                <!-- >MAIN(ESC) 버튼 -->
-                <ul class="nav justify-content-end" style="margin: 0; padding: 0;">
-                    <li style="margin: 0; padding: 0;">
-                        <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#logoutModal" style="margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center;">
-                            <span style="font-size: 30px; line-height: 30px;">>MAIN</span>
-                            <span style="font-size: 20px; line-height: 20px;">(ESC)</span>
-                        </a>
-                    </li>
-                </ul>
+                <!-- nav menu buttons -->
+                    <ul class="nav justify-content-end">
+                        <li style="margin-right: 0px;">
+                            <a class="btn btn-primary transItem" href="/main" data-trans_id="main_button">>MAIN
+                                <p style="font-size: 20px; margin-top: -12px;">(ESC)</p>
+                            </a>
+                        </li>
+                    </ul>
             </div>
         </div>
+    </div>
 
         <!-- 상단 안내문 -->
-        <div class="PS2P_font" style="position: relative; z-index: 3; margin-top: 136px; font-size: 30px; color: white; text-align: center;">
+        <div class="PS2P_font transItem" style="position: relative; z-index: 3; margin-top: 136px; font-size: 30px; color: white; text-align: center;" data-trans_id="nickname_text">
             ENTER A NICKNAME FOR EACH PLAYER
         </div>
 
@@ -86,6 +87,12 @@ export default class extends AbstractView {
     }
 
     async init() {
+        // translate 적용 테스트
+        const transItems = document.querySelectorAll(".transItem");
+        transItems.forEach( (transItem) => {
+            transItem.innerHTML = get_translated_value(transItem.dataset.trans_id);
+        })
+
         const mainButtons = document.querySelectorAll("#main_button a");
         const readyButton = document.querySelector("#ready_button");
 

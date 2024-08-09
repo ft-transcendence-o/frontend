@@ -1,5 +1,6 @@
 import AbstractView from "./AbstractView.js";
 import { navigateTo, baseUrl } from "../../router.js";
+import { get_translated_value } from "../../language.js"
 
 export default class extends AbstractView {
     constructor() {
@@ -53,7 +54,7 @@ export default class extends AbstractView {
                         <!-- <button style="background-color: rgba(0, 0, 0, 0); border: 0;"> -->
                         <img src="../image/pacman_right.gif" style="width: 100px; height: 107.18px; padding-right: 23px;" alt="pacman">
                         <span style="font-family: Arial, Helvetica, sans-serif; font-size: 70px; vertical-align: middle;" class="PS2P_font">►</span>
-                        <span style="padding-right: 160px; font-size: 70px; vertical-align: middle;" class="PS2P_font">LOG-IN</span>
+                        <span style="padding-right: 160px; font-size: 70px; vertical-align: middle;" class="PS2P_font transItem" data-trans_id="home_login">LOG-IN</span>
                     <!-- </button> -->
                     </div>
                 </div>
@@ -81,7 +82,11 @@ export default class extends AbstractView {
     }
 
     async init() {
-
+        // translate 적용 테스트
+        const transItems = document.querySelectorAll(".transItem");
+        transItems.forEach( (transItem) => {
+            transItem.innerHTML = get_translated_value(transItem.dataset.trans_id);
+        } )
         // 페이지 로드 할 때는 spinner 돌지 않도록 하기
         const spinner = document.getElementById("spinner");
         spinner.style.display = "none";
@@ -94,7 +99,7 @@ export default class extends AbstractView {
         function login_click(event) {
             event.preventDefault();
             spinner.style.display = "flex"; // 뺑글이 시작
-            window.location.href = "https://127.0.0.1/api/user-management/login";
+            window.location.href = `${baseUrl}/api/user-management/login`;
         }
             
         const login_button = document.querySelector(".login");

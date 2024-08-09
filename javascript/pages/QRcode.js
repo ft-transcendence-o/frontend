@@ -1,5 +1,6 @@
 import { navigateTo, baseUrl } from "../../router.js";
 import AbstractView from "./AbstractView.js";
+import { get_translated_value } from "../../language.js"
 
 // 소독 sanitize input
 function sanitizeInput(input) {
@@ -35,8 +36,8 @@ export default class extends AbstractView {
 
 				<!-- NEXT Button -->
 				<button id="next_button" type="button" style="background-color: black; z-index: 4; margin-top: 600px; width: 280px; height: 139px;" class="blue_outline PS2P_font">
-					<span style="font-size: 50px; line-height: 50px;">NEXT</span>
-					<span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
+					<p class="transItem" style="font-size: 50px; line-height: 50px; padding-top: 15px;" data-trans_id="QR_next">NEXT</p>
+					<p style="font-size: 20px; line-height: 20px;">(ENTER)</p>
 				</button>
 		
 		
@@ -53,6 +54,10 @@ export default class extends AbstractView {
     }
 
     async init() {
+		const transItems = document.querySelectorAll(".transItem");
+        transItems.forEach( (transItem) => {
+            transItem.innerHTML = get_translated_value(transItem.dataset.trans_id);
+        })
 
 		/* 넥스트 Button */
         const Next_Button = document.querySelector("#next_button");
