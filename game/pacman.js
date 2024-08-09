@@ -456,6 +456,7 @@ export class PongGame {
             // 공의 원근감을 알기 위한 사각형모양의 링의 z좌표 변경
             this._perspectiveLineEdges.position.z = this._ball.position.z;
         }
+        // console.log("update: ", this._ball.position);
     }
 
     handleSocketMessage(event) {
@@ -464,6 +465,7 @@ export class PongGame {
         console.log(received);
 
         if (received.game){
+            console.log("game");
             this._ball.position.set(received.game.ball[0], received.game.ball[1], received.game.ball[2]);
             this._panel1.position.set(received.game.panel1[0], received.game.panel1[1], received.game.panel1[2]);
             this._panel2.position.set(received.game.panel2[0], received.game.panel2[1], received.game.panel2[2]);
@@ -472,7 +474,7 @@ export class PongGame {
         
         //이하의 메시지는 확인해야한다
         if (received.score){
-            console.log("test");
+            console.log("score");
             this._player1.Score = received.score.score[0];
             this._player2.Score = received.score.score[1];
             this.refreshScore();
@@ -525,7 +527,7 @@ export class PongGame {
     
             if (countdownValue === 0) {
                 countdownElement.innerText = "START";
-                this._socket.send("first");
+                this._socket.send("start");
             }
             else if (countdownValue === -1) {
                 clearInterval(countdownInterval);
