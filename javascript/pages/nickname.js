@@ -1,5 +1,6 @@
 import { navigateTo } from "../../router.js";
 import AbstractView from "./AbstractView.js";
+import { get_translated_value } from "../../language.js"
 
 // 소독 Sanitize input
 function sanitizeInput(input) {
@@ -26,22 +27,22 @@ export default class extends AbstractView {
             <div class="blue_outline" style="background-color: black; position: absolute; width: 1405px; height: 984px; top: 20px; z-index: 1;"></div>
             
             <!-- top item -->
-            <div id="main_button" class="PS2P_font" style="position: absolute; top: 63px; right: 50px; font-size: 30px; z-index: 2">
+            <div id="main_button" class="PS2P_font" style="position: absolute; top: 50px; right: 50px; font-size: 30px; z-index: 2">
                 
-                <!-- >MAIN(ESC) 버튼 -->
-                <ul class="nav justify-content-end" style="margin: 0; padding: 0;">
-                    <li style="margin: 0; padding: 0;">
-                        <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#logoutModal" style="margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center;">
-                            <span style="font-size: 30px; line-height: 30px;">>MAIN</span>
-                            <span style="font-size: 20px; line-height: 20px;">(ESC)</span>
-                        </a>
-                    </li>
-                </ul>
+                <!-- nav menu buttons -->
+                    <ul class="nav justify-content-end">
+                        <li style="margin-right: 0px;">
+                            <a class="btn btn-primary transItem" href="/main" data-trans_id="main_button">>MAIN
+                                <p style="font-size: 20px; margin-top: -12px;">(ESC)</p>
+                            </a>
+                        </li>
+                    </ul>
             </div>
         </div>
+    </div>
 
         <!-- 상단 안내문 -->
-        <div class="PS2P_font" style="position: relative; z-index: 3; margin-top: 136px; font-size: 30px; color: white; text-align: center;">
+        <div class="PS2P_font transItem" style="position: relative; z-index: 3; margin-top: 136px; font-size: 30px; color: white; text-align: center;" data-trans_id="nickname_text">
             ENTER A NICKNAME FOR EACH PLAYER
         </div>
 
@@ -63,7 +64,7 @@ export default class extends AbstractView {
                 <img src="./image/ghost_pink.gif" style="width: 100px; height: auto; margin-right:32px;" alt="3UP">
                 <input type="text" class="PS2P_font nickname-input-field" maxlength="10" style="width:600px; height:100px; border: solid; border-color: #14FF00; border-width: 10px; background-color:black; color:white; font-size: 30px; outline: none; padding-left: 20px;" />
             </div>
-            <div class="nickname-input d-flex align-items-center">
+            <div class="nickname-input d-flex	align-items-center">
                 <span style="color: white; margin-right: 58px;">4UP</span>
                 <img src="./image/ghost_orange.gif" style="width: 100px; height: auto; margin-right:32px;" alt="4UP">
                 <input type="text" class="PS2P_font nickname-input-field" maxlength="10" style="width:600px; height:100px; border: solid; border-color: #14FF00; border-width: 10px; background-color:black; color:white; font-size: 30px; outline: none; padding-left: 20px;" />
@@ -86,6 +87,12 @@ export default class extends AbstractView {
     }
 
     async init() {
+        // translate 적용 테스트
+        const transItems = document.querySelectorAll(".transItem");
+        transItems.forEach( (transItem) => {
+            transItem.innerHTML = get_translated_value(transItem.dataset.trans_id);
+        })
+
         const mainButtons = document.querySelectorAll("#main_button a");
         const readyButton = document.querySelector("#ready_button");
 
@@ -130,17 +137,18 @@ export default class extends AbstractView {
             });
 
             if (!allFieldsFilled) {
-                invalidInputElement.innerHTML = sanitizeInput(`<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">NO EMPTY INPUT FIELD!</p>`);
+                invalidInputElement.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">NO EMPTY INPUT FIELD!</p>`;
                 return;
             }
 
             const hasDuplicates = new Set(nicknames).size !== nicknames.length;
             if (hasDuplicates) {
-                invalidInputElement.innerHTML = sanitizeInput(`<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">NICKNAME DUPLICATION NOT ALLOWED!</p>`);
+                invalidInputElement.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">NICKNAME DUPLICATION NOT ALLOWED!</p>`;
                 return;
             }
 
-            let storedNicknames = JSON.parse(localStorage.getItem('nicknames')) || [];
+            let storedNicknames = [];
+            // storedNicknames = JSON.parse(localStorage.getItem('nicknames')) || []; // JSON으로 파싱(보안처리)
 
             storedNicknames = [...storedNicknames, ...nicknames].slice(-10);
 
@@ -173,22 +181,39 @@ export default class extends AbstractView {
         readyButton.addEventListener("mouseenter", handleReadyMouseEnter);
         readyButton.addEventListener("mouseleave", handleReadyMouseLeave);
 
+        // chrome에서 한글입력 시 씹히거나 입력필드 두 칸씩 넘어가는 등 문제 해결법
+        let isComposing = false;
+
+        const handleCompositionStart = () => {
+            isComposing = true;
+        }
+
+        const handleCompositionEnd = () => {
+            isComposing = false;
+        }
+
         const handleKeyDown = (event) => {
-            if (event.key === "Enter") {
+            if (event.key === "Enter" && !isComposing) {
+                const inputFields = Array.from(document.querySelectorAll(".nickname-input-field"));
                 const currentInput = document.activeElement;
+
                 if (currentInput.classList.contains("nickname-input-field")) {
-                    const inputFields = Array.from(document.querySelectorAll(".nickname-input-field"));
                     const currentIndex = inputFields.indexOf(currentInput);
                     const nextInput = inputFields[currentIndex + 1];
+
                     if (nextInput) {
                         nextInput.focus();
+                        console.log("goes next input filed!");
                     } else {
-                        const allFieldsFilled = inputFields.every(input => input.value.trim() !== "");
-                        if (allFieldsFilled) {
-                            readyButton.click();
-                        } else {
-                            event.preventDefault();
-                        }
+                        console.log("focus ready button!");
+                        readyButton.focus();
+                    }
+                } else if (currentInput === readyButton) {
+                    const allFieldsFilled = inputFields.every(input => input.value.trim() !== "");
+                    if (allFieldsFilled) {
+                        readyButton.click();
+                    } else {
+                        inputFields.find(input => input.value.trim() === "").focus();
                     }
                 }
             } else if (event.key === "Escape") {
@@ -198,6 +223,11 @@ export default class extends AbstractView {
         };
 
         document.addEventListener("keydown", handleKeyDown);
+
+        document.querySelectorAll(".nickname-input-field").forEach((input) => {
+            input.addEventListener("compositionstart", handleCompositionStart);
+            input.addEventListener("compositionend", handleCompositionEnd);
+        });
 
         requestAnimationFrame(() => {
             const inputFields = document.querySelectorAll(".nickname-input-field");
@@ -214,6 +244,10 @@ export default class extends AbstractView {
             readyButton.removeEventListener("mouseenter", handleReadyMouseEnter);
             readyButton.removeEventListener("mouseleave", handleReadyMouseLeave);
             document.removeEventListener("keydown", handleKeyDown);
+            document.querySelectorAll(".nickname-input-field").forEach((input) => {
+                input.removeEventListener("compositionstart", handleCompositionStart);
+                input.removeEventListener("compositionend", handleCompositionEnd);
+            });
         };
     }
 
