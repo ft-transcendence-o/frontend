@@ -145,6 +145,7 @@ const translations = {
         match_schedules_champion: 'CHAMPION!',
         again_1ON1: '1 ON 1<br>AGAIN?',
         again_TOURNAMENT: 'TOURNAMENT<br>AGAIN?',
+        game_win: 'WIN',
     },
     ko: {
         home_loading: '로딩중...',
@@ -195,6 +196,7 @@ const translations = {
         match_schedules_champion: '챔피언!',
         again_1ON1: '일 대 일<br>한판 더?',
         again_TOURNAMENT: '토너먼트<br>한판 더?',
+        game_win: '승리',
     },
     jp: {
         home_loading: 'ローディング中...',
@@ -245,5 +247,6 @@ const translations = {
         match_schedules_champion: 'チャンピオン!',
         again_1ON1: '一 対 一<br>もう一回?',
         again_TOURNAMENT: 'トーナメント<br>もう一回?',
+        game_win: '勝利',
     },
 };
