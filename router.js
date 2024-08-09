@@ -50,7 +50,7 @@ export const router = async () => {
         { path: "/match_record", view: match_record },
         { path: "/nickname", view: nickname },
         { path: "/match_schedules", view: match_schedules},
-        { path: "/game", view: PongGame},
+        { path: "/game", view: game},
     ];
 
     const potentialMatches = routes.map((route) => {

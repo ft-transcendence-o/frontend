@@ -1,40 +1,60 @@
 import * as THREE from '../build/three.module.js';
 import { GLTFLoader } from '../build/GLTFLoader.js';
-import { navigateTo, baseUrl, router} from "../../router.js";
+// import { navigateTo, baseUrl, router} from "../../router.js";
+import { get_translated_value } from "../../language.js"
+
+/*
+게임 동작 순서
+1. PongGame클래스의 생성자 호출
+2. 카메라, 조명, 모델을 초기화, 렌더링
+3. 카운트 다운 후 게임시작
+4. update함수의 로직대로 모델들의 좌표와 이동방향을 계산하여 렌더링하고 게임을 진행함
+*/
+// ball과 panel의 움직임 변화는 update함수에서 사용하는 함수들이 수행하므로 update함수를 살펴보면 좋을듯합니다
 
 export class PongGame {
     // constructor : renderer, scene, 함수들 정의
     constructor() {
+        // socket
+        this._socket = new WebSocket("ws://127.0.0.1:8000/ws/game"); //TODO: 추후에 변경해야한다
+
+        // 캔버스의 크기를 설정한다 // 백엔드에서는 신경쓰지말것
         const canvas1 = document.querySelector("#canvas1");
         const canvas2 = document.querySelector("#canvas2");
         this._divCanvas1 = canvas1;
         this._divCanvas2 = canvas2;
         this._canvasWidth = 712;
         this._canvasHeight = 700;
-        this._isRunning = true;
+        this._isRunning = true; //백엔드에서는 신경쓰지말것 //game페이지가 로드되면 클래스의 생성자를 호출해서 게임을 렌더링하는데 뒤로가기 버튼을 누르면 다른 페이지임에도 브라우저내부적으로는 게임이 진행되고 있으므로 이를 막기 구분하기 위한 플래그
+        this._keyState = {
+            KeyW: false,
+            KeyA: false,
+            KeyS: false,
+            KeyD: false,
+            ArrowUp: false,
+            ArrowDown: false,
+            ArrowLeft: false,
+            ArrowRight: false,
+        }; // 키보드 입력 상태를 추적하는 변수
 
         // game_status_var
         this._gameVar = document.querySelector("#game_var");
         this._player1 = {
-            Nick: localStorage.getItem("match_1up"),
+            // Nick: localStorage.getItem("match_1up"),
+            Nick: "1UP",
             Score : 0,
         }
         this._player2 = {
-            Nick: localStorage.getItem("match_2up"),
+            // Nick: localStorage.getItem("match_2up"),
+            Nick: "2UP",
             Score : 0,
         }
         this._mode = localStorage.getItem('mode');
         document.querySelector("#player1_nick").innerHTML = this._player1.Nick;
         document.querySelector("#player2_nick").innerHTML = this._player2.Nick;
 
-        //게임에 사용할 변수들
-        this._vec = new THREE.Vector3(0, 0, 2); //공의 방향벡터 //0.5일때 터짐
-        this._angularVec = new THREE.Vector3(0, 0, 0); //공의 각속도 회전 벡터
-        this._flag = true; //공이 player1의 방향인지 player2의 방향인지 여부
-        this._keyState = {}; // 키보드 입력 상태를 추적하는 변수
-        this._panel1Vec = new THREE.Vector3(0, 0, 0);
-        this._panel2Vec = new THREE.Vector3(0, 0, 0);
-        this._isPaused = false;
+        //게임에 사용할 변수들 // 백엔드에서 관리해야하는 변수들
+        this._isPaused = false; // 게임을 pause해야할때 사용하는 플래그변수 -> 카운트다운, 골먹힘 등 // 백엔드로부터 값을 받아와야한다
 
         let renderer1 = new THREE.WebGLRenderer({
             canvas: canvas1,
@@ -72,6 +92,18 @@ export class PongGame {
         // 뒤로가기 앞으로가기 이벤트 핸들러를 추가
         window.addEventListener('popstate', this.gameRoute.bind(this));
 
+        // socket에 들어온 입력에 대한 이벤트 등록
+        this._socket.onopen = () => {
+            console.log("Socket is open");
+        };
+        this._socket.onclose = (event) => {
+            console.log("WebSocket is closed now.", event);
+        };
+        this._socket.onerror = (error) => {
+            console.log("WebSocket error observed:", error);
+        };
+        this._socket.onmessage = (event) => this.handleSocketMessage(event); //이벤트 등록
+
         // 게임시작시 카운트 다운
         this.countdown();
         this._renderer1.render(this._scene, this._camera1);
@@ -82,7 +114,9 @@ export class PongGame {
         // requestAnimationFrame(this.render.bind(this));
     }
 
+    // 카메라 설정
     _setupCamera() {
+        console.log("camera");
         const width = this._canvasWidth;
         const height = this._canvasHeight;
         const camera1 = new THREE.PerspectiveCamera(
@@ -106,7 +140,9 @@ export class PongGame {
         this._camera2 = camera2;
     }
 
+    // 조명 설정 | 전체조명사용하도록 수정예정
     _setupLight() {
+        console.log("light");
         const PLight = new THREE.PointLight();
         const ALight = new THREE.AmbientLight();
         this._PLight = PLight;
@@ -115,11 +151,13 @@ export class PongGame {
         this._scene.add(PLight, ALight);
     }
 
+    // 렌더링할 Mesh들을 정의하고 생성하는 함수
     _setupModel() {
+        console.log("model");
         const loader = new GLTFLoader();
 
         //Mesh: pacman ball
-        loader.load("./game/pac/scene.gltf", (gltf) => {
+        loader.load("./pac/scene.gltf", (gltf) => {
             this._ball = gltf.scene;
             this._scene.add(this._ball);
         
@@ -128,7 +166,7 @@ export class PongGame {
             let size = new THREE.Vector3();
             box.getSize(size);
             console.log("size: ", size);
-            this._radius = Math.max(size.x, size.y, size.z) / 2; // 반지름 계산
+            this._radius = Math.max(size.x, size.y, size.z) / 2; // 반지름 계산 하면 대충 2쯤 나옴
             console.log("radius : ", this._radius);
             this._ball.traverse((child) => {
                 if (child.isMesh) {
@@ -178,7 +216,7 @@ export class PongGame {
         this._scene.add(stadium);
         this._stadium = stadium;
 
-        // BoxGeometry의 6개 면 정의
+        // BoxGeometry의 4개 면 정의
         this._planes = [
             new THREE.Plane(new THREE.Vector3(1, 0, 0), this._stadium.geometry.parameters.width / 2),  // Left
             new THREE.Plane(new THREE.Vector3(-1, 0, 0), this._stadium.geometry.parameters.width / 2), // Right
@@ -233,6 +271,7 @@ export class PongGame {
         this._scene.add(panel2);
     }
 
+    // 렌더링함수
     render(time) { // 렌더링이 시작된 이후 경과된 밀리초를 받는다
         if (!this._isRunning)
             return ;
@@ -243,19 +282,8 @@ export class PongGame {
         requestAnimationFrame(this.render.bind(this));
         // 생성자의 코드와 동일: 계속 렌더 메소드가 무한히 반복되어 호출되도록 만든다
     }
-
-    collisionWithSide() { //충돌이 발생한 plane을 반환한다
-        for (const plane of this._planes){
-            const collisionPoint = this.getCollisionPointWithPlane(plane);
-            if (collisionPoint) {
-                this._ball.position.copy(collisionPoint);
-                this._ball.position.add(plane.normal.clone().multiplyScalar(this._radius));
-                return plane;
-            }
-        }
-        return null;
-    }
     
+    // 게임 한판의 결과를 서버에 POST -> 현재는 1VS1에서만 사용
     async fetchResult() {
         const response = await fetch(baseUrl + "/api/game-management/tournament", {
             method: "POST",
@@ -265,7 +293,7 @@ export class PongGame {
                 "player2Nick": "2up",
                 "player1Score" : this._player1.Score,
                 "player2Score" : this._player2.Score,
-                "mode": "1VS1"
+                "mode": "1 ON 1"
             }),
         });
         if (response.ok) {
@@ -276,6 +304,7 @@ export class PongGame {
         }
     }
 
+    // 토너먼트경기가 끝나면 하는 동작들
     tournamentGameSet() {
         localStorage.setItem(`game${localStorage.getItem("match_count")}`, JSON.stringify({
             "player1Nick": this._player1.Nick,
@@ -296,6 +325,7 @@ export class PongGame {
         this.pauseGame(1000);
     }
 
+    // 골먹히면 공의 위치를 초기화하고 1초정도 정지하도록 만든 함수
     setGame() {
         this._ball.position.x = 0;
         this._ball.position.y = 0;
@@ -304,229 +334,169 @@ export class PongGame {
         this.pauseGame(1000);
     }
 
-    collisionWithGoalArea() { //TODO: 문제발생지점
-        const collisionPoint1 = this.getCollisionPointWithPlane(this._panel1Plane);
-        const collisionPoint2 = this.getCollisionPointWithPlane(this._panel2Plane);
+    // player1이 점수를 딴 경우
+    player1Win() {
+        console.log("player1 win");
+        document.querySelector("#player1_score").innerHTML = this._player1.Score;
+        if (this._player1.Score === 10){ // 일정점수에 도달하면 game set
+            if (this._mode === "TOURNAMENT") {
+                document.querySelector("#winner1").innerHTML = `
+                <div style="font-size: 100px; line-height: 100px; color: white;">${get_translated_value("game_win")}!</div>
+                <button id="next_button" type="button" style="
+                    background-color: black;
+                    width: 328px; height: 199px;
+                    margin-left: 20px;" 
+                    class="blue_outline">
+                    <span style="font-size: 50px; line-height: 50px;">
+                        >>${get_translated_value("QR_next")}
+                    </span>
+                    <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
+                </button>`;
+                this.tournamentGameSet();
+            }
+            else { //1vs1
+                document.querySelector("#winner1").innerHTML = `
+                <div style="font-size: 100px; line-height: 100px; color: white;">${get_translated_value("game_win")}!</div>
+                <button id="next_button" type="button" style="
+                    background-color: black;
+                    width: 328px; height: 199px;
+                    margin-left: 20px;" 
+                    class="blue_outline">
+                    <span style="font-size: 50px; line-height: 50px;">
+                        ${get_translated_value("again_1ON1")}
+                    </span>
+                    <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
+                </button>`;
+                // post API
+                // this.fetchResult();
+                document.querySelector("#next_button").addEventListener("click", (event) => { 
+                    this._isRunning = false;
+                    navigateTo("/game");
+                })
+                this._socket.send("start");
+            }
+        }
+        this.setGame();
+    }
+
+    // player2가 점수를 딴 경우
+    player2Win() {
+        console.log("player2 win");
+        document.querySelector("#player2_score").innerHTML = this._player2.Score;
+        if (this._player2.Score === 10){ // 승리점수가 일정 점수에 도달하면 게임을 끝낸다
+            if (this._mode === "TOURNAMENT") { // 토너먼트
+                document.querySelector("#winner2").innerHTML = `
+                <div style="font-size: 100px; line-height: 100px; color: white;">${get_translated_value("game_win")}!</div>
+                <button id="next_button" type="button" style="
+                    background-color: black;
+                    width: 328px; height: 199px;
+                    margin-left: 20px;" 
+                    class="blue_outline">
+                    <span style="font-size: 50px; line-height: 50px;">
+                        >>${get_translated_value("QR_next")}
+                    </span>
+                    <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
+                </button>`;
+                this.tournamentGameSet();
+            }
+            else { // 1VS1의 경우
+                document.querySelector("#winner2").innerHTML = `
+                <div style="font-size: 100px; line-height: 100px; color: white;">${get_translated_value("game_win")}!</div>
+                <button id="next_button" type="button" style="
+                    background-color: black;
+                    width: 328px; height: 199px;
+                    margin-left: 20px;" 
+                    class="blue_outline">
+                    <span style="font-size: 50px; line-height: 50px;">
+                        ${get_translated_value("again_1ON1")}
+                    </span>
+                    <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
+                </button>`;
+                // 결과를 backend에 POST
+                // this.fetchResult();
+                document.querySelector("#next_button").addEventListener("click", (event) => {
+                    this._isRunning = false;
+                    navigateTo("/game");
+                })
+            }
+        }
+        this.setGame();        
+    }
+
+    // GoalArea와 ball이 충돌했을때 동작하는 함수
+    collisionWithGoalArea() {
+        const collisionPoint1 = this.getCollisionPointWithPlane(this._panel1Plane); //panel1이 위치한 평면과 공의 충돌좌표 //충돌하지 않았다면 null을 반환한다
+        const collisionPoint2 = this.getCollisionPointWithPlane(this._panel2Plane); //panel2가 위치한 평면과 공의 출돌좌표 //충돌하지 않았다면 null을 반환한다
 
         if (collisionPoint1){
+            // 충돌한 좌표가 panel내부에 있다면
             if (Math.abs(collisionPoint1.x  - this._panel1.position.x) < 4 && Math.abs(collisionPoint1.y - this._panel1.position.y) < 4 && this._flag == true) {
-                this._flag = false;
-                console.log('panel1 충돌 발생');
-                // 구체 중심과 PlaneMesh의 경계 상자 내에서의 최소 거리 계산
-
-                this._ball.position.copy(collisionPoint1);
-                this._ball.position.add(this._panel1Plane.normal.clone().multiplyScalar(2));
-
-                this._angularVec.sub(this._panel1Vec.multiplyScalar(0.01));
-                this.updateVector(this._panel1Plane);
-                this.updateVectorByPanel(this._panel1, collisionPoint1);
-                console.log('충돌 지점:', collisionPoint1);
+                this.collisionInPanel1();
             }
-            else {
-                console.log("player2 win");
-                document.querySelector("#player2_score").innerHTML = ++this._player2.Score;
-                if (this._player2.Score === 1){
-                    this._vec.set(0, 0, 0);
-                    this._angularVec.set(0, 0, 0.1);
-                    if (this._mode === "TOURNAMENT") {
-                        document.querySelector("#winner2").innerHTML = `
-                        <div style="font-size: 100px; line-height: 100px; color: white;">WIN!</div>
-                        <button id="next_button" type="button" style="
-                            background-color: black;
-                            width: 328px; height: 199px;
-                            margin-left: 20px;" 
-                            class="blue_outline">
-                            <span style="font-size: 50px; line-height: 50px;">
-                                >>NEXT
-                            </span>
-                            <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
-                        </button>`;
-                        this.tournamentGameSet();
-                    }
-                    else { //TODO: 1vs1
-                        document.querySelector("#winner2").innerHTML = `
-                        <div style="font-size: 100px; line-height: 100px; color: white;">WIN!</div>
-                        <button id="next_button" type="button" style="
-                            background-color: black;
-                            width: 328px; height: 199px;
-                            margin-left: 20px;" 
-                            class="blue_outline">
-                            <span style="font-size: 50px; line-height: 50px;">
-                                1 ON 1
-                                AGAIN?
-                            </span>
-                            <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
-                        </button>`;
-                        /////////////////////
-                        this.fetchResult();
-                        /////////////////////////////////////
-                        document.querySelector("#next_button").addEventListener("click", (event) => {
-                            this._isRunning = false;
-                            navigateTo("/game");
-                        })
-                    }
-                }
-                this.setGame();
+            // panel과 부딪히지 않은 경우
+            else { 
+                this.player2Win();
             }
         }
+        // panel2쪽 평면과 충돌한 경우
         else if (collisionPoint2){
             if (Math.abs(collisionPoint2.x  - this._panel2.position.x) < 4 && Math.abs(collisionPoint2.y - this._panel2.position.y) < 4 && this._flag == false) {
-                this._flag = true;
-                console.log('panel2 충돌 발생');
-
-                this._ball.position.copy(collisionPoint2);
-                this._ball.position.add(this._panel2Plane.normal.clone().multiplyScalar(2)); //충돌시 반지름만큼 좌표를 더해준다
-            
-                this._angularVec.sub(this._panel2Vec.multiplyScalar(0.01));
-                this.updateVector(this._panel2Plane);
-                this.updateVectorByPanel(this._panel2, collisionPoint2);
-                console.log('충돌 지점:', collisionPoint2);
+                this.collisionInPanel2();
             }
             else {
-                console.log("player1 win");
-                document.querySelector("#player1_score").innerHTML = ++(this._player1.Score);
-                if (this._player1.Score === 1){
-                    this._vec.set(0, 0, 0);
-                    this._angularVec.set(0, 0, 0.1);
-                    if (this._mode === "TOURNAMENT") {
-                        document.querySelector("#winner1").innerHTML = `
-                        <div style="font-size: 100px; line-height: 100px; color: white;">WIN!</div>
-                        <button id="next_button" type="button" style="
-                            background-color: black;
-                            width: 328px; height: 199px;
-                            margin-left: 20px;" 
-                            class="blue_outline">
-                            <span style="font-size: 50px; line-height: 50px;">
-                                >>NEXT
-                            </span>
-                            <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
-                        </button>`;
-                        this.tournamentGameSet();
-                    }
-                    else { //1vs1
-                        document.querySelector("#winner1").innerHTML = `
-                        <div style="font-size: 100px; line-height: 100px; color: white;">WIN!</div>
-                        <button id="next_button" type="button" style="
-                            background-color: black;
-                            width: 328px; height: 199px;
-                            margin-left: 20px;" 
-                            class="blue_outline">
-                            <span style="font-size: 50px; line-height: 50px;">
-                                1 ON 1
-                                AGAIN?
-                            </span>
-                            <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
-                        </button>`;
-                        /////////////////////
-                        this.fetchResult();
-                        /////////////////////////////////////
-                        document.querySelector("#next_button").addEventListener("click", (event) => { 
-                            this._isRunning = false;
-                            navigateTo("/game");
-                        })
-                    }
-                }
-                this.setGame();
+                this.player1Win();
             }
         }
     }
 
-    getCollisionPointWithPlane(plane) {
-        const ballCenter = this._ball.position; //공의 중심좌표
-        const ballRadius = this._radius; // 공의 반지름(대충 1.99999인데 2쯤임)
-        const distanceToPlane = plane.distanceToPoint(ballCenter); // 공 중심으로부터 평면까지의 거리
-
-        if (Math.abs(distanceToPlane) <= ballRadius) { // 공과 평면사이의 거리가 반지름보다 작거나 같으면
-            const collisionPoint = ballCenter.clone().sub(plane.normal.clone().multiplyScalar(distanceToPlane));
-            return collisionPoint; // 벽과 충돌한 좌표를 연산해서 vector3(x, y, z)의 형태로 반환한다
-        }
-        return null; // 벽에 충돌하지 않으면 null반환
-    }
-
-    updateAngularVelocity(plane, radius) {
-        const n = plane.normal.clone();
-        const w = this._angularVec.clone();
-
-        // 충격 모멘트 계산 (τ = r × F)
-        const F = this._angularVec.clone().multiplyScalar(-0.1); //마찰력
-        // console.log("F: ", F);
-        const r = n.clone();
-        const tau = r.clone().cross(F);
-        // console.log("Torque (τ):", tau);
-    
-        // 관성 모멘트 텐서의 역행렬 계산
-        const I_inv = new THREE.Matrix3().set(
-            1 / (0.4 * radius * radius), 0, 0,
-            0, 1 / (0.4 * radius * radius), 0,
-            0, 0, 1 / (0.4 * radius * radius)
-        );
-    
-        // 각속도 변화 계산 (Δω = I^(-1) * τ)
-        const delta_w = new THREE.Vector3().copy(tau).applyMatrix3(I_inv);
-        // console.log("Angular Velocity Change (Δω):", delta_w);
-    
-        // 최종 각속도 벡터 계산 (ω' = ω + Δω)
-        const w_prime = w.clone().add(delta_w);
-        console.log("Final Angular Velocity (ω'):", w_prime);
-        
-        const spinSpeed = w_prime.length();
-        if (spinSpeed > 0.1)
-            w_prime.multiplyScalar(spinSpeed / 2);
-        // 각속도 벡터 업데이트
-        this._angularVec.copy(w_prime);
-    }
-
-    updateVector(plane) {
-        //초기벡터 임시저장
-        const previousVec = this._vec.clone();
-
-        // ball의 방향벡터
-        // v = v - 2(v dot plane.normal)plane.normal + w cross (radius * plane.normal)
-        const dotProduct = this._vec.dot(plane.normal);
-        // console.log("Dot Product:", dotProduct);
-
-        const reflection = plane.normal.clone().multiplyScalar(dotProduct * 2);
-        // console.log("Reflection:", reflection);
-
-        const angularComponent = this._angularVec.clone().cross(plane.normal.clone().multiplyScalar(this._radius));
-        // console.log("angularComponent:", angularComponent);
-
-        this._vec.sub(reflection).add(angularComponent);
-
-        // ball의 각속도 벡터
-        this.updateAngularVelocity(plane, this._radius, previousVec);
-    }
-
-    updateVectorByPanel(panel, collisionPoint) {
-        this._vec.x += (collisionPoint.x - panel.position.x) >> 4;
-        this._vec.y += (collisionPoint.y - panel.position.y) >> 4;
-        console.log(this._vec);
-    }
-
-    update(time) { // TODO: 앞으로 동작에 대해서 함수를 들어서 정의해야함
-        if (this._ball && !this._isPaused) {
-            // 공의 이동 업데이트를 작은 시간 간격으로 나누어 수행
-            const steps = 10; // 충돌 체크 빈도
-            for (let i = 0; i < steps; i++) {
-                const movement = new THREE.Vector3().copy(this._vec).multiplyScalar(0.4 / steps); //이게 뭐였더라
-                this._ball.position.add(movement);
-                this._ball.rotation.x += this._angularVec.x;
-                this._ball.rotation.y += this._angularVec.y;
-                this._ball.rotation.z += this._angularVec.z;
-
-                // 충돌 감지 및 처리
-                const collisionPlane = this.collisionWithSide();
-                if (collisionPlane) {
-                    this.updateVector(collisionPlane);
-                    break; // 충돌이 발생하면 반복문을 중지합니다.
-                }
-                this.collisionWithGoalArea();
-            }
-            this.updatePanel();
+    // 렌더링마다 mesh들의 상태를 업데이트하는 함수
+    update(time) {
+        // if (this._socket.onopen && this._ball && !this._isPaused) {
+        if (this._socket.onopen && !this._isPaused) {
+            // 공의 원근감을 알기 위한 사각형모양의 링의 z좌표 변경
             this._perspectiveLineEdges.position.z = this._ball.position.z;
         }
+        // console.log("update: ", this._ball.position);
     }
 
+    handleSocketMessage(event) {
+        console.log("get socket msg");
+        const received = JSON.parse(event.data); // ball 좌표, panel1 좌표, panel2 좌표가 순서대로 들어온다고 가정
+        console.log(received);
+
+        if (received.game){
+            console.log("game");
+            this._ball.position.set(received.game.ball[0], received.game.ball[1], received.game.ball[2]);
+            this._panel1.position.set(received.game.panel1[0], received.game.panel1[1], received.game.panel1[2]);
+            this._panel2.position.set(received.game.panel2[0], received.game.panel2[1], received.game.panel2[2]);
+            this._perspectiveLineEdges.position.z = this._ball.position.z;
+        }
+        
+        //이하의 메시지는 확인해야한다
+        if (received.score){
+            console.log("score");
+            this._player1.Score = received.score.score[0];
+            this._player2.Score = received.score.score[1];
+            this.refreshScore();
+        }
+    }
+
+    async refreshScore() {
+        document.querySelector("#player1_score").innerHTML = this._player1.Score;
+        document.querySelector("#player2_score").innerHTML = this._player2.Score;
+        // this._isRunning = false;
+        this._ball
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        this._ball.position.set(0, 0, 0);
+        this._panel1.position.set(0, 0, 50);
+        this._panel2.position.set(0, 0, -50);
+        this._perspectiveLineEdges.position.z = 0;
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        // this._isRunning = true;
+        this._socket.send("start");
+    }
+
+    // 게임 일시정지
     pauseGame(duration) {
         this._isPaused = true;
         setTimeout(() => {
@@ -535,46 +505,16 @@ export class PongGame {
     }
 
     keydown(event) {
-        this._keyState[event.code] = true;
+        if (event.code in this._keyState){
+            this._keyState[event.code] = true;
+            this._socket.send(JSON.stringify(this._keyState));
+        }
     }
 
     keyup(event){
-        // console.log("test");
-        this._keyState[event.code] = false;
-    }
-
-    updatePanel(){
-        if (this._keyState['KeyW']) {
-            this._panel1.position.y += 0.6;
-            this._panel1Vec.y = 0.6;
-        }
-        if (this._keyState['KeyS']) {
-            this._panel1.position.y -= 0.6;
-            this._panel1Vec.y = -0.6;
-        }
-        if (this._keyState['KeyA']) {
-            this._panel1.position.x -= 0.6;
-            this._panel2Vec.x = -0.6;
-        }
-        if (this._keyState['KeyD']) {
-            this._panel1.position.x += 0.6;
-            this._panel2Vec.x = 0.6;
-        }
-        if (this._keyState['ArrowUp']) {
-            this._panel2Vec.y = 0.6;
-            this._panel2.position.y += 0.6;
-        }
-        if (this._keyState['ArrowDown']) {
-            this._panel2Vec.y = -0.6;
-            this._panel2.position.y -= 0.6;
-        }
-        if (this._keyState['ArrowLeft']) {
-            this._panel2Vec.x = 0.6;
-            this._panel2.position.x += 0.6;
-        }
-        if (this._keyState['ArrowRight']) {
-            this._panel2Vec.x = -0.6;
-            this._panel2.position.x -= 0.6;
+        if (event.code in this._keyState){
+            this._keyState[event.code] = false;
+            this._socket.send(JSON.stringify(this._keyState));
         }
     }
 
@@ -587,6 +527,7 @@ export class PongGame {
     
             if (countdownValue === 0) {
                 countdownElement.innerText = "START";
+                this._socket.send("start");
             }
             else if (countdownValue === -1) {
                 clearInterval(countdownInterval);
@@ -633,6 +574,6 @@ export class PongGame {
     }
 }
 
-// window.onload = function() {
-//     new PongGame();
-// }
+window.onload = function() {
+    new PongGame();
+}
