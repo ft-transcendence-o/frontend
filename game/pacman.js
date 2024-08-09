@@ -157,6 +157,7 @@ export class PongGame {
         const loader = new GLTFLoader();
 
         //Mesh: pacman ball
+        // loader.load("./game/pac/scene.gltf", (gltf) => {
         loader.load("./pac/scene.gltf", (gltf) => {
             this._ball = gltf.scene;
             this._scene.add(this._ball);
@@ -574,6 +575,7 @@ export class PongGame {
     }
 }
 
+//serverSidePong test시 주석처리할것
 window.onload = function() {
     new PongGame();
 }
