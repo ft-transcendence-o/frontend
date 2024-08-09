@@ -1,5 +1,6 @@
 import { navigateTo, baseUrl } from "../../router.js";
 import AbstractView from "./AbstractView.js";
+import { get_translated_value } from "../../language.js"
 
 // 소독 sanitize input
 function sanitizeInput(input) {
@@ -56,8 +57,8 @@ export default class extends AbstractView {
         <!-- footer -->
         <div class="row" style="position:absolute; padding-top:824px; z-index: 3;">
             <div class="col-12">
-                <p class="m-0 text-center text-white PS2P_font" style="padding-bottom: 34px; font-size: 30px;">ENTER 6 DIGITS</p>
-                <p class="m-0 text-center text-white PS2P_font" style="padding-bottom: 0px; font-size: 30px;">FROM GOOGLE OTP/AUTHENTICATOR</p>
+                <p class="m-0 text-center text-white PS2P_font transItem" style="padding-bottom: 34px; font-size: 30px;" data-trans_id="OTP_text1">ENTER 6 DIGITS</p>
+                <p class="m-0 text-center text-white PS2P_font transItem" style="padding-bottom: 0px; font-size: 30px;" data-trans_id="OTP_text2">FROM GOOGLE OTP/AUTHENTICATOR</p>
             </div>
         </div>
 	</div>
@@ -71,6 +72,11 @@ export default class extends AbstractView {
     }
 
     async init() {
+        const transItems = document.querySelectorAll(".transItem");
+        transItems.forEach( (transItem) => {
+            transItem.innerHTML = get_translated_value(transItem.dataset.trans_id);
+        })
+
         const inputs = document.querySelectorAll(".otp-field > input");
         const invalid_input = document.querySelector("#invalid_input");
 
@@ -125,18 +131,10 @@ export default class extends AbstractView {
                 const inputsNo = inputs.length;
                 if (!inputs[inputsNo - 1].disabled && inputs[inputsNo - 1].value !== "") {
                     // Clear all inputs and reset the form
-                    // 여기서 백엔드에 보내는 api호출
                     let OTPNumber = "";
                     for (let i = 0; i < 6; i++) {
                         OTPNumber += inputs[i].value.toString();
                     }
-
-                    // const jwt = sanitizeInput(localStorage.getItem('jwt'));
-                    // if (!jwt) {
-                    //     console.error("JWT not found in local storage");
-                    //     navigateTo('/');
-                    //     return;
-                    // }
 
                     try {
                         const response = await fetch(baseUrl + "/api/user-management/otp/verify", {
@@ -146,16 +144,16 @@ export default class extends AbstractView {
                         });
 
                         if (response.ok) {
-                            // document.cookie = `jwt=${jwt}; path=/; secure; HttpOnly; SameSite=Strict`;
-                            // localStorage.removeItem('jwt');
                             navigateTo('/main');
                         } else {
                             if (response.status === 400) {
                                 const jsonResponse = await response.json();
                                 const attempts_number = sanitizeInput(jsonResponse['remain_attempts']);
-                                invalid_input.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">Incorrect password. Remaining attempts: ${attempts_number}</p>`;
+                                invalid_input.innerHTML = `<p class="PS2P_font transItem" style="color: red; font-size: 30px; z-index:4" data-trans_id="OTP_wrong">Incorrect password. Remaining attempts: ${attempts_number}</p>`;
+                                invalid_input.querySelector("p").innerHTML = get_translated_value(invalid_input.querySelector("p").dataset.trans_id) + ` ${attempts_number}`;
                             } else if (response.status === 403) {
-                                invalid_input.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">Account is locked for 15 minutes.<br>try later</p>`;
+                                invalid_input.innerHTML = `<p class="PS2P_font transItem" style="color: red; font-size: 30px; z-index:4" data-trans_id="OTP_lock">Account is locked for 15 minutes.<br>try later</p>`;
+                                invalid_input.querySelector("p").innerHTML = get_translated_value(invalid_input.querySelector("p").dataset.trans_id);
                             } else {
                                 // localStorage.removeItem('jwt');
                                 navigateTo('/');
@@ -170,7 +168,6 @@ export default class extends AbstractView {
                         }
                     } catch (error) {
                         console.error("Fetch error:", error);
-                        // localStorage.removeItem('jwt');
                         navigateTo('/');
                     }
                 }
