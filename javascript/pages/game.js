@@ -1,6 +1,7 @@
 import AbstractView from "./AbstractView.js";
 import { navigateTo } from "../../router.js";
 import { PongGame } from "../../game/pacman.js";
+import { get_translated_value } from "../../language.js"
 
 export default class extends AbstractView {
     constructor() {
@@ -18,7 +19,7 @@ export default class extends AbstractView {
 			<!-- nav menu buttons -->
 			<ul class="nav justify-content-end">
 				<li style="margin-right: 40px;">
-					<a class="btn btn-primary" href="/main">>MAIN
+					<a class="btn btn-primary transItem" href="/main" data-trans_id="main_button">>MAIN
 						<p style="font-size: 20px;">(ESC)</p>
 					</a>
 				</li>
@@ -76,5 +77,41 @@ export default class extends AbstractView {
 
     async init() {
 		new PongGame();
+
+		// translate 적용 테스트
+        const transItems = document.querySelectorAll(".transItem");
+        transItems.forEach( (transItem) => {
+            transItem.innerHTML = get_translated_value(transItem.dataset.trans_id);
+        } )
+
+		// 클릭 가능한 요소들에 이벤트 리스너를 등록한다
+        const Top_Buttons = document.querySelector("#top_item").querySelectorAll("a");
+
+        Top_Buttons.forEach((Button) => {
+
+            Button.addEventListener("click", (event) => {
+                event.preventDefault();
+                console.log(event.currentTarget.href);
+
+                // 라우팅 이벤트 추가
+                // 비동기 이슈?
+                const url = new URL(event.currentTarget.href);
+                const pathname = url.pathname;
+
+                navigateTo(pathname);
+            });
+
+            Button.addEventListener("mouseenter", (event) => {
+                Button.classList.remove("blue_outline");
+                Button.classList.add("green_outline");
+                Button.classList.add("white_stroke_2_5px");
+            });
+
+            Button.addEventListener("mouseleave", (event) => {
+                Button.classList.add("blue_outline");
+                Button.classList.remove("green_outline");
+                Button.classList.remove("white_stroke_2_5px");
+            });
+        });
     }
 }

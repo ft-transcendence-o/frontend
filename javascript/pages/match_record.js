@@ -1,5 +1,6 @@
 import AbstractView from "./AbstractView.js";
 import { navigateTo, baseUrl } from "../../router.js";
+import { get_translated_value } from "../../language.js"
 
 export default class extends AbstractView {
     constructor() {
@@ -24,7 +25,7 @@ export default class extends AbstractView {
                     <!-- nav menu buttons -->
                     <ul class="nav justify-content-end">
                         <li style="margin-right: 40px;">
-                            <a class="btn btn-primary" href="/main">>MAIN
+                            <a class="btn btn-primary transItem" href="/main" data-trans_id="main_button">>MAIN
                                 <p style="font-size: 20px; margin-top: -12px;">(ESC)</p>
                             </a>
                         </li>
@@ -38,11 +39,11 @@ export default class extends AbstractView {
                 <div style="height: 470px;">
                     <table class="table PS2P_font" style="position: relative; z-index: 1; font-size: 20px; margin: 0px 0px; margin-left: 120px; margin-top: 80px;">
                         <thead>
-                            <th scope="col" style="background-color: transparent; color: white; border: none; padding: 15px 0px; padding-bottom: 25px; width: 240px;">PLAYER A</th>
-                            <th scope="col" style="background-color: transparent; color: white; border: none; padding: 15px 0px; padding-bottom: 25px; width: 250px">PLAYER B</th>
-                            <th scope="col" style="background-color: transparent; color: white; border: none; padding: 15px 0px; padding-bottom: 25px; width: 240px">SCORE</th>
-                            <th scope="col" style="background-color: transparent; color: white; border: none; padding: 15px 0px; padding-bottom: 25px; width: 260px">MODE</th>
-                            <th scope="col" style="background-color: transparent; color: white; border: none; padding: 15px 0px; padding-bottom: 25px;">DATE</th>
+                            <th class="transItem" scope="col" style="background-color: transparent; color: white; border: none; padding: 15px 0px; padding-bottom: 25px; width: 240px;" data-trans_id="match_record_playerA_field">PLAYER A</th>
+                            <th class="transItem" scope="col" style="background-color: transparent; color: white; border: none; padding: 15px 0px; padding-bottom: 25px; width: 250px" data-trans_id="match_record_playerB_field">PLAYER B</th>
+                            <th class="transItem" scope="col" style="background-color: transparent; color: white; border: none; padding: 15px 0px; padding-bottom: 25px; width: 240px" data-trans_id="match_record_score_field">SCORE</th>
+                            <th class="transItem" scope="col" style="background-color: transparent; color: white; border: none; padding: 15px 0px; padding-bottom: 25px; width: 260px" data-trans_id="match_record_mode_field">MODE</th>
+                            <th class="transItem" scope="col" style="background-color: transparent; color: white; border: none; padding: 15px 0px; padding-bottom: 25px;" data-trans_id="match_record_date_field">DATE</th>
                         </thead>
                         <tbody id="record_table_body">
                             <!-- PLAYER A -->
@@ -54,7 +55,7 @@ export default class extends AbstractView {
                     </table>
 
                     <!-- table에 아이템이 아무것도 없을 떄 보여줄 메세지 -->
-                    <div id="no_data_msg" class="PS2P_font" style="position: relative; z-index: 3; color: white; top: 240px; text-align: center; display: none;">
+                    <div id="no_data_msg" class="PS2P_font transItem" style="position: relative; z-index: 3; color: white; top: 240px; text-align: center; display: none;" data-trans_id="match_record_empty">
                         There are no match data yet
                     </div>
                 </div>
@@ -100,58 +101,61 @@ export default class extends AbstractView {
 
                 const month = dateParse.split('-')[1];
                 {
-                    if (month === "01")
-                    {
-                        dateDisplay += "JAN"
-                    }
-                    else if (month === "02")
-                    {
-                        dateDisplay += "FEB"
-                    }
-                    else if (month === "03")
-                    {
-                        dateDisplay += "MAR"
-                    }
-                    else if (month === "04")
-                    {
-                        dateDisplay += "APR"
-                    }
-                    else if (month === "05")
-                    {
-                        dateDisplay += "MAY"
-                    }
-                    else if (month === "06")
-                    {
-                        dateDisplay += "JUN"
-                    }
-                    else if (month === "07")
-                    {
-                        dateDisplay += "JUL"
-                    }
-                    else if (month === "08")
-                    {
-                        dateDisplay += "AUG"
-                    }
-                    else if (month === "09")
-                    {
-                        dateDisplay += "SEP"
-                    }
-                    else if (month === "10")
-                    {
-                        dateDisplay += "OCT"
-                    }
-                    else if (month === "11")
-                    {
-                        dateDisplay += "NOV"
-                    }
-                    else if (month === "12")
-                    {
-                        dateDisplay += "DEC"
-                    }
-                    else
-                    {
-                        dateDisplay += "err"
-                    }
+                    dateDisplay += get_translated_value(`match_record_date_month_${month}`)
+                    // if (month === "01")
+                    // {
+                    //     dateDisplay += "JAN"
+                    // }
+                    // else if (month === "02")
+                    // {
+                    //     dateDisplay += "FEB"
+                    // }
+                    // else if (month === "03")
+                    // {
+                    //     dateDisplay += "MAR"
+                    // }
+                    // else if (month === "04")
+                    // {
+                    //     dateDisplay += "APR"
+                    // }
+                    // else if (month === "05")
+                    // {
+                    //     dateDisplay += "MAY"
+                    // }
+                    // else if (month === "06")
+                    // {
+                    //     dateDisplay += "JUN"
+                    // }
+                    // else if (month === "07")
+                    // {
+                    //     dateDisplay += "JUL"
+                    // }
+                    // else if (month === "08")
+                    // {
+                    //     dateDisplay += "AUG"
+                    //     // dateDisplay += "8月"
+                    //     // dateDisplay += "8월"
+                    // }
+                    // else if (month === "09")
+                    // {
+                    //     dateDisplay += "SEP"
+                    // }
+                    // else if (month === "10")
+                    // {
+                    //     dateDisplay += "OCT"
+                    // }
+                    // else if (month === "11")
+                    // {
+                    //     dateDisplay += "NOV"
+                    // }
+                    // else if (month === "12")
+                    // {
+                    //     dateDisplay += "DEC"
+                    // }
+                    // else
+                    // {
+                    //     dateDisplay += "err"
+                    // }
                 }
 
                 dateDisplay += ".";
@@ -166,7 +170,7 @@ export default class extends AbstractView {
                         <span>:</span>
                         <span style="display: inline-block; width: 40px; text-align: left;">${game['player2Score']}</span>
                     </td>
-                    <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">${game['mode']}</td>
+                    <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">${get_translated_value("match_record_mode_" + game['mode'])}</td>
                     <td style="background-color: transparent; color: white; border: none; padding: 5px 0px;">${dateDisplay}</td>
                 </tr>
                 `;
@@ -223,6 +227,20 @@ export default class extends AbstractView {
     }
 
     async init() {
+        // translate 적용 테스트
+        const transItems = document.querySelectorAll(".transItem");
+        transItems.forEach( (transItem) => {
+            transItem.innerHTML = get_translated_value(transItem.dataset.trans_id);
+        } )
+
+        const handleKeyDown = (event) => {
+            const Main_Button = document.querySelector("#top_item").querySelector("a");
+			if (event.key === "Escape") {
+				Main_Button.click();
+			}
+		};
+        document.addEventListener("keydown", handleKeyDown);
+
         // 클릭 가능한 요소들에 이벤트 리스너를 등록한다
         const Top_Buttons = document.querySelector("#top_item").querySelectorAll("a");
 
@@ -362,5 +380,15 @@ export default class extends AbstractView {
             console.log(response);
             console.log(jsonResponse);
         }
+
+        this.cleanup = () => {
+			document.removeEventListener("keydown", handleKeyDown);
+		};
     }
+
+    destroy() {
+		if (this.cleanup) {
+			this.cleanup();
+		}
+	}
 }
