@@ -39,7 +39,6 @@ export default class extends AbstractView {
                     </ul>
             </div>
         </div>
-    </div>
 
         <!-- 상단 안내문 -->
         <div class="PS2P_font transItem" style="position: relative; z-index: 3; margin-top: 136px; font-size: 30px; color: white; text-align: center;" data-trans_id="nickname_text">

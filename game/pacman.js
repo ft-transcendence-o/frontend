@@ -574,6 +574,6 @@ export class PongGame {
     }
 }
 
-window.onload = function() {
-    new PongGame();
-}
+// window.onload = function() {
+//     new PongGame();
+// }
