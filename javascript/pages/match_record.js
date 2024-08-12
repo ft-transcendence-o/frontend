@@ -100,63 +100,7 @@ export default class extends AbstractView {
                 dateDisplay += ".";
 
                 const month = dateParse.split('-')[1];
-                {
-                    dateDisplay += get_translated_value(`match_record_date_month_${month}`)
-                    // if (month === "01")
-                    // {
-                    //     dateDisplay += "JAN"
-                    // }
-                    // else if (month === "02")
-                    // {
-                    //     dateDisplay += "FEB"
-                    // }
-                    // else if (month === "03")
-                    // {
-                    //     dateDisplay += "MAR"
-                    // }
-                    // else if (month === "04")
-                    // {
-                    //     dateDisplay += "APR"
-                    // }
-                    // else if (month === "05")
-                    // {
-                    //     dateDisplay += "MAY"
-                    // }
-                    // else if (month === "06")
-                    // {
-                    //     dateDisplay += "JUN"
-                    // }
-                    // else if (month === "07")
-                    // {
-                    //     dateDisplay += "JUL"
-                    // }
-                    // else if (month === "08")
-                    // {
-                    //     dateDisplay += "AUG"
-                    //     // dateDisplay += "8月"
-                    //     // dateDisplay += "8월"
-                    // }
-                    // else if (month === "09")
-                    // {
-                    //     dateDisplay += "SEP"
-                    // }
-                    // else if (month === "10")
-                    // {
-                    //     dateDisplay += "OCT"
-                    // }
-                    // else if (month === "11")
-                    // {
-                    //     dateDisplay += "NOV"
-                    // }
-                    // else if (month === "12")
-                    // {
-                    //     dateDisplay += "DEC"
-                    // }
-                    // else
-                    // {
-                    //     dateDisplay += "err"
-                    // }
-                }
+                dateDisplay += get_translated_value(`match_record_date_month_${month}`)
 
                 dateDisplay += ".";
                 dateDisplay += dateParse.split('-')[2];
@@ -374,6 +318,13 @@ export default class extends AbstractView {
                     // 
                 });
             });
+        } else if (response.status === 401) {
+            // 토큰이 만료되었을 경우 -> 백엔드에서 갱신하고 새로고침 해준다
+            // 이 부분에 도달하려면 로그아웃하고 popstate로 이동하여야 한다
+            // (오류에 대한 모달창을 띄워 정보를 제공한다)
+            // 로그인 화면으로 보내버린다
+            navigateTo("/");
+            // otp 통과 안했을 경우 500 error
         } else {
             const jsonResponse = await response.json();
             console.log("Fail");

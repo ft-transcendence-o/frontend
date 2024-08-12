@@ -150,6 +150,20 @@ export default class extends AbstractView {
             transItem.innerHTML = get_translated_value(transItem.dataset.trans_id);
         } )
 
+        // 서버쪽 정보가 어떻게 저장되는지에 따라 localStorage에서 사용하던 값을 fetch로 가져온다
+        // 해당 response에 따라 401 핸들링을 한다
+        /*
+
+        else if (response.status === 401) {
+            // 토큰이 만료되었을 경우 -> 백엔드에서 갱신하고 새로고침 해준다
+            // 이 부분에 도달하려면 로그아웃하고 popstate로 이동하여야 한다
+            // (오류에 대한 모달창을 띄워 정보를 제공한다)
+            // 로그인 화면으로 보내버린다
+            navigateTo("/");
+        }
+
+        */
+
         // localStorage 변조에 대응하기 위해 미리 변수에 담아두고 리터럴 값을 이벤트 리스너로 넣어준다
 
         // player nickname을 적용시킨다
