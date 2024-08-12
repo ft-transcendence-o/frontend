@@ -15,7 +15,7 @@ export default class extends AbstractView {
         return `
         <!-- background -->
 	
-        <div class="container-fluid d-flex flex-column align-items-center">
+        <div class="container d-flex flex-column align-items-center">
                 
             <!-- blue outline background -->
             <div class="row justify-content-center blue_outline" style="background-color: black; margin-top: 20px; position: absolute; width: 1408px; height: 992px; top: 0px; z-index: 1;">
@@ -87,6 +87,34 @@ export default class extends AbstractView {
         {
             localStorage.setItem("locale", "en");
         }
+
+        try {
+            const response = await fetch(baseUrl + "/api/user-management/auth-status", {
+                method: "GET",
+                credentials: 'include',
+            });
+            if (response.ok) {  // status === 200이고 이곳에서 response.json()을 까보고 분기
+                console.log("api confirm");
+                const jsonResponse = await response.json();
+                console.log(jsonResponse);
+                if (jsonResponse.otp_authenticated)
+                {
+                    navigateTo('/main');
+                    return;
+                }
+            } else if (response.status === 401) {
+                console.log("response is 401! but it's okay at home cause it doesn't have cookies");
+                const jsonResponse = await response.json();
+                console.log(jsonResponse);
+            } else {
+                const jsonResponse = await response.json();
+                console.log(jsonResponse);
+                console.log("error");
+            }
+        } catch (error) {
+            console.log("Fetch error:", error);
+        }
+
         // translate 적용 테스트
         const transItems = document.querySelectorAll(".transItem");
         transItems.forEach( (transItem) => {
