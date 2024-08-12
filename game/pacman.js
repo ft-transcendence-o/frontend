@@ -1,6 +1,6 @@
 import * as THREE from '../build/three.module.js';
 import { GLTFLoader } from '../build/GLTFLoader.js';
-// import { navigateTo, baseUrl, router} from "../../router.js";
+import { navigateTo, baseUrl, router} from "../../router.js";
 import { get_translated_value } from "../../language.js"
 
 export class PongGame {
@@ -509,9 +509,5 @@ export class PongGame {
     }
 }
 
-//backend test시 주석처리할것
-window.onload = function() {
-    new PongGame();
-}
 
 
