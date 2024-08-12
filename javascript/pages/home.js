@@ -82,6 +82,11 @@ export default class extends AbstractView {
     }
 
     async init() {
+        const localeCheck = localStorage.getItem("locale");
+        if (!localeCheck)
+        {
+            localStorage.setItem("locale", "en");
+        }
 
         try {
             const response = await fetch(baseUrl + "/api/user-management/auth-status", {
