@@ -138,6 +138,15 @@ export default class extends AbstractView {
     }
 
     async init() {
+        // logout 모달의 backdrop 처리
+        window.addEventListener('popstate', () => {
+            const existingBackdrop = document.querySelector('.modal-backdrop.fade.show');
+            if (existingBackdrop) {
+                existingBackdrop.remove();
+            }
+            window.addEventListener('popstate', router);
+        });
+
         // translate 적용 테스트
         const transItems = document.querySelectorAll(".transItem");
         transItems.forEach( (transItem) => {
