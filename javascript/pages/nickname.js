@@ -1,4 +1,4 @@
-import { navigateTo } from "../../router.js";
+import { navigateTo, baseUrl } from "../../router.js";
 import AbstractView from "./AbstractView.js";
 import { get_translated_value } from "../../language.js"
 
@@ -86,6 +86,35 @@ export default class extends AbstractView {
     }
 
     async init() {
+
+        try {
+            const response = await fetch(baseUrl + "/api/user-management/auth-status", {
+                method: "GET",
+                credentials: 'include',
+            });
+            if (response.ok) {  // status === 200이고 이곳에서 response.json()을 까보고 분기
+                console.log("api confirm");
+                const jsonResponse = await response.json();
+                console.log(jsonResponse);
+                if (!(jsonResponse.otp_authenticated)) {
+                    navigateTo('/');
+                    return;
+                }
+            } else if (response.status === 401) {
+                console.log("response is 401!");
+                const jsonResponse = await response.json();
+                console.log(jsonResponse);
+                navigateTo('/');
+                return;
+            } else {
+                const jsonResponse = await response.json();
+                console.log(jsonResponse);
+                console.log("error");
+            }
+        } catch (error) {
+            console.log("Fetch error:", error);
+        }
+
         // translate 적용 테스트
         const transItems = document.querySelectorAll(".transItem");
         transItems.forEach( (transItem) => {
@@ -124,7 +153,7 @@ export default class extends AbstractView {
             let allFieldsFilled = true;
 
             document.querySelectorAll(".nickname-input-field").forEach(input => {
-                const trimmedValue = sanitizeInput(input.value.trim());
+                const trimmedValue = sanitizeInput(input.value.trim()); // 입력값 소독
                 if (trimmedValue.length === 0) {
                     allFieldsFilled = false;
                     input.focus();
