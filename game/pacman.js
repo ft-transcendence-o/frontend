@@ -15,9 +15,9 @@ import { get_translated_value } from "../../language.js"
 export class PongGame {
     // constructor : renderer, scene, 함수들 정의
     constructor() {
-        // socket
-        this._socket = new WebSocket("ws://127.0.0.1:8000/ws/game"); //TODO: 추후에 변경해야한다
-
+        // socket -> tournament인 경우 요청경로가 ws/game/tournament
+        this._socket = new WebSocket("ws://127.0.0.1:8000/ws/game/normal"); //TODO: 추후에 변경해야한다
+        
         // 캔버스의 크기를 설정한다 // 백엔드에서는 신경쓰지말것
         const canvas1 = document.querySelector("#canvas1");
         const canvas2 = document.querySelector("#canvas2");
@@ -157,7 +157,8 @@ export class PongGame {
         const loader = new GLTFLoader();
 
         //Mesh: pacman ball
-        loader.load("./game/pac/scene.gltf", (gltf) => {
+        // loader.load("./game/pac/scene.gltf", (gltf) => { //backend테스트시 이거사용
+        loader.load("./pac/scene.gltf", (gltf) => {
             this._ball = gltf.scene;
             this._scene.add(this._ball);
         
@@ -455,46 +456,46 @@ export class PongGame {
         if (this._socket.onopen && !this._isPaused) {
             // 공의 원근감을 알기 위한 사각형모양의 링의 z좌표 변경
             this._perspectiveLineEdges.position.z = this._ball.position.z;
+            console.log("ball_rot", this._ball.rotation);
         }
         // console.log("update: ", this._ball.position);
     }
 
     handleSocketMessage(event) {
-        console.log("get socket msg");
         const received = JSON.parse(event.data); // ball 좌표, panel1 좌표, panel2 좌표가 순서대로 들어온다고 가정
         console.log(received);
 
-        if (received.game){
-            console.log("game");
-            this._ball.position.set(received.game.ball[0], received.game.ball[1], received.game.ball[2]);
-            this._panel1.position.set(received.game.panel1[0], received.game.panel1[1], received.game.panel1[2]);
-            this._panel2.position.set(received.game.panel2[0], received.game.panel2[1], received.game.panel2[2]);
+        if (received.type === "state"){
+            this._ball.position.set(received.ball_pos[0], received.ball_pos[1], received.ball_pos[2]);
+            this._panel1.position.set(received.panel1[0], received.panel1[1], received.panel1[2]);
+            this._panel2.position.set(received.panel2[0], received.panel2[1], received.panel2[2]);
+            this._ball.rotation.set(received.ball_rot[0], received.ball_rot[1], received.ball_rot[2])
             this._perspectiveLineEdges.position.z = this._ball.position.z;
         }
-        
-        //이하의 메시지는 확인해야한다
-        if (received.score){
-            console.log("score");
-            this._player1.Score = received.score.score[0];
-            this._player2.Score = received.score.score[1];
-            this.refreshScore();
+        else if (received.type === "score"){
+            this._player1.Score = received.left_score;
+            this._player2.Score = received.right_score;
+            document.querySelector("#player1_score").innerHTML = this._player1.Score;
+            document.querySelector("#player2_score").innerHTML = this._player2.Score;
         }
+        else {//type init data
+            this._player1.Score = received.left_score;
+            this._player2.Score = received.right_score;
+            const name = received.players_name;
+            console.log(name);
+        }
+
     }
 
-    async refreshScore() {
-        document.querySelector("#player1_score").innerHTML = this._player1.Score;
-        document.querySelector("#player2_score").innerHTML = this._player2.Score;
-        // this._isRunning = false;
-        this._ball
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        this._ball.position.set(0, 0, 0);
-        this._panel1.position.set(0, 0, 50);
-        this._panel2.position.set(0, 0, -50);
-        this._perspectiveLineEdges.position.z = 0;
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        // this._isRunning = true;
-        this._socket.send("start");
-    }
+    // async refreshScore() {
+    //     document.querySelector("#player1_score").innerHTML = this._player1.Score;
+    //     document.querySelector("#player2_score").innerHTML = this._player2.Score;
+    //     this._ball
+    //     this._ball.position.set(0, 0, 0);
+    //     this._panel1.position.set(0, 0, 50);
+    //     this._panel2.position.set(0, 0, -50);
+    //     this._perspectiveLineEdges.position.z = 0;
+    // }
 
     // 게임 일시정지
     pauseGame(duration) {
@@ -527,11 +528,11 @@ export class PongGame {
     
             if (countdownValue === 0) {
                 countdownElement.innerText = "START";
-                this._socket.send("start");
             }
             else if (countdownValue === -1) {
                 clearInterval(countdownInterval);
                 countdownElement.innerText = "";
+                this._socket.send("start");
                 return ;
             }
         }, 1000);
@@ -574,6 +575,9 @@ export class PongGame {
     }
 }
 
-// window.onload = function() {
-//     new PongGame();
-// }
+//backend test시 주석처리할것
+window.onload = function() {
+    new PongGame();
+}
+
+
