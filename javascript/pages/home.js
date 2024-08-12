@@ -82,6 +82,11 @@ export default class extends AbstractView {
     }
 
     async init() {
+        const localeCheck = localStorage.getItem("locale");
+        if (!localeCheck)
+        {
+            localStorage.setItem("locale", "en");
+        }
         // translate 적용 테스트
         const transItems = document.querySelectorAll(".transItem");
         transItems.forEach( (transItem) => {
