@@ -6,7 +6,7 @@ export default class {
     async getHtml() {
         return `
     <div class="container-fluid d-flex flex-column align-items-center">
-        <div class="container PS2P_font" style="position: absolute; margin-top: 50px;">
+        <div class="container PS2P_font" style="position: absolute; margin-top: 30px;">
             <div class="d-flex align-items-center">
                 <div>
                     <span style="font-size: 100px; line-height: 100px; color:#14FF00">404</span>
@@ -18,7 +18,7 @@ export default class {
             <p id="typewriter-text-japanese" class="typewriter" style="margin-bottom: 0px; font-size: 30px;"></p>
         </div>
         <div class="pacman-game" style="visibility: hidden; position: absolute; margin-top: 500px;">
-            <iframe id="pacman-game" src="https://freepacman.org" width="1200" height="800" frameborder="0" sandbox="allow-scripts allow-same-origin"></iframe>
+            <iframe id="pacman-game" src="https://freepacman.org" width="1100" height="790" frameborder="0" sandbox="allow-scripts allow-same-origin"></iframe>
         </div>
     </div>
         `;

@@ -72,6 +72,35 @@ export default class extends AbstractView {
     }
 
     async init() {
+
+        try {
+            const response = await fetch(baseUrl + "/api/user-management/auth-status", {
+                method: "GET",
+                credentials: 'include',
+            });
+            if (response.ok) {  // status === 200이고 이곳에서 response.json()을 까보고 분기
+                console.log("api confirm");
+                const jsonResponse = await response.json();
+                console.log(jsonResponse);
+                if (jsonResponse.otp_authenticated)
+                {
+                    navigateTo('/main');
+                    return;
+                }
+            } else if (response.status === 401) {
+                console.log("response is 401!");
+                const jsonResponse = await response.json();
+                console.log(jsonResponse);
+                navigateTo('/');
+            } else {
+                const jsonResponse = await response.json();
+                console.log(jsonResponse);
+                console.log("error");
+            }
+        } catch (error) {
+            console.log("Fetch error:", error);
+        }
+
         const transItems = document.querySelectorAll(".transItem");
         transItems.forEach( (transItem) => {
             transItem.innerHTML = get_translated_value(transItem.dataset.trans_id);

@@ -44,8 +44,8 @@ export default class extends AbstractView {
 				<!-- footer -->
 				<div class="row" style="position:absolute; margin-top:824px; z-index: 3;">
 					<div class="col-12">
-						<p class="m-0 text-center text-white PS2P_font" style="padding-bottom: 34px; font-size: 30px;">SCAN THE QR-CODE</p>
-						<p class="m-0 text-center text-white PS2P_font" style="padding-bottom: 0px; font-size: 30px;">VIA GOOGLE OTP/AUTHENTICATOR</p>
+						<p class="m-0 text-center text-white PS2P_font transItem" style="padding-bottom: 34px; font-size: 30px;" data-trans_id="QR_text1">SCAN THE QR-CODE</p>
+						<p class="m-0 text-center text-white PS2P_font transItem" style="padding-bottom: 0px; font-size: 30px;" data-trans_id="QR_text2">VIA GOOGLE OTP/AUTHENTICATOR</p>
 					</div>
 				</div>
 				
@@ -117,7 +117,13 @@ export default class extends AbstractView {
             } else {
                 const jsonResponse = await response.json();
                 console.log("Fail", jsonResponse);
-                if (response.status === 401) {
+				if (response.status === 400) { // token은 유효 OTP를 이전에 한 번 통과한 사람 
+                    navigateTo('/OTP');
+				}
+				else if (response.status === 403) { // 403(Forbidden) 로그인하여 인증되었지만 접근 권한이 없는 무언가를 요청하는 경우이다. 예를 들어 어떤 쇼핑몰에 접속하여 로그인까지 하였지만, 다른 사용자의 결제 내역을 달라고 하면 403(Forbidden)을 반환 -> token 유효, OTP도 통과한 사람
+					navigateTo('/main')
+				}
+                else if (response.status === 401) { // 401)(unauthorized)클라이언트가 인증되지 않았거나, 유효한 인증 정보가 부족하여 요청이 거부되었음을 의미하는 상태값 -> token이 없는사람
                     navigateTo('/');
                 }
             }
