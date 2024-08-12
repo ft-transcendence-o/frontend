@@ -1,16 +1,7 @@
 import * as THREE from '../build/three.module.js';
 import { GLTFLoader } from '../build/GLTFLoader.js';
-// import { navigateTo, baseUrl, router} from "../../router.js";
+import { navigateTo, baseUrl, router} from "../../router.js";
 import { get_translated_value } from "../../language.js"
-
-/*
-게임 동작 순서
-1. PongGame클래스의 생성자 호출
-2. 카메라, 조명, 모델을 초기화, 렌더링
-3. 카운트 다운 후 게임시작
-4. update함수의 로직대로 모델들의 좌표와 이동방향을 계산하여 렌더링하고 게임을 진행함
-*/
-// ball과 panel의 움직임 변화는 update함수에서 사용하는 함수들이 수행하므로 update함수를 살펴보면 좋을듯합니다
 
 export class PongGame {
     // constructor : renderer, scene, 함수들 정의
@@ -18,14 +9,14 @@ export class PongGame {
         // socket -> tournament인 경우 요청경로가 ws/game/tournament
         this._socket = new WebSocket("ws://127.0.0.1:8000/ws/game/normal"); //TODO: 추후에 변경해야한다
         
-        // 캔버스의 크기를 설정한다 // 백엔드에서는 신경쓰지말것
         const canvas1 = document.querySelector("#canvas1");
         const canvas2 = document.querySelector("#canvas2");
         this._divCanvas1 = canvas1;
         this._divCanvas2 = canvas2;
         this._canvasWidth = 712;
         this._canvasHeight = 700;
-        this._isRunning = true; //백엔드에서는 신경쓰지말것 //game페이지가 로드되면 클래스의 생성자를 호출해서 게임을 렌더링하는데 뒤로가기 버튼을 누르면 다른 페이지임에도 브라우저내부적으로는 게임이 진행되고 있으므로 이를 막기 구분하기 위한 플래그
+        this._isRunning = true;
+        this._rotVec = new THREE.Vector3(0, 0, 0);
         this._keyState = {
             KeyW: false,
             KeyA: false,
@@ -40,12 +31,10 @@ export class PongGame {
         // game_status_var
         this._gameVar = document.querySelector("#game_var");
         this._player1 = {
-            // Nick: localStorage.getItem("match_1up"),
             Nick: "1UP",
             Score : 0,
         }
         this._player2 = {
-            // Nick: localStorage.getItem("match_2up"),
             Nick: "2UP",
             Score : 0,
         }
@@ -53,8 +42,8 @@ export class PongGame {
         document.querySelector("#player1_nick").innerHTML = this._player1.Nick;
         document.querySelector("#player2_nick").innerHTML = this._player2.Nick;
 
-        //게임에 사용할 변수들 // 백엔드에서 관리해야하는 변수들
-        this._isPaused = false; // 게임을 pause해야할때 사용하는 플래그변수 -> 카운트다운, 골먹힘 등 // 백엔드로부터 값을 받아와야한다
+        //게임에 사용할 변수들
+        this._isPaused = false;
 
         let renderer1 = new THREE.WebGLRenderer({
             canvas: canvas1,
@@ -110,8 +99,6 @@ export class PongGame {
         this._renderer2.render(this._scene, this._camera2);
         setTimeout(() => {requestAnimationFrame(this.render.bind(this));}, 5000);
 
-        // render 함수 정의 및 애니메이션 프레임 요청
-        // requestAnimationFrame(this.render.bind(this));
     }
 
     // 카메라 설정
@@ -157,8 +144,8 @@ export class PongGame {
         const loader = new GLTFLoader();
 
         //Mesh: pacman ball
-        // loader.load("./game/pac/scene.gltf", (gltf) => { //backend테스트시 이거사용
-        loader.load("./pac/scene.gltf", (gltf) => {
+        loader.load("./game/pac/scene.gltf", (gltf) => { //backend테스트시 이거사용
+        // loader.load("./pac/scene.gltf", (gltf) => {
             this._ball = gltf.scene;
             this._scene.add(this._ball);
         
@@ -226,11 +213,11 @@ export class PongGame {
         ];
 
         //Mesh: 경기장 테두리
-        const stadiumEdges = new THREE.EdgesGeometry(stadiumGeometry); //geometry의 테두리를 추출하는 함수
+        const stadiumEdges = new THREE.EdgesGeometry(stadiumGeometry);
         const edgesMaterial = new THREE.MeshBasicMaterial({ color: 0x1e30f5 });
 
         const stadiumPositions = stadiumEdges.attributes.position.array;
-        const edges = new THREE.Group(); //그룹을 생성한다
+        const edges = new THREE.Group();
         for (let i = 0; i < stadiumPositions.length - 3; i += 6) {
             const start = new THREE.Vector3(stadiumPositions[i], stadiumPositions[i + 1], stadiumPositions[i + 2]);
             const end = new THREE.Vector3(stadiumPositions[i + 3], stadiumPositions[i + 4], stadiumPositions[i + 5]);
@@ -281,28 +268,6 @@ export class PongGame {
         this._renderer2.render(this._scene, this._camera2);
         this.update(time); // 시간에 따라 애니메이션 효과를 발생시킨다
         requestAnimationFrame(this.render.bind(this));
-        // 생성자의 코드와 동일: 계속 렌더 메소드가 무한히 반복되어 호출되도록 만든다
-    }
-    
-    // 게임 한판의 결과를 서버에 POST -> 현재는 1VS1에서만 사용
-    async fetchResult() {
-        const response = await fetch(baseUrl + "/api/game-management/tournament", {
-            method: "POST",
-            credentials: 'include',
-            body: JSON.stringify({
-                "player1Nick": "1up",
-                "player2Nick": "2up",
-                "player1Score" : this._player1.Score,
-                "player2Score" : this._player2.Score,
-                "mode": "1 ON 1"
-            }),
-        });
-        if (response.ok) {
-            console.log("success");
-        }
-        else {
-            console.log(await response.json());
-        }
     }
 
     // 토너먼트경기가 끝나면 하는 동작들
@@ -319,15 +284,6 @@ export class PongGame {
             this._isRunning = false;
             navigateTo("/match_schedules");
         })
-        this._ball.position.x = 0;
-        this._ball.position.y = 0;
-        this._ball.position.z = 0;
-        console.log("ball vec:", this._vec);
-        this.pauseGame(1000);
-    }
-
-    // 골먹히면 공의 위치를 초기화하고 1초정도 정지하도록 만든 함수
-    setGame() {
         this._ball.position.x = 0;
         this._ball.position.y = 0;
         this._ball.position.z = 0;
@@ -424,41 +380,13 @@ export class PongGame {
         this.setGame();        
     }
 
-    // GoalArea와 ball이 충돌했을때 동작하는 함수
-    collisionWithGoalArea() {
-        const collisionPoint1 = this.getCollisionPointWithPlane(this._panel1Plane); //panel1이 위치한 평면과 공의 충돌좌표 //충돌하지 않았다면 null을 반환한다
-        const collisionPoint2 = this.getCollisionPointWithPlane(this._panel2Plane); //panel2가 위치한 평면과 공의 출돌좌표 //충돌하지 않았다면 null을 반환한다
-
-        if (collisionPoint1){
-            // 충돌한 좌표가 panel내부에 있다면
-            if (Math.abs(collisionPoint1.x  - this._panel1.position.x) < 4 && Math.abs(collisionPoint1.y - this._panel1.position.y) < 4 && this._flag == true) {
-                this.collisionInPanel1();
-            }
-            // panel과 부딪히지 않은 경우
-            else { 
-                this.player2Win();
-            }
-        }
-        // panel2쪽 평면과 충돌한 경우
-        else if (collisionPoint2){
-            if (Math.abs(collisionPoint2.x  - this._panel2.position.x) < 4 && Math.abs(collisionPoint2.y - this._panel2.position.y) < 4 && this._flag == false) {
-                this.collisionInPanel2();
-            }
-            else {
-                this.player1Win();
-            }
-        }
-    }
-
-    // 렌더링마다 mesh들의 상태를 업데이트하는 함수
     update(time) {
-        // if (this._socket.onopen && this._ball && !this._isPaused) {
         if (this._socket.onopen && !this._isPaused) {
-            // 공의 원근감을 알기 위한 사각형모양의 링의 z좌표 변경
             this._perspectiveLineEdges.position.z = this._ball.position.z;
-            console.log("ball_rot", this._ball.rotation);
+            this._ball.rotation.x += this._rotVec.x;
+            this._ball.rotation.y += this._rotVec.y;
+            this._ball.rotation.x += this._rotVec.z;
         }
-        // console.log("update: ", this._ball.position);
     }
 
     handleSocketMessage(event) {
@@ -469,7 +397,7 @@ export class PongGame {
             this._ball.position.set(received.ball_pos[0], received.ball_pos[1], received.ball_pos[2]);
             this._panel1.position.set(received.panel1[0], received.panel1[1], received.panel1[2]);
             this._panel2.position.set(received.panel2[0], received.panel2[1], received.panel2[2]);
-            this._ball.rotation.set(received.ball_rot[0], received.ball_rot[1], received.ball_rot[2])
+            this._rotVec.set(received.ball_rot[0], received.ball_rot[1], received.ball_rot[2])
             this._perspectiveLineEdges.position.z = this._ball.position.z;
         }
         else if (received.type === "score"){
@@ -477,14 +405,20 @@ export class PongGame {
             this._player2.Score = received.right_score;
             document.querySelector("#player1_score").innerHTML = this._player1.Score;
             document.querySelector("#player2_score").innerHTML = this._player2.Score;
-        }
-        else {//type init data
-            this._player1.Score = received.left_score;
-            this._player2.Score = received.right_score;
-            const name = received.players_name;
-            console.log(name);
-        }
 
+            // this._socket.send("pause");
+            // let countdownValue = 4;
+        
+            // let countdownInterval = setInterval(() => {
+            //     countdownValue--;
+            //     if (countdownValue === 0) {
+            //         clearInterval(countdownInterval);
+            //         this._socket.send("resume");
+            //         console.log("send resume");
+            //         return ;
+            //     }
+            // })
+        }
     }
 
     // async refreshScore() {
@@ -575,9 +509,5 @@ export class PongGame {
     }
 }
 
-//backend test시 주석처리할것
-window.onload = function() {
-    new PongGame();
-}
 
 
