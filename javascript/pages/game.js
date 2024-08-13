@@ -1,5 +1,5 @@
 import AbstractView from "./AbstractView.js";
-import { navigateTo } from "../../router.js";
+import { navigateTo, baseUrl } from "../../router.js";
 import { PongGame } from "../../game/pacman.js";
 import { get_translated_value } from "../../language.js"
 
@@ -76,7 +76,23 @@ export default class extends AbstractView {
     }
 
     async init() {
-		new PongGame();
+		try {
+			const response = await fetch(baseUrl + "/api/game-management/session", {
+				method: "GET",
+				credentials: 'include',
+			});
+			if (response.ok) {
+				const sessionData = await response.json()
+				console.log("get session Data", sessionData)
+				new PongGame(sessionData);
+			} else {
+				const jsonResponse = await response.json();
+				console.log(jsonResponse);
+				console.log("error");
+			}
+		} catch (error) {
+			console.log("Fetch error:", error);
+		}
 
 		// translate 적용 테스트
         const transItems = document.querySelectorAll(".transItem");

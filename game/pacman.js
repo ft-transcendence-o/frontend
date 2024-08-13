@@ -1,6 +1,6 @@
 import * as THREE from '../build/three.module.js';
 import { GLTFLoader } from '../build/GLTFLoader.js';
-// import { navigateTo, baseUrl, router} from "../../router.js";
+import { navigateTo, baseUrl, router} from "../../router.js";
 import { get_translated_value } from "../../language.js"
 
 /*
@@ -14,10 +14,10 @@ import { get_translated_value } from "../../language.js"
 
 export class PongGame {
     // constructor : renderer, scene, 함수들 정의
-    constructor() {
+    constructor(sessionData) {
         // socket -> tournament인 경우 요청경로가 ws/game/tournament
-        this._socket = new WebSocket("ws://127.0.0.1:8000/ws/game/normal"); //TODO: 추후에 변경해야한다
-        
+        this._socket = new WebSocket("wss://127.0.0.1/api/pong-game/normal/" + sessionData.user_id); //TODO: 추후에 변경해야한다
+
         // 캔버스의 크기를 설정한다 // 백엔드에서는 신경쓰지말것
         const canvas1 = document.querySelector("#canvas1");
         const canvas2 = document.querySelector("#canvas2");
@@ -94,6 +94,7 @@ export class PongGame {
 
         // socket에 들어온 입력에 대한 이벤트 등록
         this._socket.onopen = () => {
+            this._socket.send(JSON.stringify(sessionData));
             console.log("Socket is open");
         };
         this._socket.onclose = (event) => {
@@ -158,7 +159,7 @@ export class PongGame {
 
         //Mesh: pacman ball
         // loader.load("./game/pac/scene.gltf", (gltf) => { //backend테스트시 이거사용
-        loader.load("./pac/scene.gltf", (gltf) => {
+        loader.load("./game/pac/scene.gltf", (gltf) => {
             this._ball = gltf.scene;
             this._scene.add(this._ball);
         
@@ -374,7 +375,7 @@ export class PongGame {
                     this._isRunning = false;
                     navigateTo("/game");
                 })
-                this._socket.send("start");
+                // this._socket.send("start");
             }
         }
         this.setGame();
@@ -456,14 +457,14 @@ export class PongGame {
         if (this._socket.onopen && !this._isPaused) {
             // 공의 원근감을 알기 위한 사각형모양의 링의 z좌표 변경
             this._perspectiveLineEdges.position.z = this._ball.position.z;
-            console.log("ball_rot", this._ball.rotation);
+            // console.log("ball_rot", this._ball.rotation);
         }
         // console.log("update: ", this._ball.position);
     }
 
     handleSocketMessage(event) {
         const received = JSON.parse(event.data); // ball 좌표, panel1 좌표, panel2 좌표가 순서대로 들어온다고 가정
-        console.log(received);
+        // console.log(received);
 
         if (received.type === "state"){
             this._ball.position.set(received.ball_pos[0], received.ball_pos[1], received.ball_pos[2]);
@@ -575,9 +576,5 @@ export class PongGame {
     }
 }
 
-//backend test시 주석처리할것
-window.onload = function() {
-    new PongGame();
-}
 
 
