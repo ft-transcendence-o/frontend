@@ -1,4 +1,4 @@
-import { navigateTo, baseUrl } from "../../router.js";
+import { navigateTo, baseUrl, router } from "../../router.js";
 import AbstractView from "./AbstractView.js";
 import { get_translated_value } from "../../language.js"
 
