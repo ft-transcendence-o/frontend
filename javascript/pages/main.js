@@ -278,18 +278,16 @@ export default class extends AbstractView {
             console.log(response);
             console.log(jsonResponse);
             User_Name_Holder.innerHTML = sanitizeInput(jsonResponse['login']);      // 이부분 추가
-        } else if (response.status === 401) {
-            // 토큰이 만료되었을 경우 -> 백엔드에서 갱신하고 새로고침 해준다
-            // 이 부분에 도달하려면 로그아웃하고 popstate로 이동하여야 한다
-            // (오류에 대한 모달창을 띄워 정보를 제공한다)
-            // 로그인 화면으로 보내버린다
+        } else if (response.status === 401) { // jwt가 없는 경우
             navigateTo("/");
-            // otp 통과 안했을 경우 500 error
-        } else {
+            return ;
+        } else { // otp 통과 안했을 경우
             const jsonResponse = await response.json();
-            console.log("Fail");
-            console.log(response);
-            console.log(jsonResponse);
+            if (jsonResponse["otp_verified"] === false)
+            {
+                navigateTo("/");
+                return ;
+            }
         }
 
         // 언어 변경에 따라 현재 페이지의 text를 모두 변경해야하는건 main뿐이다
