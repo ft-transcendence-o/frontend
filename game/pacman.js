@@ -5,10 +5,9 @@ import { get_translated_value } from "../../language.js"
 
 export class PongGame {
     // constructor : renderer, scene, 함수들 정의
-    constructor() {
-        // socket -> tournament인 경우 요청경로가 ws/game/tournament
-        this._socket = new WebSocket("ws://127.0.0.1:8000/ws/game/normal"); //TODO: 추후에 변경해야한다
-        
+    constructor(sessionData, mode) {
+        this._socket = new WebSocket("wss://127.0.0.1/api/pong-game" + mode + sessionData.user_id); //TODO: 추후에 변경해야한다
+
         const canvas1 = document.querySelector("#canvas1");
         const canvas2 = document.querySelector("#canvas2");
         this._divCanvas1 = canvas1;
@@ -83,6 +82,7 @@ export class PongGame {
 
         // socket에 들어온 입력에 대한 이벤트 등록
         this._socket.onopen = () => {
+            this._socket.send(JSON.stringify(sessionData));
             console.log("Socket is open");
         };
         this._socket.onclose = (event) => {
@@ -330,7 +330,7 @@ export class PongGame {
                     this._isRunning = false;
                     navigateTo("/game");
                 })
-                this._socket.send("start");
+                // this._socket.send("start");
             }
         }
         this.setGame();
@@ -391,7 +391,7 @@ export class PongGame {
 
     handleSocketMessage(event) {
         const received = JSON.parse(event.data); // ball 좌표, panel1 좌표, panel2 좌표가 순서대로 들어온다고 가정
-        console.log(received);
+        // console.log(received);
 
         if (received.type === "state"){
             this._ball.position.set(received.ball_pos[0], received.ball_pos[1], received.ball_pos[2]);
@@ -483,6 +483,7 @@ export class PongGame {
 
                 if (event.target.href === "http://localhost:5500/main") {
                     this._isRunning = false;
+                    this._socket.close();
                     navigateTo("/main");
                 }
             });
@@ -503,6 +504,7 @@ export class PongGame {
 
     gameRoute() {
         this._isRunning = false;
+        this._socket.close();
         console.log("gameROute");
         console.log("isRunning : ", this._isRunning);
         router();

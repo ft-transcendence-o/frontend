@@ -6,7 +6,7 @@ import { get_translated_value } from "../../language.js"
 export default class extends AbstractView {
     constructor() {
         super();
-        this.setTitle("game");
+        this.setTitle("tournament_game");
     }
 
     /**
@@ -76,7 +76,23 @@ export default class extends AbstractView {
     }
 
     async init() {
-		new PongGame();
+		try {
+			const response = await fetch(baseUrl + "/api/game-management/session", {
+				method: "GET",
+				credentials: 'include',
+			});
+			if (response.ok) {
+				const sessionData = await response.json()
+				console.log("get session Data", sessionData)
+				new PongGame(sessionData, "tournament/");
+			} else {
+				const jsonResponse = await response.json();
+				console.log(jsonResponse);
+				console.log("error");
+			}
+		} catch (error) {
+			console.log("Fetch error:", error);
+		}
 
 		// translate 적용 테스트
         const transItems = document.querySelectorAll(".transItem");
