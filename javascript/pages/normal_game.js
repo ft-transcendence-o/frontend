@@ -76,8 +76,10 @@ export default class extends AbstractView {
     }
 
     async init() {
+		// game session data
 		try {
-			const response = await fetch(baseUrl + "/api/game-management/session", {
+			const fetch_url = baseUrl + `/api/game-management/session?mode-${encodeURIComponent("normal")}`;
+			const response = await fetch(fetch_url, {
 				method: "GET",
 				credentials: 'include',
 			});
@@ -99,35 +101,5 @@ export default class extends AbstractView {
         transItems.forEach( (transItem) => {
             transItem.innerHTML = get_translated_value(transItem.dataset.trans_id);
         } )
-
-		// 클릭 가능한 요소들에 이벤트 리스너를 등록한다
-        const Top_Buttons = document.querySelector("#top_item").querySelectorAll("a");
-
-        Top_Buttons.forEach((Button) => {
-
-            Button.addEventListener("click", (event) => {
-                event.preventDefault();
-                console.log(event.currentTarget.href);
-
-                // 라우팅 이벤트 추가
-                // 비동기 이슈?
-                const url = new URL(event.currentTarget.href);
-                const pathname = url.pathname;
-
-                navigateTo(pathname);
-            });
-
-            Button.addEventListener("mouseenter", (event) => {
-                Button.classList.remove("blue_outline");
-                Button.classList.add("green_outline");
-                Button.classList.add("white_stroke_2_5px");
-            });
-
-            Button.addEventListener("mouseleave", (event) => {
-                Button.classList.add("blue_outline");
-                Button.classList.remove("green_outline");
-                Button.classList.remove("white_stroke_2_5px");
-            });
-        });
     }
 }

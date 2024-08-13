@@ -170,7 +170,7 @@ export default class extends AbstractView {
                 }
                 else if (Button.dataset.href === "/1ON1")
                 {
-                    navigateTo("/game");
+                    navigateTo("/normal_game");
                 }
             });
 

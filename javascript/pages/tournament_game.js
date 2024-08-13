@@ -76,8 +76,10 @@ export default class extends AbstractView {
     }
 
     async init() {
+		// game session data
 		try {
-			const response = await fetch(baseUrl + "/api/game-management/session", {
+			const fetch_url = baseUrl + `/api/game-management/session?mode-${encodeURIComponent("tournament")}`;
+			const response = await fetch(fetch_url, {
 				method: "GET",
 				credentials: 'include',
 			});

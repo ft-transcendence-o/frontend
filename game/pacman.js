@@ -5,7 +5,7 @@ import { get_translated_value } from "../../language.js"
 
 export class PongGame {
     constructor(sessionData, mode) {
-        this._socket = new WebSocket("wss://127.0.0.1/api/pong-game" + mode + sessionData.user_id); //TODO: 추후에 변경해야한다
+        this._socket = new WebSocket("wss://127.0.0.1/api/pong-game/" + mode + sessionData.user_id); //TODO: 추후에 변경해야한다
 
         const canvas1 = document.querySelector("#canvas1");
         const canvas2 = document.querySelector("#canvas2");
@@ -30,13 +30,12 @@ export class PongGame {
         this._gameVar = document.querySelector("#game_var");
         this._player1 = {
             Nick: "1UP",
-            Score : 0,
+            Score : sessionData.left_score, //
         }
         this._player2 = {
             Nick: "2UP",
-            Score : 0,
+            Score : sessionData.right_score,
         }
-        this._mode = localStorage.getItem('mode');
         document.querySelector("#player1_nick").innerHTML = this._player1.Nick;
         document.querySelector("#player2_nick").innerHTML = this._player2.Nick;
 
@@ -82,6 +81,7 @@ export class PongGame {
         // socket에 들어온 입력에 대한 이벤트 등록
         this._socket.onopen = () => {
             this._socket.send(JSON.stringify(sessionData));
+            //잘 갔는지 확인이 가능한가?
             console.log("Socket is open");
         };
         this._socket.onclose = (event) => {
@@ -255,8 +255,10 @@ export class PongGame {
 
     // 렌더링함수
     render(time) { // 렌더링이 시작된 이후 경과된 밀리초를 받는다
-        if (!this._isRunning)
+        if (!this._isRunning) {
+            console.log("rendering finish");
             return ;
+        }
         // 렌더러가 scenen을 카메라의 시점을 기준으로 렌더링하는작업을 한다
         this._renderer1.render(this._scene, this._camera1);
         this._renderer2.render(this._scene, this._camera2);
@@ -320,9 +322,8 @@ export class PongGame {
                 // this.fetchResult();
                 document.querySelector("#next_button").addEventListener("click", (event) => { 
                     this._isRunning = false;
-                    navigateTo("/game");
+                    navigateTo("/normal_game");
                 })
-                // this._socket.send("start");
             }
         }
         this.setGame();
@@ -360,11 +361,9 @@ export class PongGame {
                     </span>
                     <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
                 </button>`;
-                // 결과를 backend에 POST
-                // this.fetchResult();
                 document.querySelector("#next_button").addEventListener("click", (event) => {
                     this._isRunning = false;
-                    navigateTo("/game");
+                    navigateTo("/normal_game");
                 })
             }
         }
@@ -396,7 +395,6 @@ export class PongGame {
             this._player2.Score = received.right_score;
             document.querySelector("#player1_score").innerHTML = this._player1.Score;
             document.querySelector("#player2_score").innerHTML = this._player2.Score;
-
             // this._socket.send("pause");
             // let countdownValue = 4;
         
@@ -410,17 +408,19 @@ export class PongGame {
             //     }
             // })
         }
+        else if (received.type === "init_data") {
+            const nicks = received.players_name;
+            console.log("nicksL:", nicks);
+            this._player1.Score = received.left_score;
+            this._player2.Score = received.right_score;
+            this._player1.Nick = received.players_name[0];
+            this._player2.Nick = received.players_name[1];
+        }
+        else if (received.type === "game_end") {
+            this._isRunning == false;
+            this._socket.close();
+        }
     }
-
-    // async refreshScore() {
-    //     document.querySelector("#player1_score").innerHTML = this._player1.Score;
-    //     document.querySelector("#player2_score").innerHTML = this._player2.Score;
-    //     this._ball
-    //     this._ball.position.set(0, 0, 0);
-    //     this._panel1.position.set(0, 0, 50);
-    //     this._panel2.position.set(0, 0, -50);
-    //     this._perspectiveLineEdges.position.z = 0;
-    // }
 
     // 게임 일시정지
     pauseGame(duration) {
@@ -464,6 +464,7 @@ export class PongGame {
     }
 
     mainButtonEvent() {
+        // 기본값설정
         this._Top_Buttons = document.querySelector("#top_item").querySelectorAll("a");
 	
 		this._Top_Buttons.forEach((Button) => {
@@ -472,11 +473,11 @@ export class PongGame {
                 event.preventDefault();
                 console.log(event.target.href);
 
-                if (event.target.href === "http://localhost:5500/main") {
-                    this._isRunning = false;
-                    this._socket.close();
-                    navigateTo("/main");
-                }
+                this._isRunning = false;
+                this._socket.close();
+                console.log("mainButtonEvent occured: isRunning = false, socket is closed");
+                this.removeEventListener();
+                navigateTo("/main");
             });
 
             Button.addEventListener("mouseenter", (event) => {
@@ -496,9 +497,19 @@ export class PongGame {
     gameRoute() {
         this._isRunning = false;
         this._socket.close();
-        console.log("gameROute");
-        console.log("isRunning : ", this._isRunning);
+        console.log("gameRoute occured: isRunning = false, socket is closed");
+        this.removeEventListener();
         router();
+    }
+
+    removeEventListener() {
+        window.addEventListener('keydown', empty => {})
+        window.addEventListener('keyup', empty => {})
+        // window.addEventListener('popstate', empty => {})
+        // window.removeEventListener('keydown', this.keydown.bind(this));
+        // window.removeEventListener('keyup', this.keyup.bind(this));
+        // window.removeEventListener('popstate', this.keydown.bind(this));
+        console.log("Event listeners removed.");
     }
 }
 
