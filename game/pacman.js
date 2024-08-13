@@ -4,7 +4,6 @@ import { navigateTo, baseUrl, router} from "../../router.js";
 import { get_translated_value } from "../../language.js"
 
 export class PongGame {
-    // constructor : renderer, scene, 함수들 정의
     constructor(sessionData, mode) {
         this._socket = new WebSocket("wss://127.0.0.1/api/pong-game" + mode + sessionData.user_id); //TODO: 추후에 변경해야한다
 
@@ -103,7 +102,6 @@ export class PongGame {
 
     // 카메라 설정
     _setupCamera() {
-        console.log("camera");
         const width = this._canvasWidth;
         const height = this._canvasHeight;
         const camera1 = new THREE.PerspectiveCamera(
@@ -129,7 +127,6 @@ export class PongGame {
 
     // 조명 설정 | 전체조명사용하도록 수정예정
     _setupLight() {
-        console.log("light");
         const PLight = new THREE.PointLight();
         const ALight = new THREE.AmbientLight();
         this._PLight = PLight;
@@ -140,7 +137,6 @@ export class PongGame {
 
     // 렌더링할 Mesh들을 정의하고 생성하는 함수
     _setupModel() {
-        console.log("model");
         const loader = new GLTFLoader();
 
         //Mesh: pacman ball
@@ -153,9 +149,7 @@ export class PongGame {
             let box = new THREE.Box3().setFromObject(this._ball);
             let size = new THREE.Vector3();
             box.getSize(size);
-            console.log("size: ", size);
             this._radius = Math.max(size.x, size.y, size.z) / 2; // 반지름 계산 하면 대충 2쯤 나옴
-            console.log("radius : ", this._radius);
             this._ball.traverse((child) => {
                 if (child.isMesh) {
                     child.geometry.computeBoundingBox();
@@ -287,13 +281,11 @@ export class PongGame {
         this._ball.position.x = 0;
         this._ball.position.y = 0;
         this._ball.position.z = 0;
-        console.log("ball vec:", this._vec);
         this.pauseGame(1000);
     }
 
     // player1이 점수를 딴 경우
     player1Win() {
-        console.log("player1 win");
         document.querySelector("#player1_score").innerHTML = this._player1.Score;
         if (this._player1.Score === 10){ // 일정점수에 도달하면 game set
             if (this._mode === "TOURNAMENT") {
@@ -338,7 +330,6 @@ export class PongGame {
 
     // player2가 점수를 딴 경우
     player2Win() {
-        console.log("player2 win");
         document.querySelector("#player2_score").innerHTML = this._player2.Score;
         if (this._player2.Score === 10){ // 승리점수가 일정 점수에 도달하면 게임을 끝낸다
             if (this._mode === "TOURNAMENT") { // 토너먼트
