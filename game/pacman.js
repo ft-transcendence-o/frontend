@@ -85,7 +85,8 @@ export class PongGame {
         window.addEventListener('keydown', this._bindKeydown);
 
         // keyup 이벤트 핸들러를 추가
-        window.addEventListener('keyup', this.keyup.bind(this));
+        this._bindKeyup = this.keyup.bind(this);
+        window.addEventListener('keyup', this._bindKeyup);
 
         // main 버튼 이벤트 핸들러를 추가
         this.mainButtonEvent();
@@ -500,6 +501,8 @@ export class PongGame {
     }
 
     removeEventListener() {
+        window.removeEventListener('keydown', this._bindKeydown);
+        window.removeEventListener('keyup', this._bindKeyup);
         // window.removeEventListener('keydown', this.keydown.bind(this));
         // window.removeEventListener('keyup', this.keyup.bind(this));
         // window.removeEventListener('popstate', this.keydown.bind(this));
