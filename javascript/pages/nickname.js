@@ -142,7 +142,7 @@ export default class extends AbstractView {
             event.target.classList.remove("white_stroke_2_5px");
         };
 
-        const handleReadyButtonClick = (event) => {
+        const handleReadyButtonClick = async (event) => {
             event.preventDefault();
             console.log("ready button clicked!");
 
@@ -175,16 +175,25 @@ export default class extends AbstractView {
                 return;
             }
 
-            let storedNicknames = [];
-            // storedNicknames = JSON.parse(localStorage.getItem('nicknames')) || []; // JSON으로 파싱(보안처리)
+            try {
+                const response = await fetch(baseUrl + "/api/game-management/session", {
+                    method: "POST",
+                    credentials: 'include',
+                    body: JSON.stringify({ players_name: nicknames })
+                });
 
-            storedNicknames = [...storedNicknames, ...nicknames].slice(-10);
-
-            localStorage.setItem('nicknames', JSON.stringify(storedNicknames));
-            localStorage.setItem('match_count', 1);
-            localStorage.setItem('match_mode', 'TOURNAMENT');
-
-            navigateTo('/match_schedules');
+                if (response.ok) {
+                    const jsonResponse = await response.json();
+                    console.log(jsonResponse.message);
+                    navigateTo('/match_schedules');
+                } else {
+                    console.error("Failed to set nicknames. Response status:", response.status);
+                    invalidInputElement.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">FAILED TO SET NICKNAMES!</p>`;
+                }
+            } catch (error) {
+                console.error("Error sending nicknames:", error);
+                invalidInputElement.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">ERROR OCCURRED WHILE SENDING NICKNAMES!</p>`;
+            }
         };
 
         const handleReadyMouseEnter = (event) => {
