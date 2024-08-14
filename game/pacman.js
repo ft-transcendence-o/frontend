@@ -38,15 +38,15 @@ export class PongGame {
         this._player2 = {
             Score : sessionData.right_score,
         }
-        if (sessionData.game_round === 1) {
+        if (sessionData.current_match === 0) {
             this._player1.Nick = sessionData.players_name[0];
             this._player2.Nick = sessionData.players_name[1];
         }
-        else if (sessionData.game_round === 2) {
+        else if (sessionData.current_match === 1) {
             this._player1.Nick = sessionData.players_name[2];
             this._player2.Nick = sessionData.players_name[3];
         }
-        else if (sessionData.game_round === 3) {
+        else if (sessionData.current_match === 2) {
             this._player1.Nick = sessionData.win_history[0];
             this._player2.Nick = sessionData.win_history[1];
         }
