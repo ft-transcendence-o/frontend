@@ -72,7 +72,7 @@ export default class extends AbstractView {
         </div>
 
         <!-- invalid input -->
-        <div id="invalid_input" style="z-index: 5; position: absolute; margin-top: 790px; text-align: center"></div>
+        <div id="invalid_input" style="z-index: 5; position: absolute; margin-top: 790px; text-align: center; width: 1440px;"></div>
 
         <!-- 레디 Button -->
         <button id="ready_button" type="button" style="background-color: black; z-index: 6; margin-top: 80px; width: 232px; height: 110px;" class="blue_outline PS2P_font">

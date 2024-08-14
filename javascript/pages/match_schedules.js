@@ -102,19 +102,19 @@ export default class extends AbstractView {
                     <div class="container" style="padding-top: 4px;">
                         <div class="row">
                             <div class="col-2 player_info" style="margin-left: 46px;">
-                                <img id="img_player1" class="mx-auto d-block" src="./image/ghost_blue.png" style="width: 100px; height: 97.8px;" alt="">
+                                <img id="img_player1" class="mx-auto d-block" src="./image/ghost_blue.gif" style="width: 100px; height: 97.8px;" alt="">
                                 <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player1</p>
                             </div>
                             <div class="col-2 player_info" style="margin-left: 104px;">
-                                <img id="img_player2" class="mx-auto d-block" src="./image/ghost_red.png" style="width: 100px; height: 97.8px;" alt="">
+                                <img id="img_player2" class="mx-auto d-block" src="./image/ghost_red.gif" style="width: 100px; height: 97.8px;" alt="">
                                 <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player2</p>
                             </div>
                             <div class="col-2 player_info" style="margin-left: 58px;">
-                                <img id="img_player3" class="mx-auto d-block" src="./image/ghost_pink.png" style="width: 100px; height: 97.8px;" alt="">
+                                <img id="img_player3" class="mx-auto d-block" src="./image/ghost_pink.gif" style="width: 100px; height: 97.8px;" alt="">
                                 <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player3</p>
                             </div>
                             <div class="col-2 player_info" style="margin-left: 102px;">
-                                <img id="img_player4" class="mx-auto d-block" src="./image/ghost_orange.png" style="width: 100px; height: 97.8px;" alt="">
+                                <img id="img_player4" class="mx-auto d-block" src="./image/ghost_orange.gif" style="width: 100px; height: 97.8px;" alt="">
                                 <p style="font-size: 30px; text-align: center; margin-top: 30px; margin-bottom: 30px; max-width: 306px;">player4</p>
                             </div>
                         </div>
@@ -149,22 +149,19 @@ export default class extends AbstractView {
             method: "GET",
             credentials: 'include',
         });
+        const jsonResponse = await response.json();
+        console.log("tournamet info:", jsonResponse);
 
         if (response.status === 401) { // jwt가 없는 경우
             navigateTo("/");
             return ;
         } else { // otp 통과 안했을 경우
-            const jsonResponse = await response.json();
             if (jsonResponse["otp_verified"] === false)
             {
                 navigateTo("/");
                 return ;
             }
         }
-
-        const responseJson = await response.json();
-        console.log("tournamet info:", responseJson);
-        
 
         // translate 적용 테스트
         const transItems = document.querySelectorAll(".transItem");
@@ -198,13 +195,13 @@ export default class extends AbstractView {
         // }
         for (let idx = 0; idx < player_infos.length; idx++)
         {
-            player_infos[idx].querySelector("p").innerText = responseJson["players_name"][idx];
+            player_infos[idx].querySelector("p").innerText = jsonResponse["players_name"][idx];
         }
 
         // match_count에 따라 match text의 색을 변경한다
         const match_textes = document.querySelectorAll(".match_text");
         // const match_count = localStorage.getItem("match_count");
-        const match_count = responseJson["game_round"];
+        const match_count = jsonResponse["game_round"];
 
         // nickname에서 넘어올때 game 기록 조작을 방지하기 위해 다 지워준다
         const game1 = JSON.parse(localStorage.getItem("game1"));
@@ -219,7 +216,7 @@ export default class extends AbstractView {
             match_textes[0].style.color = "gray";
             match_textes[1].style.color = "#14FF00";
 
-            if (responseJson["win_history"][0] === 0)
+            if (jsonResponse["win_history"][0] === 0)
             {
                 const lines = document.querySelectorAll(".line_1-1")
                 
@@ -248,7 +245,7 @@ export default class extends AbstractView {
             match_textes[1].style.color = "gray";
             match_textes[2].style.color = "#14FF00";
 
-            if (responseJson["win_history"][1] === 2)
+            if (jsonResponse["win_history"][1] === 2)
             {
                 const lines = document.querySelectorAll(".line_2-1")
                 
@@ -276,7 +273,7 @@ export default class extends AbstractView {
         {
             match_textes[2].style.color = "gray";
 
-            if (responseJson["win_history"][2] === match1_winner)
+            if (jsonResponse["win_history"][2] === match1_winner)
             {
                 const lines = document.querySelectorAll(".line_3-1")
                 
