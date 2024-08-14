@@ -306,77 +306,13 @@ export default class extends AbstractView {
             // 라우팅 이벤트 추가
             if (match_count > 3)
             {
-                // 다음의 변수는 localStorage 변조에 대응하기 위해 직접 지운다
-                localStorage.removeItem('nicknames');
-                localStorage.removeItem('match_count');
-                localStorage.removeItem('match_mode');
-                localStorage.removeItem('game1');
-                localStorage.removeItem('game2');
-                localStorage.removeItem('game3');
-                localStorage.removeItem("match_1up");
-                localStorage.removeItem("match_2up");
-                
-                console.log("go to nickname page");
                 navigateTo("/nickname");
+                return ;
             }
             else
             {
-                let match_1up;
-                let match_2up;
-                console.log("go to game page");
-
-                // 첫번째 경기라면 1, 2번째 유저의 닉네임을 대입한다
-                if (match_count == 1)
-                {
-                    match_1up = nicknames[0];
-                    match_2up = nicknames[1];
-                }
-                // 두번째 경기라면 3, 4번째 유저의 닉네임을 대입한다
-                else if (match_count == 2)
-                {
-                    match_1up = nicknames[2];
-                    match_2up = nicknames[3];
-                }
-                // 마지막 경기라면
-                else
-                {
-                    // 첫번째 경기 승자의 닉네임을 대입한다
-                    if (game1['player1Score'] > game1['player2Score'])
-                    {
-                        match_1up = nicknames[0];
-                    }
-                    else
-                    {
-                        match_1up = nicknames[1];
-                    }
-
-                    // 두번째 경기 승자의 닉네임을 대입한다
-                    if (game2['player1Score'] > game2['player2Score'])
-                    {
-                        match_2up = nicknames[2];
-                    }
-                    else
-                    {
-                        match_2up = nicknames[3];
-                    }
-                }
-
-                // 다음의 변수는 localStorage 변조에 대응하기 위해 매번 직접 덮어써놓는다
-                localStorage.setItem('nicknames', JSON.stringify(nicknames));
-                localStorage.setItem('match_count', match_count);
-                localStorage.setItem('match_mode', 'TOURNAMENT');
-                if (game1)
-                {
-                    localStorage.setItem('game1', JSON.stringify(game1));
-                }
-                if (game2)
-                {
-                    localStorage.setItem('game2', JSON.stringify(game2));
-                }
-
-                localStorage.setItem("match_1up", match_1up);
-                localStorage.setItem("match_2up", match_2up);
                 navigateTo("/tournament_game");
+                return ;
             }
         });
 
