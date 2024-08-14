@@ -67,7 +67,8 @@ export class PongGame {
         this._setupModel(); // 3차원 모델을 설정
 
         // keydown 이벤트 핸들러를 추가
-        window.addEventListener('keydown', this.keydown.bind(this));
+        this._bindKeydown = this.keydown.bind(this);
+        window.addEventListener('keydown', this._bindKeydown);
 
         // keyup 이벤트 핸들러를 추가
         window.addEventListener('keyup', this.keyup.bind(this));
