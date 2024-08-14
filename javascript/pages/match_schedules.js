@@ -379,7 +379,7 @@ export default class extends AbstractView {
 
                 localStorage.setItem("match_1up", match_1up);
                 localStorage.setItem("match_2up", match_2up);
-                navigateTo("/game");
+                navigateTo("/tournament_game");
             }
         });
 
