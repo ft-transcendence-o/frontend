@@ -33,12 +33,22 @@ export class PongGame {
         // game_status_var
         this._gameVar = document.querySelector("#game_var");
         this._player1 = {
-            Nick: "1UP",
             Score : sessionData.left_score, //
         }
         this._player2 = {
-            Nick: "2UP",
             Score : sessionData.right_score,
+        }
+        if (sessionData.game_round === 1) {
+            this._player1.Nick = received.players_name[0];
+            this._player2.Nick = received.players_name[1];
+        }
+        else if (sessionData.game_round === 2) {
+            this._player1.Nick = received.players_name[2];
+            this._player2.Nick = received.players_name[3];
+        }
+        else if (sessionData.game_round === 3) {
+            this._player1.Nick = received.win_history[0];
+            this._player2.Nick = received.win_history[1];
         }
         document.querySelector("#player1_nick").innerHTML = this._player1.Nick;
         document.querySelector("#player2_nick").innerHTML = this._player2.Nick;
@@ -279,9 +289,8 @@ export class PongGame {
         })
     }
 
-    // player1이 점수를 딴 경우
     player1Win() {
-        document.querySelector("#player1_score").innerHTML = this._player1.Score;
+        // document.querySelector("#player1_score").innerHTML = this._player1.Score;
         if (this._mode === "tournament/") {
             document.querySelector("#winner1").innerHTML = `
             <div style="font-size: 100px; line-height: 100px; color: white;">${get_translated_value("game_win")}!</div>
@@ -320,9 +329,8 @@ export class PongGame {
         }
     }
 
-    // player2가 점수를 딴 경우
     player2Win() {
-        document.querySelector("#player2_score").innerHTML = this._player2.Score;
+        // document.querySelector("#player2_score").innerHTML = this._player2.Score;
         if (this._mode === "tournament/") { // 토너먼트
             document.querySelector("#winner2").innerHTML = `
             <div style="font-size: 100px; line-height: 100px; color: white;">${get_translated_value("game_win")}!</div>
@@ -398,14 +406,6 @@ export class PongGame {
             //         return ;
             //     }
             // })
-        }
-        else if (received.type === "init_data") {
-            const nicks = received.players_name;
-            console.log("nicksL:", nicks);
-            this._player1.Score = received.left_score;
-            this._player2.Score = received.right_score;
-            this._player1.Nick = received.players_name[0];
-            this._player2.Nick = received.players_name[1];
         }
         else if (received.type === "game_end") {
             this._isRunning == false;
