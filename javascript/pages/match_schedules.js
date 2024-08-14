@@ -144,6 +144,28 @@ export default class extends AbstractView {
     }
 
     async init() {
+
+        const response = await fetch(baseUrl + "/api/game-management/session?mode=tournament", {
+            method: "GET",
+            credentials: 'include',
+        });
+
+        if (response.status === 401) { // jwt가 없는 경우
+            navigateTo("/");
+            return ;
+        } else { // otp 통과 안했을 경우
+            const jsonResponse = await response.json();
+            if (jsonResponse["otp_verified"] === false)
+            {
+                navigateTo("/");
+                return ;
+            }
+        }
+
+        const responseJson = await response.json();
+        console.log("tournamet info:", responseJson);
+        
+
         // translate 적용 테스트
         const transItems = document.querySelectorAll(".transItem");
         transItems.forEach( (transItem) => {
@@ -170,14 +192,19 @@ export default class extends AbstractView {
         const player_infos = document.querySelectorAll(".player_info");
         const nicknames = JSON.parse(localStorage.getItem("nicknames"));
 
+        // for (let idx = 0; idx < player_infos.length; idx++)
+        // {
+        //     player_infos[idx].querySelector("p").innerText = nicknames[idx];
+        // }
         for (let idx = 0; idx < player_infos.length; idx++)
         {
-            player_infos[idx].querySelector("p").innerText = nicknames[idx];
+            player_infos[idx].querySelector("p").innerText = responseJson["players_name"][idx];
         }
 
         // match_count에 따라 match text의 색을 변경한다
         const match_textes = document.querySelectorAll(".match_text");
-        const match_count = localStorage.getItem("match_count");
+        // const match_count = localStorage.getItem("match_count");
+        const match_count = responseJson["game_round"];
 
         // nickname에서 넘어올때 game 기록 조작을 방지하기 위해 다 지워준다
         const game1 = JSON.parse(localStorage.getItem("game1"));
@@ -187,12 +214,12 @@ export default class extends AbstractView {
         let match1_winner;
         let match2_winner;
 
-        if (match_count > 1 && game1)
+        if (match_count > 1)
         {
             match_textes[0].style.color = "gray";
             match_textes[1].style.color = "#14FF00";
 
-            if (game1['player1Score'] > game1['player2Score'])
+            if (responseJson["win_history"][0] === 0)
             {
                 const lines = document.querySelectorAll(".line_1-1")
                 
@@ -216,12 +243,12 @@ export default class extends AbstractView {
             line.style.stroke = "#14FF00";
         }
 
-        if (match_count > 2 && game2)
+        if (match_count > 2)
         {
             match_textes[1].style.color = "gray";
             match_textes[2].style.color = "#14FF00";
 
-            if (game2['player1Score'] > game2['player2Score'])
+            if (responseJson["win_history"][1] === 2)
             {
                 const lines = document.querySelectorAll(".line_2-1")
                 
@@ -245,11 +272,11 @@ export default class extends AbstractView {
             line.style.stroke = "#14FF00";
         }
 
-        if (match_count > 3 && game3)
+        if (match_count > 3)
         {
             match_textes[2].style.color = "gray";
 
-            if (game3['player1Score'] > game3['player2Score'])
+            if (responseJson["win_history"][2] === match1_winner)
             {
                 const lines = document.querySelectorAll(".line_3-1")
                 
@@ -271,50 +298,7 @@ export default class extends AbstractView {
             line.style.stroke = "#14FF00";
 
             document.querySelector("#champion_text").style.display = "block";
-            // document.querySelector(".center_button").querySelector("p").innerHTML = "TOURNAMENT<br>AGAIN?";
             document.querySelector(".center_button").querySelector("p").innerHTML = get_translated_value("again_TOURNAMENT");
-
-            // 여기서 백엔드로 게임기록 일괄 전송?
-            // game_result 객체 만들기
-            let game_result = {
-                "game1": {
-                    "player1Nick": game1["player1Nick"],
-                    "player2Nick": game1["player2Nick"],
-                    "player1Score" : game1["player1Score"],
-                    "player2Score" : game1["player2Score"],
-                    "mode": "TOURNAMENT"
-                },
-                "game2": {
-                    "player1Nick": game2["player1Nick"],
-                    "player2Nick": game2["player2Nick"],
-                    "player1Score" : game2["player1Score"],
-                    "player2Score" : game2["player2Score"],
-                    "mode": "TOURNAMENT"
-                },
-                "game3": {
-                    "player1Nick": game3["player1Nick"],
-                    "player2Nick": game3["player2Nick"],
-                    "player1Score" : game3["player1Score"],
-                    "player2Score" : game3["player2Score"],
-                    "mode": "TOURNAMENT"
-                },
-            };
-            console.log(JSON.stringify(game_result));
-            const response = await fetch(baseUrl + "/api/game-management/tournament", {
-                method: "POST",
-                credentials: 'include',
-                body: JSON.stringify(game_result),
-            });
-
-            if (response.ok)
-            {
-                console.log("TOURNAMENT POST OK");
-            }
-            else
-            {
-                console.log("status:", response.status);
-                console.log(await response.json());
-            }
         }
 
         const Center_Button = document.querySelector(".center_button");
