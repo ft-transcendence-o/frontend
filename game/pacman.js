@@ -411,6 +411,7 @@ export class PongGame {
         else if (received.type === "game_end") {
             this._isRunning == false;
             this._socket.close();
+            this.removeEventListener(); 
             if (this._player1.Score > this._player2.Score) {
                 this.player1Win();
             }
