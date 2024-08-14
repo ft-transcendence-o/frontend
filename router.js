@@ -7,7 +7,8 @@ import main from "./javascript/pages/main.js"
 import match_record from "./javascript/pages/match_record.js"
 import nickname from "./javascript/pages/nickname.js"
 import match_schedules from "./javascript/pages/match_schedules.js"
-import game from "./javascript/pages/game.js"
+import normal_game from "./javascript/pages/normal_game.js"
+import tournament_game from "./javascript/pages/tournament_game.js"
 import Notfound from "./javascript/pages/404.js";
 
 let currentView = null;     // 현재 화면을 추적하는 전역 변수 선언. 페이지가 변경될 때 destroy 메소드가 호출되는 것을 보장하기 위함이다. destroy메소드는 각 페이지에서 등록한 eventListener들을 한군데 모아 담은 cleanup을 삭제하는 일을 한다.
@@ -50,7 +51,8 @@ export const router = async () => {
         { path: "/match_record", view: match_record },
         { path: "/nickname", view: nickname },
         { path: "/match_schedules", view: match_schedules},
-        { path: "/game", view: game},
+        { path: "/normal_game", view: normal_game},
+        { path: "/tournament_game", view: tournament_game},
     ];
 
     const potentialMatches = routes.map((route) => {
