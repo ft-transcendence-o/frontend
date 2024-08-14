@@ -5,7 +5,7 @@ import { get_translated_value } from "../../language.js"
 // 소독 sanitize input
 function sanitizeInput(input) {
 	const element = document.createElement('div');
-	element.textContent = input;	// The textContent property will convert the input into a text node, escaping the special characters.
+	element.textContent = input;	// The textContent property 가 특수문자를 escaping하면서 입력값을 text node로 변환.
 	return element.innerHTML;
 }
 
@@ -117,10 +117,10 @@ export default class extends AbstractView {
             } else {
                 const jsonResponse = await response.json();
                 console.log("Fail", jsonResponse);
-				if (response.status === 400) { // token은 유효 OTP를 이전에 한 번 통과한 사람 
+				if (response.status === 400) { // 400(Bad request) 문법상 오류가 있어서 서버가 요청사항을 이해하지 못하는 경우로 잘못 입력한 url인 경우가 대부분! -> token은 유효 OTP를 이전에 한 번 통과한 사람이 bad request를 한 경우
                     navigateTo('/OTP');
 				}
-				else if (response.status === 403) { // 403(Forbidden) 로그인하여 인증되었지만 접근 권한이 없는 무언가를 요청하는 경우이다. 예를 들어 어떤 쇼핑몰에 접속하여 로그인까지 하였지만, 다른 사용자의 결제 내역을 달라고 하면 403(Forbidden)을 반환 -> token 유효, OTP도 통과한 사람
+				else if (response.status === 403) { // 403(Forbidden) 로그인하여 인증되었지만 접근 권한이 없는 무언가를 요청하는 경우이다. (예: 정책상 인증 후 갈 필요가 없는 페이지로의 이동 요청) 예를 들어 어떤 쇼핑몰에 접속하여 로그인까지 하였지만, 다른 사용자의 결제 내역을 달라고 하면 403(Forbidden)을 반환 -> token 유효, OTP도 통과한 사람
 					navigateTo('/main')
 				}
                 else if (response.status === 401) { // 401)(unauthorized)클라이언트가 인증되지 않았거나, 유효한 인증 정보가 부족하여 요청이 거부되었음을 의미하는 상태값 -> token이 없는사람
@@ -132,7 +132,7 @@ export default class extends AbstractView {
             navigateTo('/');
         }
 
-		// 제거할 이벤트 리스터들을 한곳에 저장
+		// 제거할 이벤트 리스너들을 한곳에 저장
 		this.cleanup = () => {
 			Next_Button.removeEventListener("click", handleNextButtonClick);
 			Next_Button.removeEventListener("mouseenter", handleMouseEnter);

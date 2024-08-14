@@ -87,7 +87,7 @@ export default class extends AbstractView {
                     navigateTo('/main');
                     return;
                 }
-            } else if (response.status === 401) {
+            } else if (response.status === 401) { // 401)(unauthorized)클라이언트가 인증되지 않았거나, 유효한 인증 정보가 부족하여 요청이 거부되었음을 의미하는 상태값 -> token이 없는사람
                 console.log("response is 401!");
                 const jsonResponse = await response.json();
                 console.log(jsonResponse);
