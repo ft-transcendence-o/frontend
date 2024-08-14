@@ -3,9 +3,13 @@ import { GLTFLoader } from '../build/GLTFLoader.js';
 import { navigateTo, baseUrl, router} from "../../router.js";
 import { get_translated_value } from "../../language.js"
 
+//game_end
+
 export class PongGame {
     constructor(sessionData, mode) {
-        this._socket = new WebSocket("wss://127.0.0.1/api/pong-game/" + mode + sessionData.user_id); //TODO: 추후에 변경해야한다
+        console.log("wss://127.0.0.1/api/pong-game/" + mode + sessionData.user_id)
+        this._mode = mode;
+        this._socket = new WebSocket("wss://127.0.0.1/api/pong-game/" + mode + sessionData.user_id);
 
         const canvas1 = document.querySelector("#canvas1");
         const canvas2 = document.querySelector("#canvas2");
@@ -24,17 +28,27 @@ export class PongGame {
             ArrowDown: false,
             ArrowLeft: false,
             ArrowRight: false,
-        }; // 키보드 입력 상태를 추적하는 변수
+        };
 
         // game_status_var
         this._gameVar = document.querySelector("#game_var");
         this._player1 = {
-            Nick: "1UP",
             Score : sessionData.left_score, //
         }
         this._player2 = {
-            Nick: "2UP",
             Score : sessionData.right_score,
+        }
+        if (sessionData.game_round === 1) {
+            this._player1.Nick = received.players_name[0];
+            this._player2.Nick = received.players_name[1];
+        }
+        else if (sessionData.game_round === 2) {
+            this._player1.Nick = received.players_name[2];
+            this._player2.Nick = received.players_name[3];
+        }
+        else if (sessionData.game_round === 3) {
+            this._player1.Nick = received.win_history[0];
+            this._player2.Nick = received.win_history[1];
         }
         document.querySelector("#player1_nick").innerHTML = this._player1.Nick;
         document.querySelector("#player2_nick").innerHTML = this._player2.Nick;
@@ -269,106 +283,90 @@ export class PongGame {
 
     // 토너먼트경기가 끝나면 하는 동작들
     tournamentGameSet() {
-        localStorage.setItem(`game${localStorage.getItem("match_count")}`, JSON.stringify({
-            "player1Nick": this._player1.Nick,
-            "player2Nick": this._player2.Nick,
-            "player1Score" : this._player1.Score,
-            "player2Score" : this._player2.Score,
-            "mode": "TOURNAMENT"
-        }));
-        localStorage.setItem("match_count", localStorage.getItem("match_count") + 1);
         document.querySelector("#next_button").addEventListener("click", (event) => {
             this._isRunning = false;
             navigateTo("/match_schedules");
         })
-        this._ball.position.x = 0;
-        this._ball.position.y = 0;
-        this._ball.position.z = 0;
-        this.pauseGame(1000);
     }
 
-    // player1이 점수를 딴 경우
     player1Win() {
-        document.querySelector("#player1_score").innerHTML = this._player1.Score;
-        if (this._player1.Score === 10){ // 일정점수에 도달하면 game set
-            if (this._mode === "TOURNAMENT") {
-                document.querySelector("#winner1").innerHTML = `
-                <div style="font-size: 100px; line-height: 100px; color: white;">${get_translated_value("game_win")}!</div>
-                <button id="next_button" type="button" style="
-                    background-color: black;
-                    width: 328px; height: 199px;
-                    margin-left: 20px;" 
-                    class="blue_outline">
-                    <span style="font-size: 50px; line-height: 50px;">
-                        >>${get_translated_value("QR_next")}
-                    </span>
-                    <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
-                </button>`;
-                this.tournamentGameSet();
-            }
-            else { //1vs1
-                document.querySelector("#winner1").innerHTML = `
-                <div style="font-size: 100px; line-height: 100px; color: white;">${get_translated_value("game_win")}!</div>
-                <button id="next_button" type="button" style="
-                    background-color: black;
-                    width: 328px; height: 199px;
-                    margin-left: 20px;" 
-                    class="blue_outline">
-                    <span style="font-size: 50px; line-height: 50px;">
-                        ${get_translated_value("again_1ON1")}
-                    </span>
-                    <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
-                </button>`;
-                // post API
-                // this.fetchResult();
-                document.querySelector("#next_button").addEventListener("click", (event) => { 
-                    this._isRunning = false;
-                    navigateTo("/normal_game");
-                })
-            }
+        // document.querySelector("#player1_score").innerHTML = this._player1.Score;
+        if (this._mode === "tournament/") {
+            document.querySelector("#winner1").innerHTML = `
+            <div style="font-size: 100px; line-height: 100px; color: white;">${get_translated_value("game_win")}!</div>
+            <button id="next_button" type="button" style="
+                background-color: black;
+                width: 328px; height: 199px;
+                margin-left: 20px;" 
+                class="blue_outline">
+                <span style="font-size: 50px; line-height: 50px;">
+                    >>${get_translated_value("QR_next")}
+                </span>
+                <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
+            </button>`;
+            document.querySelector("#next_button").addEventListener("click", (event) => {
+                this._isRunning = false;
+                navigateTo("/match_schedules");
+            })
         }
-        this.setGame();
+        else { //1vs1
+            document.querySelector("#winner1").innerHTML = `
+            <div style="font-size: 100px; line-height: 100px; color: white;">${get_translated_value("game_win")}!</div>
+            <button id="next_button" type="button" style="
+                background-color: black;
+                width: 328px; height: 199px;
+                margin-left: 20px;" 
+                class="blue_outline">
+                <span style="font-size: 50px; line-height: 50px;">
+                    ${get_translated_value("again_1ON1")}
+                </span>
+                <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
+            </button>`;
+            document.querySelector("#next_button").addEventListener("click", (event) => { 
+                this._isRunning = false;
+                navigateTo("/normal_game");
+            })
+        }
     }
 
-    // player2가 점수를 딴 경우
     player2Win() {
-        document.querySelector("#player2_score").innerHTML = this._player2.Score;
-        if (this._player2.Score === 10){ // 승리점수가 일정 점수에 도달하면 게임을 끝낸다
-            if (this._mode === "TOURNAMENT") { // 토너먼트
-                document.querySelector("#winner2").innerHTML = `
-                <div style="font-size: 100px; line-height: 100px; color: white;">${get_translated_value("game_win")}!</div>
-                <button id="next_button" type="button" style="
-                    background-color: black;
-                    width: 328px; height: 199px;
-                    margin-left: 20px;" 
-                    class="blue_outline">
-                    <span style="font-size: 50px; line-height: 50px;">
-                        >>${get_translated_value("QR_next")}
-                    </span>
-                    <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
-                </button>`;
-                this.tournamentGameSet();
-            }
-            else { // 1VS1의 경우
-                document.querySelector("#winner2").innerHTML = `
-                <div style="font-size: 100px; line-height: 100px; color: white;">${get_translated_value("game_win")}!</div>
-                <button id="next_button" type="button" style="
-                    background-color: black;
-                    width: 328px; height: 199px;
-                    margin-left: 20px;" 
-                    class="blue_outline">
-                    <span style="font-size: 50px; line-height: 50px;">
-                        ${get_translated_value("again_1ON1")}
-                    </span>
-                    <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
-                </button>`;
-                document.querySelector("#next_button").addEventListener("click", (event) => {
-                    this._isRunning = false;
-                    navigateTo("/normal_game");
-                })
-            }
+        // document.querySelector("#player2_score").innerHTML = this._player2.Score;
+        if (this._mode === "tournament/") { // 토너먼트
+            document.querySelector("#winner2").innerHTML = `
+            <div style="font-size: 100px; line-height: 100px; color: white;">${get_translated_value("game_win")}!</div>
+            <button id="next_button" type="button" style="
+                background-color: black;
+                width: 328px; height: 199px;
+                margin-left: 20px;" 
+                class="blue_outline">
+                <span style="font-size: 50px; line-height: 50px;">
+                    >>${get_translated_value("QR_next")}
+                </span>
+                <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
+            </button>`;
+            document.querySelector("#next_button").addEventListener("click", (event) => {
+                this._isRunning = false;
+                navigateTo("/match_schedules");
+            })
         }
-        this.setGame();        
+        else { // 1VS1의 경우
+            document.querySelector("#winner2").innerHTML = `
+            <div style="font-size: 100px; line-height: 100px; color: white;">${get_translated_value("game_win")}!</div>
+            <button id="next_button" type="button" style="
+                background-color: black;
+                width: 328px; height: 199px;
+                margin-left: 20px;" 
+                class="blue_outline">
+                <span style="font-size: 50px; line-height: 50px;">
+                    ${get_translated_value("again_1ON1")}
+                </span>
+                <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
+            </button>`;
+            document.querySelector("#next_button").addEventListener("click", (event) => {
+                this._isRunning = false;
+                navigateTo("/normal_game");
+            })
+        }
     }
 
     update(time) {
@@ -409,17 +407,15 @@ export class PongGame {
             //     }
             // })
         }
-        else if (received.type === "init_data") {
-            const nicks = received.players_name;
-            console.log("nicksL:", nicks);
-            this._player1.Score = received.left_score;
-            this._player2.Score = received.right_score;
-            this._player1.Nick = received.players_name[0];
-            this._player2.Nick = received.players_name[1];
-        }
         else if (received.type === "game_end") {
             this._isRunning == false;
             this._socket.close();
+            if (this._player1.Score > this._player2.Score) {
+                this.player1Win();
+            }
+            else {
+                this.player2Win();
+            }
         }
     }
 
