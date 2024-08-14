@@ -39,16 +39,16 @@ export class PongGame {
             Score : sessionData.right_score,
         }
         if (sessionData.game_round === 1) {
-            this._player1.Nick = received.players_name[0];
-            this._player2.Nick = received.players_name[1];
+            this._player1.Nick = sessionData.players_name[0];
+            this._player2.Nick = sessionData.players_name[1];
         }
         else if (sessionData.game_round === 2) {
-            this._player1.Nick = received.players_name[2];
-            this._player2.Nick = received.players_name[3];
+            this._player1.Nick = sessionData.players_name[2];
+            this._player2.Nick = sessionData.players_name[3];
         }
         else if (sessionData.game_round === 3) {
-            this._player1.Nick = received.win_history[0];
-            this._player2.Nick = received.win_history[1];
+            this._player1.Nick = sessionData.win_history[0];
+            this._player2.Nick = sessionData.win_history[1];
         }
         document.querySelector("#player1_nick").innerHTML = this._player1.Nick;
         document.querySelector("#player2_nick").innerHTML = this._player2.Nick;
@@ -500,9 +500,6 @@ export class PongGame {
     }
 
     removeEventListener() {
-        window.addEventListener('keydown', empty => {})
-        window.addEventListener('keyup', empty => {})
-        // window.addEventListener('popstate', empty => {})
         // window.removeEventListener('keydown', this.keydown.bind(this));
         // window.removeEventListener('keyup', this.keyup.bind(this));
         // window.removeEventListener('popstate', this.keydown.bind(this));
