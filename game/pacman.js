@@ -31,6 +31,7 @@ export class PongGame {
         };
 
         // game_status_var
+        console.log("Session Data:", sessionData);
         this._gameVar = document.querySelector("#game_var");
         this._player1 = {
             Score : sessionData.left_score, //
@@ -38,11 +39,10 @@ export class PongGame {
         this._player2 = {
             Score : sessionData.right_score,
         }
-        if (sessionData.current_match === 0) {
-            this._player1.Nick = sessionData.players_name[0];
-            this._player2.Nick = sessionData.players_name[1];
-        }
-        else if (sessionData.current_match === 1) {
+        
+        this._player1.Nick = sessionData.players_name[0];
+        this._player2.Nick = sessionData.players_name[1];
+        if (sessionData.current_match === 1) {
             this._player1.Nick = sessionData.players_name[2];
             this._player2.Nick = sessionData.players_name[3];
         }
@@ -50,8 +50,11 @@ export class PongGame {
             this._player1.Nick = sessionData.win_history[0];
             this._player2.Nick = sessionData.win_history[1];
         }
+        document.querySelector("#player1_score").innerHTML = this._player1.Score;
+        document.querySelector("#player2_score").innerHTML = this._player2.Score;
         document.querySelector("#player1_nick").innerHTML = this._player1.Nick;
         document.querySelector("#player2_nick").innerHTML = this._player2.Nick;
+        
 
         //게임에 사용할 변수들
         this._isPaused = false;

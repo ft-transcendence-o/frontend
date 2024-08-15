@@ -85,7 +85,6 @@ export default class extends AbstractView {
 			});
 			if (response.ok) {
 				const sessionData = await response.json()
-				console.log("get session Data", sessionData)
 				new PongGame(sessionData, "tournament/");
 			} else {
 				const jsonResponse = await response.json();
