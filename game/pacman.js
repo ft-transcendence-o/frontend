@@ -523,13 +523,15 @@ export class PongGame {
                 this._socket.send("start");
                 return ;
             }
+            else if (countdownValue === -1){
+                this.removeEventListener();
+                navigateTo("main");
+            }
         }, 1000);
     }
 
     mainButtonEvent() {
         this._Top_Button = document.querySelector("#top_item").querySelector("a");
-
-
         this._mainButtonClick = this.mainButtonClick.bind(this);
         this._Top_Button.addEventListener('click', this._mainButtonClick);
         this._eventList[this._eventCnt++] = {
@@ -579,8 +581,6 @@ export class PongGame {
     nextButtonClick(event) {
         this._isRunning = false;
         this._socket.close();
-        document.querySelector("#next_button").removeEventListener("click", this._nextButtonClick);
-        window.removeEventListener("keydown", this._nextButtonEnter);
         console.log("next Button Click");
         this.removeEventListener();
         navigateTo("/match_schedules");
@@ -590,8 +590,6 @@ export class PongGame {
         if (event.code === 'Enter') {
             this._isRunning = false;
             this._socket.close();
-            document.querySelector("#next_button").removeEventListener("click", this._nextButtonClick);
-            window.removeEventListener("keydown", this._nextButtonEnter);
             console.log("next Button Enter");
             this.removeEventListener();
             navigateTo("/match_schedules");
@@ -601,8 +599,6 @@ export class PongGame {
     playAgainButtonClick(event) {
         this._isRunning = false;
         this._socket.close();
-        document.querySelector("#next_button").removeEventListener("click", this._playAgainButtonClick);
-        window.removeEventListener("keydown", this._playAgainButtonEnter);
         console.log("paly Again Button Click");
         this.removeEventListener();
         navigateTo("/normal_game");
@@ -612,8 +608,6 @@ export class PongGame {
         if (event.code === 'Enter'){
             this._isRunning = false;
             this._socket.close();
-            document.querySelector("#next_button").removeEventListener("click", this._playAgainButtonClick);
-            window.removeEventListener("keydown", this._playAgainButtonEnter);
             console.log("paly Again Button Enter");
             this.removeEventListener();
             navigateTo("/normal_game");
@@ -628,14 +622,16 @@ export class PongGame {
         router();
     }
 
+    //14개중에서 7개가 지워짐
     removeEventListener() {
         for (let i = 0; i < this._eventCnt; i++) {
             const eventInfo = this._eventList[i];
             eventInfo.ref.removeEventListener(eventInfo.event, eventInfo.function);
-            console.log(eventInfo.function);
+            console.log(`Removed listener for event: ${eventInfo.ref}`);
         }
-        console.log("Event listeners removed.");
+        console.log("All event listeners removed.");
     }
+
 }
 
 
