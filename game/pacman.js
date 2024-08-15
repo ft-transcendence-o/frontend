@@ -506,15 +506,23 @@ export class PongGame {
     
         let countdownInterval = setInterval(() => {
             countdownElement.innerText =  --countdownValue;
-    
-            if (countdownValue === 0) {
+            if (this._isRunning === false) {
+                clearInterval(countdownInterval);
+                this.removeEventListener();
+                navigateTo("main");
+                return ;
+            }
+            else if (countdownValue === 0) {
                 requestAnimationFrame(this.render.bind(this))
                 countdownElement.innerText = "START";
+                return ;
             }
             else if (countdownValue === -1) {
                 if (this._socket === null) {
+                    clearInterval(countdownInterval);
                     this.removeEventListener();
                     navigateTo("main");
+                    return ;
                 }
                 else if (this._socket.readyState === 1) {
                     clearInterval(countdownInterval);
@@ -522,9 +530,11 @@ export class PongGame {
                     this._socket.send("start");
                     return ;
                 }
-                else {
+                else { //순수하게 카운트가 -1인 경우
+                    clearInterval(countdownInterval);
                     this.removeEventListener();
                     navigateTo("main");
+                    return ;
                 }
             }
         }, 1000);
