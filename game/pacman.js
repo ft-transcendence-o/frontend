@@ -437,6 +437,13 @@ export class PongGame {
             this._keyState[event.code] = true;
             this._socket.send(JSON.stringify(this._keyState));
         }
+        else if (event.code === 'Escape'){
+            event.preventDefault();
+            this._isRunning = false;
+            this._socket.close();
+            this.removeEventListener();
+            navigateTo("/main");
+        }
     }
 
     keyup(event){
@@ -473,11 +480,8 @@ export class PongGame {
 
             Button.addEventListener("click", (event) => {
                 event.preventDefault();
-                console.log(event.target.href);
-
                 this._isRunning = false;
                 this._socket.close();
-                console.log("mainButtonEvent occured: isRunning = false, socket is closed");
                 this.removeEventListener();
                 navigateTo("/main");
             });
