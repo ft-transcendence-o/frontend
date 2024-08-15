@@ -274,20 +274,10 @@ export default class extends AbstractView {
         });
         if (response.ok) {
             const jsonResponse = await response.json();
-            console.log("success");
-            console.log(response);
-            console.log(jsonResponse);
             User_Name_Holder.innerHTML = sanitizeInput(jsonResponse['login']);      // 이부분 추가
-        } else if (response.status === 401) { // jwt가 없는 경우
+        } else { // jwt가 없는 경우 or OTP err
             navigateTo("/");
             return ;
-        } else { // otp 통과 안했을 경우
-            const jsonResponse = await response.json();
-            if (jsonResponse["otp_verified"] === false)
-            {
-                navigateTo("/");
-                return ;
-            }
         }
 
         // 언어 변경에 따라 현재 페이지의 text를 모두 변경해야하는건 main뿐이다

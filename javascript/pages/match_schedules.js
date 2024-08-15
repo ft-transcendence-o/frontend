@@ -25,7 +25,7 @@ export default class extends AbstractView {
                     <!-- nav menu buttons -->
                     <ul class="nav justify-content-end">
                         <li style="margin-right: 40px;">
-                            <a class="btn btn-primary transItem" href="/main" data-trans_id="main_button">>MAIN
+                            <a class="btn btn-primary transItem" id="main_button" href="/main" data-trans_id="main_button">>MAIN
                                 <p style="font-size: 20px; margin-top: -12px;">(ESC)</p>
                             </a>
                         </li>
@@ -201,7 +201,7 @@ export default class extends AbstractView {
         // match_count에 따라 match text의 색을 변경한다
         const match_textes = document.querySelectorAll(".match_text");
         // const match_count = localStorage.getItem("match_count");
-        const match_count = jsonResponse["game_round"];
+        const match_count = jsonResponse["current_match"];
 
         // nickname에서 넘어올때 game 기록 조작을 방지하기 위해 다 지워준다
         const game1 = JSON.parse(localStorage.getItem("game1"));
@@ -211,7 +211,7 @@ export default class extends AbstractView {
         let match1_winner;
         let match2_winner;
 
-        if (match_count > 1)
+        if (match_count > 0)
         {
             match_textes[0].style.color = "gray";
             match_textes[1].style.color = "#14FF00";
@@ -240,7 +240,7 @@ export default class extends AbstractView {
             line.style.stroke = "#14FF00";
         }
 
-        if (match_count > 2)
+        if (match_count > 1)
         {
             match_textes[1].style.color = "gray";
             match_textes[2].style.color = "#14FF00";
@@ -269,7 +269,7 @@ export default class extends AbstractView {
             line.style.stroke = "#14FF00";
         }
 
-        if (match_count > 3)
+        if (match_count > 2)
         {
             match_textes[2].style.color = "gray";
 
@@ -298,83 +298,100 @@ export default class extends AbstractView {
             document.querySelector(".center_button").querySelector("p").innerHTML = get_translated_value("again_TOURNAMENT");
         }
 
-        const Center_Button = document.querySelector(".center_button");
+        // 클릭 가능한 요소들에 이벤트 리스너를 등록한다
+        // mainButton
+        const mainButtons = document.querySelectorAll("#main_button");
 
-        Center_Button.addEventListener("click", (event) => {
+        const handleMainButtonClick = async (event) => {
             event.preventDefault();
+            console.log(event.target.href);
+            const response = await fetch(baseUrl + "/api/game-management/session", {
+                method: "DELETE",
+                credentials: 'include',
+                body: JSON.stringify({"mode": "tournament"}),
+            });
+            const jsonResponse = await response.json();
+            console.log("tournamet info:", jsonResponse);
+    
+            navigateTo('/main');
+        };
 
-            // 라우팅 이벤트 추가
-            if (match_count > 3)
-            {
+        const handleMainMouseEnter = (event) => {
+            event.target.classList.remove("blue_outline");
+            event.target.classList.add("green_outline");
+            event.target.classList.add("white_stroke_2_5px");
+        };
+
+        const handleMainMouseLeave = (event) => {
+            event.target.classList.add("blue_outline");
+            event.target.classList.remove("green_outline");
+            event.target.classList.remove("white_stroke_2_5px");
+        };
+
+        mainButtons.forEach((button) => {
+            button.addEventListener("click", handleMainButtonClick);
+            button.addEventListener("mouseenter", handleMainMouseEnter);
+            button.addEventListener("mouseleave", handleMainMouseLeave);
+        });
+
+        // centerButton
+        const centerButtons = document.querySelectorAll(".center_button");
+
+        const handleCenterButtonClick = (event) => {
+            event.preventDefault();
+            console.log(event.target.href);
+            if (match_count > 2)
                 navigateTo("/nickname");
-                return ;
-            }
             else
-            {
                 navigateTo("/tournament_game");
-                return ;
-            }
-        });
+            return ;
+        };
 
-        Center_Button.addEventListener("mouseenter", (event) => {
-            Center_Button.classList.remove("blue_outline");
-            Center_Button.classList.add("green_outline");
-            Center_Button.classList.add("white_stroke_2_5px");
-            Center_Button.classList.add("blue_hover");
-        });
+        const handleCenterMouseEnter = (event) => {
+            event.target.classList.remove("blue_outline");
+            event.target.classList.add("green_outline");
+            event.target.classList.add("white_stroke_2_5px");
+            event.target.classList.add("blue_hover");
+        };
 
-        Center_Button.addEventListener("mouseleave", (event) => {
-            Center_Button.classList.add("blue_outline");
-            Center_Button.classList.remove("green_outline");
-            Center_Button.classList.remove("white_stroke_2_5px");
-            Center_Button.classList.remove("blue_hover");
+        const handleCenterMouseLeave = (event) => {
+            event.target.classList.add("blue_outline");
+            event.target.classList.remove("green_outline");
+            event.target.classList.remove("white_stroke_2_5px");
+            event.target.classList.remove("blue_hover");
+        };
+
+        centerButtons.forEach((button) => {
+            button.addEventListener("click", handleCenterButtonClick);
+            button.addEventListener("mouseenter", handleCenterMouseEnter);
+            button.addEventListener("mouseleave", handleCenterMouseLeave);
         });
 
         const handleKeyDown = (event) => {
-            const Main_Button = document.querySelector("#top_item").querySelector("a");
-			if (event.key === "Escape") {
-				Main_Button.click();
-			}
-            else if (event.key === "Enter")
-            {
-                Center_Button.click();
+            if (event.key === "Enter") {
+                event.preventDefault();
+                centerButtons[0].click();
+            } else if (event.key === "Escape") {
+                event.preventDefault();
+                mainButtons[0].click();
             }
-		};
+        };
+
         document.addEventListener("keydown", handleKeyDown);
 
-        // 클릭 가능한 요소들에 이벤트 리스너를 등록한다
-        const Top_Buttons = document.querySelector("#top_item").querySelectorAll("a");
-
-		Top_Buttons.forEach((Button) => {
-
-            Button.addEventListener("click", (event) => {
-                event.preventDefault();
-                console.log(event.target.href);
-
-                // 라우팅 이벤트 추가
-                // 비동기 이슈?
-                const url = new URL(event.currentTarget.href);
-                const pathname = url.pathname;
-
-                navigateTo(pathname);
-            });
-
-            Button.addEventListener("mouseenter", (event) => {
-                Button.classList.remove("blue_outline");
-                Button.classList.add("green_outline");
-                Button.classList.add("white_stroke_2_5px");
-            });
-
-            Button.addEventListener("mouseleave", (event) => {
-                Button.classList.add("blue_outline");
-                Button.classList.remove("green_outline");
-                Button.classList.remove("white_stroke_2_5px");
-            });
-        });
-
         this.cleanup = () => {
-			document.removeEventListener("keydown", handleKeyDown);
-		};
+            mainButtons.forEach((button) => {
+                button.removeEventListener("click", handleMainButtonClick);
+                button.removeEventListener("mouseenter", handleMainMouseEnter);
+                button.removeEventListener("mouseleave", handleMainMouseLeave);
+            });
+            centerButtons.forEach((button) => {
+                button.removeEventListener("click", handleCenterButtonClick);
+                button.removeEventListener("mouseenter", handleCenterMouseEnter);
+                button.removeEventListener("mouseleave", handleCenterMouseLeave);
+            });
+            document.removeEventListener("keydown", handleKeyDown);
+        };
     }
 
     destroy() {
