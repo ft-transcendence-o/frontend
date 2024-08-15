@@ -76,7 +76,6 @@ export default class extends AbstractView {
     }
 
     async init() {
-		let weakRef = new WeakRef(obj);
 		// game session data
 		try {
 			const fetch_url = baseUrl + `/api/game-management/session?mode=tournament`;
