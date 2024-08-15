@@ -497,6 +497,7 @@ export class PongGame {
         document.querySelector("#next_button").removeEventListener("click", this._nextButtonClick);
         window.removeEventListener("keydown", this._nextButtonEnter);
         console.log("next Button Click");
+        this.removeEventListener();
         navigateTo("/match_schedules");
     }
 
@@ -506,6 +507,7 @@ export class PongGame {
             document.querySelector("#next_button").removeEventListener("click", this._nextButtonClick);
             window.removeEventListener("keydown", this._nextButtonEnter);
             console.log("next Button Enter");
+            this.removeEventListener();
             navigateTo("/match_schedules");
         }
     }
@@ -515,6 +517,7 @@ export class PongGame {
         document.querySelector("#next_button").removeEventListener("click", this._playAgainButtonClick);
         window.removeEventListener("keydown", this._playAgainButtonEnter);
         console.log("paly Again Button Click");
+        this.removeEventListener();
         navigateTo("/normal_game");
     }
 
@@ -523,6 +526,7 @@ export class PongGame {
         document.querySelector("#next_button").removeEventListener("click", this._playAgainButtonClick);
         window.removeEventListener("keydown", this._playAgainButtonEnter);
         console.log("paly Again Button Enter");
+        this.removeEventListener();
         navigateTo("/normal_game");
     }
 
