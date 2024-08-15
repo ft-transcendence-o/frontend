@@ -3,13 +3,13 @@ import { GLTFLoader } from '../build/GLTFLoader.js';
 import { navigateTo, baseUrl, router} from "../../router.js";
 import { get_translated_value } from "../../language.js"
 
-//game_end
-
 export class PongGame {
     constructor(sessionData, mode) {
         console.log("wss://127.0.0.1/api/pong-game/" + mode + sessionData.user_id)
         this._mode = mode;
         this._socket = new WebSocket("wss://127.0.0.1/api/pong-game/" + mode + sessionData.user_id);
+        this._eventList = [];
+        this._eventCnt = 0;
 
         const canvas1 = document.querySelector("#canvas1");
         const canvas2 = document.querySelector("#canvas2");
@@ -31,6 +31,7 @@ export class PongGame {
         };
 
         // game_status_var
+        console.log("Session Data:", sessionData);
         this._gameVar = document.querySelector("#game_var");
         this._player1 = {
             Score : sessionData.left_score, //
@@ -38,20 +39,22 @@ export class PongGame {
         this._player2 = {
             Score : sessionData.right_score,
         }
-        if (sessionData.current_match === 0) {
-            this._player1.Nick = sessionData.players_name[0];
-            this._player2.Nick = sessionData.players_name[1];
-        }
-        else if (sessionData.current_match === 1) {
+        
+        this._player1.Nick = sessionData.players_name[0];
+        this._player2.Nick = sessionData.players_name[1];
+        if (sessionData.current_match === 1) {
             this._player1.Nick = sessionData.players_name[2];
             this._player2.Nick = sessionData.players_name[3];
         }
         else if (sessionData.current_match === 2) {
-            this._player1.Nick = sessionData.win_history[0];
-            this._player2.Nick = sessionData.win_history[1];
+            this._player1.Nick = sessionData.players_name[sessionData.win_history[0]];
+            this._player2.Nick = sessionData.players_name[sessionData.win_history[1]];
         }
+        document.querySelector("#player1_score").innerHTML = this._player1.Score;
+        document.querySelector("#player2_score").innerHTML = this._player2.Score;
         document.querySelector("#player1_nick").innerHTML = this._player1.Nick;
         document.querySelector("#player2_nick").innerHTML = this._player2.Nick;
+        
 
         //게임에 사용할 변수들
         this._isPaused = false;
@@ -82,17 +85,33 @@ export class PongGame {
 
         // keydown 이벤트 핸들러를 추가
         this._bindKeydown = this.keydown.bind(this);
-        window.addEventListener('keydown', this._bindKeydown);
+        document.addEventListener('keydown', this._bindKeydown);
+        this._eventList[this._eventCnt++] = {
+            function: this._bindKeydown,
+            event: 'keydown',
+            ref: document,
+        }
 
         // keyup 이벤트 핸들러를 추가
         this._bindKeyup = this.keyup.bind(this);
-        window.addEventListener('keyup', this._bindKeyup);
+        document.addEventListener('keyup', this._bindKeyup);
+        this._eventList[this._eventCnt++] = {
+            function: this._bindKeyup,
+            event: 'keyup',
+            ref: document,
+        }
 
         // main 버튼 이벤트 핸들러를 추가
         this.mainButtonEvent();
 
         // 뒤로가기 앞으로가기 이벤트 핸들러를 추가
-        window.addEventListener('popstate', this.gameRoute.bind(this));
+        this._bindgameRoute = this.gameRoute.bind(this);
+        document.addEventListener('popstate', this._bindgameRoute);
+        this._eventList[this._eventCnt++] = {
+            function: this._bindgameRoute,
+            event: 'popstate',
+            ref: document,
+        }
 
         // socket에 들어온 입력에 대한 이벤트 등록
         this._socket.onopen = () => {
@@ -282,14 +301,6 @@ export class PongGame {
         requestAnimationFrame(this.render.bind(this));
     }
 
-    // 토너먼트경기가 끝나면 하는 동작들
-    tournamentGameSet() {
-        document.querySelector("#next_button").addEventListener("click", (event) => {
-            this._isRunning = false;
-            navigateTo("/match_schedules");
-        })
-    }
-
     player1Win() {
         // document.querySelector("#player1_score").innerHTML = this._player1.Score;
         if (this._mode === "tournament/") {
@@ -305,10 +316,21 @@ export class PongGame {
                 </span>
                 <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
             </button>`;
-            document.querySelector("#next_button").addEventListener("click", (event) => {
-                this._isRunning = false;
-                navigateTo("/match_schedules");
-            })
+            this._nextButtonClick = this.nextButtonClick.bind(this);
+            document.querySelector("#next_button").addEventListener("click", this._nextButtonClick);
+            this._eventList[this._eventCnt++] = {
+                function: this._nextButtonClick,
+                event: 'click',
+                ref: document.querySelector("#next_button"),
+            }
+
+            this._nextButtonEnter = this.nextButtonEnter.bind(this);
+            document.addEventListener("keydown", this._nextButtonEnter);
+            this._eventList[this._eventCnt++] = {
+                function: this._nextButtonEnter,
+                event: 'keydown',
+                ref: document.querySelector("#next_button"),
+            }
         }
         else { //1vs1
             document.querySelector("#winner1").innerHTML = `
@@ -323,10 +345,21 @@ export class PongGame {
                 </span>
                 <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
             </button>`;
-            document.querySelector("#next_button").addEventListener("click", (event) => { 
-                this._isRunning = false;
-                navigateTo("/normal_game");
-            })
+            this._playAgainButtonClick = this.playAgainButtonClick.bind(this);
+            document.querySelector("#next_button").addEventListener("click", this._playAgainButtonClick);
+            this._eventList[this._eventCnt++] = {
+                function: this._playAgainButtonClick,
+                event: 'click',
+                ref: document.querySelector("#next_button"),
+            }
+
+            this._playAgainButtonEnter = this.playAgainButtonEnter.bind(this);
+            document.addEventListener("keydown", this._playAgainButtonEnter);
+            this._eventList[this._eventCnt++] = {
+                function: this._playAgainButtonEnter,
+                event: 'keydown',
+                ref: document.querySelector("#next_button"),
+            }
         }
     }
 
@@ -345,10 +378,21 @@ export class PongGame {
                 </span>
                 <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
             </button>`;
-            document.querySelector("#next_button").addEventListener("click", (event) => {
-                this._isRunning = false;
-                navigateTo("/match_schedules");
-            })
+            this._nextButtonClick = this.nextButtonClick.bind(this);
+            document.querySelector("#next_button").addEventListener("click", this._nextButtonClick);
+            this._eventList[this._eventCnt++] = {
+                function: this._nextButtonClick,
+                event: 'click',
+                ref: document.querySelector("#next_button"),
+            }
+
+            this._nextButtonEnter = this.nextButtonEnter.bind(this);
+            document.addEventListener("keydown", this._nextButtonEnter);
+            this._eventList[this._eventCnt++] = {
+                function: this._nextButtonEnter,
+                event: 'keydown',
+                ref: document.querySelector("#next_button"),
+            }
         }
         else { // 1VS1의 경우
             document.querySelector("#winner2").innerHTML = `
@@ -363,10 +407,21 @@ export class PongGame {
                 </span>
                 <span style="font-size: 20px; line-height: 20px;">(ENTER)</span>
             </button>`;
-            document.querySelector("#next_button").addEventListener("click", (event) => {
-                this._isRunning = false;
-                navigateTo("/normal_game");
-            })
+            this._playAgainButtonClick = this.playAgainButtonClick.bind(this);
+            document.querySelector("#next_button").addEventListener("click", this._playAgainButtonClick);
+            this._eventList[this._eventCnt++] = {
+                function: this._playAgainButtonClick,
+                event: 'click',
+                ref: document.querySelector("#next_button"),
+            }
+
+            this._playAgainButtonEnter = this.playAgainButtonEnter.bind(this);
+            document.addEventListener("keydown", this._playAgainButtonEnter);
+            this._eventList[this._eventCnt++] = {
+                function: this._playAgainButtonEnter,
+                event: 'keydown',
+                ref: document.querySelector("#next_button"),
+            }
         }
     }
 
@@ -411,7 +466,7 @@ export class PongGame {
         else if (received.type === "game_end") {
             this._isRunning == false;
             this._socket.close();
-            this.removeEventListener(); 
+            // this.removeEventListener();
             if (this._player1.Score > this._player2.Score) {
                 this.player1Win();
             }
@@ -434,10 +489,19 @@ export class PongGame {
             this._keyState[event.code] = true;
             this._socket.send(JSON.stringify(this._keyState));
         }
+        else if (event.code === 'Escape'){
+            if (this._isRunning === false) {
+            }
+            event.preventDefault();
+            this._isRunning = false;
+            this._socket.close();
+            this.removeEventListener();
+            navigateTo("/main");
+        }
     }
 
     keyup(event){
-        if (event.code in this._keyState){
+        if (event.code in this._keyState) {
             this._keyState[event.code] = false;
             this._socket.send(JSON.stringify(this._keyState));
         }
@@ -453,44 +517,101 @@ export class PongGame {
             if (countdownValue === 0) {
                 countdownElement.innerText = "START";
             }
-            else if (countdownValue === -1) {
+            else if (countdownValue === -1 && this._socket.readyState === 1) {
                 clearInterval(countdownInterval);
                 countdownElement.innerText = "";
                 this._socket.send("start");
                 return ;
             }
+            else if (countdownValue === -1){
+                this.removeEventListener();
+                navigateTo("main");
+            }
         }, 1000);
     }
 
     mainButtonEvent() {
-        // 기본값설정
-        this._Top_Buttons = document.querySelector("#top_item").querySelectorAll("a");
-	
-		this._Top_Buttons.forEach((Button) => {
+        this._Top_Button = document.querySelector("#top_item").querySelector("a");
+        this._mainButtonClick = this.mainButtonClick.bind(this);
+        this._Top_Button.addEventListener('click', this._mainButtonClick);
+        this._eventList[this._eventCnt++] = {
+            function: this._mainButtonClick,
+            event: 'click',
+            ref: this._Top_Button,
+        }
 
-            Button.addEventListener("click", (event) => {
-                event.preventDefault();
-                console.log(event.target.href);
+        this._mainButtonMouseEnter = this.mainButtonMouseEnter.bind(this);
+        this._Top_Button.addEventListener('mouseenter', this._mainButtonMouseEnter);
+        this._eventList[this._eventCnt++] = {
+            function: this._mainButtonMouseEnter,
+            event: 'mouseenter',
+            ref: this._Top_Button,
+        }
 
-                this._isRunning = false;
-                this._socket.close();
-                console.log("mainButtonEvent occured: isRunning = false, socket is closed");
-                this.removeEventListener();
-                navigateTo("/main");
-            });
+        this._mainButtonMouseLeave = this.mainButtonMouseLeave.bind(this);
+        this._Top_Button.addEventListener('mouseleave', this._mainButtonMouseLeave);
+        this._eventList[this._eventCnt++] = {
+            function: this._mainButtonMouseLeave,
+            event: 'mouseleave',
+            ref: this._Top_Button,
+        }
+    }
 
-            Button.addEventListener("mouseenter", (event) => {
-                Button.classList.remove("blue_outline");
-                Button.classList.add("green_outline");
-                Button.classList.add("white_stroke_2_5px");
-            });
+    mainButtonClick(event) {
+        console.log("main click");
+        event.preventDefault();
+        this._isRunning = false;
+        this._socket.close();
+        this.removeEventListener();
+        navigateTo("/main");
+    }
 
-            Button.addEventListener("mouseleave", (event) => {
-                Button.classList.add("blue_outline");
-                Button.classList.remove("green_outline");
-                Button.classList.remove("white_stroke_2_5px");
-            });
-        });
+    mainButtonMouseEnter(event) {
+        this._Top_Button.classList.remove("blue_outline");
+        this._Top_Button.classList.add("green_outline");
+        this._Top_Button.classList.add("white_stroke_2_5px");
+    }
+
+    mainButtonMouseLeave(event) {
+        this._Top_Button.classList.add("blue_outline");
+        this._Top_Button.classList.remove("green_outline");
+        this._Top_Button.classList.remove("white_stroke_2_5px");
+    }
+
+    nextButtonClick(event) {
+        this._isRunning = false;
+        this._socket.close();
+        console.log("next Button Click");
+        this.removeEventListener();
+        navigateTo("/match_schedules");
+    }
+
+    nextButtonEnter(event) {
+        if (event.code === 'Enter') {
+            this._isRunning = false;
+            this._socket.close();
+            console.log("next Button Enter");
+            this.removeEventListener();
+            navigateTo("/match_schedules");
+        }
+    }
+
+    playAgainButtonClick(event) {
+        this._isRunning = false;
+        this._socket.close();
+        console.log("paly Again Button Click");
+        this.removeEventListener();
+        navigateTo("/normal_game");
+    }
+
+    playAgainButtonEnter(event) {
+        if (event.code === 'Enter'){
+            this._isRunning = false;
+            this._socket.close();
+            console.log("paly Again Button Enter");
+            this.removeEventListener();
+            navigateTo("/normal_game");
+        }
     }
 
     gameRoute() {
@@ -501,14 +622,16 @@ export class PongGame {
         router();
     }
 
+    //14개중에서 7개가 지워짐
     removeEventListener() {
-        window.removeEventListener('keydown', this._bindKeydown);
-        window.removeEventListener('keyup', this._bindKeyup);
-        // window.removeEventListener('keydown', this.keydown.bind(this));
-        // window.removeEventListener('keyup', this.keyup.bind(this));
-        // window.removeEventListener('popstate', this.keydown.bind(this));
-        console.log("Event listeners removed.");
+        for (let i = 0; i < this._eventCnt; i++) {
+            const eventInfo = this._eventList[i];
+            eventInfo.ref.removeEventListener(eventInfo.event, eventInfo.function);
+            console.log(`Removed listener for event: ${eventInfo.ref}`);
+        }
+        console.log("All event listeners removed.");
     }
+
 }
 
 
