@@ -47,8 +47,8 @@ export class PongGame {
             this._player2.Nick = sessionData.players_name[3];
         }
         else if (sessionData.current_match === 2) {
-            this._player1.Nick = sessionData.win_history[0];
-            this._player2.Nick = sessionData.win_history[1];
+            this._player1.Nick = sessionData.players_name[sessionData.win_history[0]];
+            this._player2.Nick = sessionData.players_name[sessionData.win_history[1]];
         }
         document.querySelector("#player1_score").innerHTML = this._player1.Score;
         document.querySelector("#player2_score").innerHTML = this._player2.Score;
