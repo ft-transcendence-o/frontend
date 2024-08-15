@@ -279,7 +279,6 @@ export class PongGame {
         this._renderer2.render(this._scene, this._camera2);
         this.update(time); // 시간에 따라 애니메이션 효과를 발생시킨다
         requestAnimationFrame(this.render.bind(this));
-        console.log("now rendering");
     }
 
     player1Win() {
@@ -424,7 +423,6 @@ export class PongGame {
 
     handleSocketMessage(event) {
         const received = JSON.parse(event.data); // ball 좌표, panel1 좌표, panel2 좌표가 순서대로 들어온다고 가정
-        console.log(received);
 
         if (received.type === "state"){
             this._ball.position.set(received.ball_pos[0], received.ball_pos[1], received.ball_pos[2]);
@@ -454,7 +452,7 @@ export class PongGame {
         else if (received.type === "game_end") {
             this._isRunning = false;
             this._socket.close();
-            // this.removeEventListener();
+            this.removeEventListener();
             if (this._player1.Score > this._player2.Score) {
                 this.player1Win();
             }
@@ -577,7 +575,7 @@ export class PongGame {
 
     nextButtonClick(event) {
         this._isRunning = false;
-        this._socket.close();
+        // this._socket.close();
         console.log("next Button Click");
         this.removeEventListener();
         navigateTo("/match_schedules");
@@ -586,7 +584,7 @@ export class PongGame {
     nextButtonEnter(event) {
         if (event.code === 'Enter') {
             this._isRunning = false;
-            this._socket.close();
+            // this._socket.close();
             console.log("next Button Enter");
             this.removeEventListener();
             navigateTo("/match_schedules");
@@ -595,7 +593,7 @@ export class PongGame {
 
     playAgainButtonClick(event) {
         this._isRunning = false;
-        this._socket.close();
+        // this._socket.close();
         console.log("paly Again Button Click");
         this.removeEventListener();
         navigateTo("/normal_game");
@@ -604,8 +602,8 @@ export class PongGame {
     playAgainButtonEnter(event) {
         if (event.code === 'Enter'){
             this._isRunning = false;
-            this._socket.close();
-            console.log("paly Again Button Enter");
+            // this._socket.close();
+            console.log("play Again Button Enter");
             this.removeEventListener();
             navigateTo("/normal_game");
         }
@@ -613,7 +611,7 @@ export class PongGame {
 
     gameRoute() {
         this._isRunning = false;
-        this._socket.close();
+        // this._socket.close();
         console.log("gameRoute occured: isRunning = false, socket is closed");
 
         // 여기에서 모든 이벤트를 제거
