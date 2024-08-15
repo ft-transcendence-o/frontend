@@ -3,13 +3,13 @@ import { GLTFLoader } from '../build/GLTFLoader.js';
 import { navigateTo, baseUrl, router} from "../../router.js";
 import { get_translated_value } from "../../language.js"
 
-//game_end
-
 export class PongGame {
     constructor(sessionData, mode) {
         console.log("wss://127.0.0.1/api/pong-game/" + mode + sessionData.user_id)
         this._mode = mode;
         this._socket = new WebSocket("wss://127.0.0.1/api/pong-game/" + mode + sessionData.user_id);
+        this._eventList = [];
+        const eventCnt = 0;
 
         const canvas1 = document.querySelector("#canvas1");
         const canvas2 = document.querySelector("#canvas2");
@@ -86,10 +86,12 @@ export class PongGame {
         // keydown 이벤트 핸들러를 추가
         this._bindKeydown = this.keydown.bind(this);
         window.addEventListener('keydown', this._bindKeydown);
+        this._eventList[eventCnt++] = this._bindKeydown;
 
         // keyup 이벤트 핸들러를 추가
         this._bindKeyup = this.keyup.bind(this);
         window.addEventListener('keyup', this._bindKeyup);
+        this._eventList[eventCnt++] = this._bindKeyup;
 
         // main 버튼 이벤트 핸들러를 추가
         this.mainButtonEvent();
@@ -431,6 +433,8 @@ export class PongGame {
             this._socket.send(JSON.stringify(this._keyState));
         }
         else if (event.code === 'Escape'){
+            if (this._isRunning === false) {
+            }
             event.preventDefault();
             this._isRunning = false;
             this._socket.close();
@@ -440,7 +444,7 @@ export class PongGame {
     }
 
     keyup(event){
-        if (event.code in this._keyState){
+        if (event.code in this._keyState) {
             this._keyState[event.code] = false;
             this._socket.send(JSON.stringify(this._keyState));
         }
@@ -466,31 +470,33 @@ export class PongGame {
     }
 
     mainButtonEvent() {
-        // 기본값설정
-        this._Top_Buttons = document.querySelector("#top_item").querySelectorAll("a");
-	
-		this._Top_Buttons.forEach((Button) => {
+        this._mainButtonClick = this.mainButtonClick();
+        this._eventList[eventCnt++] = this._mainButtonClick
+        this._mainButtonMouseEnter = this.mainButtonMouseEnter();
+        this._eventList[eventCnt++] = this._mainButtonMouseEnter;
+        this._mainButtonMouseLeave = this.mainButtonMouseLeave();
+        this._eventList[eventCnt++] = this._mainButtonMouseLeave;
+    }
 
-            Button.addEventListener("click", (event) => {
-                event.preventDefault();
-                this._isRunning = false;
-                this._socket.close();
-                this.removeEventListener();
-                navigateTo("/main");
-            });
+    mainButtonClick(event) {
+        this._Top_Buttons = document.querySelector("#top_item").querySelector("a");
+        event.preventDefault();
+        this._isRunning = false;
+        this._socket.close();
+        this.removeEventListener();
+        navigateTo("/main");
+    }
 
-            Button.addEventListener("mouseenter", (event) => {
-                Button.classList.remove("blue_outline");
-                Button.classList.add("green_outline");
-                Button.classList.add("white_stroke_2_5px");
-            });
+    mainButtonMouseEnter(event) {
+        Button.classList.remove("blue_outline");
+        Button.classList.add("green_outline");
+        Button.classList.add("white_stroke_2_5px");
+    }
 
-            Button.addEventListener("mouseleave", (event) => {
-                Button.classList.add("blue_outline");
-                Button.classList.remove("green_outline");
-                Button.classList.remove("white_stroke_2_5px");
-            });
-        });
+    mainButtonMouseLeave(event) {
+        Button.classList.add("blue_outline");
+        Button.classList.remove("green_outline");
+        Button.classList.remove("white_stroke_2_5px");
     }
 
     nextButtonClick(event) {

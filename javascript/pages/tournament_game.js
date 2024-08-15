@@ -76,6 +76,7 @@ export default class extends AbstractView {
     }
 
     async init() {
+		let weakRef = new WeakRef(obj);
 		// game session data
 		try {
 			const fetch_url = baseUrl + `/api/game-management/session?mode=tournament`;
@@ -89,7 +90,7 @@ export default class extends AbstractView {
 					navigateTo("main");
 				}
 				else {
-					new PongGame(sessionData, "tournament/");
+					const game = new PongGame(sessionData, "tournament/");
 				}
 			} else if (response.status === 401) { // 401)(unauthorized)클라이언트가 인증되지 않았거나, 유효한 인증 정보가 부족하여 요청이 거부되었음을 의미하는 상태값 -> token이 없는사람 (사용자가 로그아웃을 한 경우 백엔드에서는 cookie를 삭제한다. 따라서 api를 쏘면 백엔드는 해당 사용자에 대한 인증 정보가 부족하다며 거부하는 의미로 status를 401로 응답한다.)
 				navigateTo("/");
