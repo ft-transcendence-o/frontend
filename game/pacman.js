@@ -283,7 +283,6 @@ export class PongGame {
     }
 
     player1Win() {
-        // document.querySelector("#player1_score").innerHTML = this._player1.Score;
         if (this._mode === "tournament/") {
             document.querySelector("#winner1").innerHTML = `
             <div style="font-size: 100px; line-height: 100px; color: white;">${get_translated_value("game_win")}!</div>
@@ -425,7 +424,7 @@ export class PongGame {
 
     handleSocketMessage(event) {
         const received = JSON.parse(event.data); // ball 좌표, panel1 좌표, panel2 좌표가 순서대로 들어온다고 가정
-        // console.log(received);
+        console.log(received);
 
         if (received.type === "state"){
             this._ball.position.set(received.ball_pos[0], received.ball_pos[1], received.ball_pos[2]);
@@ -453,7 +452,7 @@ export class PongGame {
             // })
         }
         else if (received.type === "game_end") {
-            this._isRunning == false;
+            this._isRunning = false;
             this._socket.close();
             // this.removeEventListener();
             if (this._player1.Score > this._player2.Score) {
