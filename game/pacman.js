@@ -560,6 +560,7 @@ export class PongGame {
         event.preventDefault();
         this._isRunning = false;
         this._socket.close();
+        this.removeEventListener();
         navigateTo("/main");
     }
 
@@ -628,10 +629,11 @@ export class PongGame {
     }
 
     removeEventListener() {
-        // window.removeEventListener('keydown', this._bindKeydown);
-        // window.removeEventListener('keyup', this._bindKeyup);
-        // window.removeEventListener('popstate', this._bindgameRoute);
-
+        for (let i = 0; i < this._eventCnt; i++) {
+            const eventInfo = this._eventList[i];
+            eventInfo.ref.removeEventListener(eventInfo.event, eventInfo.function);
+            console.log(eventInfo.function);
+        }
         console.log("Event listeners removed.");
     }
 }
