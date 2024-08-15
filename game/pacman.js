@@ -95,7 +95,8 @@ export class PongGame {
         this.mainButtonEvent();
 
         // 뒤로가기 앞으로가기 이벤트 핸들러를 추가
-        window.addEventListener('popstate', this.gameRoute.bind(this));
+        this._bindgameRoute = this.gameRoute.bind(this);
+        window.addEventListener('popstate', this._bindgameRoute);
 
         // socket에 들어온 입력에 대한 이벤트 등록
         this._socket.onopen = () => {
@@ -543,7 +544,7 @@ export class PongGame {
     removeEventListener() {
         window.removeEventListener('keydown', this._bindKeydown);
         window.removeEventListener('keyup', this._bindKeyup);
-        // window.removeEventListener('popstate', this.keydown.bind(this));
+        window.removeEventListener('popstate', this._bindgameRoute);
         console.log("Event listeners removed.");
     }
 }
