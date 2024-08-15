@@ -456,7 +456,7 @@ export class PongGame {
             if (countdownValue === 0) {
                 countdownElement.innerText = "START";
             }
-            else if (countdownValue === -1) {
+            else if (countdownValue === -1 && this._socket.readyState === 1) {
                 clearInterval(countdownInterval);
                 countdownElement.innerText = "";
                 this._socket.send("start");
@@ -495,6 +495,7 @@ export class PongGame {
 
     nextButtonClick(event) {
         this._isRunning = false;
+        this._socket.close();
         document.querySelector("#next_button").removeEventListener("click", this._nextButtonClick);
         window.removeEventListener("keydown", this._nextButtonEnter);
         console.log("next Button Click");
@@ -505,6 +506,7 @@ export class PongGame {
     nextButtonEnter(event) {
         if (event.code === 'Enter') {
             this._isRunning = false;
+            this._socket.close();
             document.querySelector("#next_button").removeEventListener("click", this._nextButtonClick);
             window.removeEventListener("keydown", this._nextButtonEnter);
             console.log("next Button Enter");
@@ -515,6 +517,7 @@ export class PongGame {
 
     playAgainButtonClick(event) {
         this._isRunning = false;
+        this._socket.close();
         document.querySelector("#next_button").removeEventListener("click", this._playAgainButtonClick);
         window.removeEventListener("keydown", this._playAgainButtonEnter);
         console.log("paly Again Button Click");
@@ -525,6 +528,7 @@ export class PongGame {
     playAgainButtonEnter(event) {
         if (event.code === 'Enter'){
             this._isRunning = false;
+            this._socket.close();
             document.querySelector("#next_button").removeEventListener("click", this._playAgainButtonClick);
             window.removeEventListener("keydown", this._playAgainButtonEnter);
             console.log("paly Again Button Enter");
