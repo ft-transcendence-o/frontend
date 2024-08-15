@@ -662,7 +662,7 @@ export class PongGame {
 
         // 여기에서 모든 이벤트를 제거
         this.removeEventListener();
-
+        document.querySelector('#app').innerHTML = '';
         // 페이지를 실제로 변경
         router();
     }
