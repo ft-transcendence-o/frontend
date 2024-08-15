@@ -472,21 +472,23 @@ export class PongGame {
     mainButtonEvent() {
         this._Top_Button = document.querySelector("#top_item").querySelector("a");
 
-        this._mainButtonClick = this.mainButtonClick;
+
+        this._mainButtonClick = this.mainButtonClick.bind(this);
         this._Top_Button.addEventListener('click', this._mainButtonClick);
         this._eventList[this._eventCnt++] = this._mainButtonClick
 
-        this._mainButtonMouseEnter = this.mainButtonMouseEnter;
+        this._mainButtonMouseEnter = this.mainButtonMouseEnter.bind(this);
         this._Top_Button.addEventListener('mouseenter', this._mainButtonMouseEnter);
         this._eventList[this._eventCnt++] = this._mainButtonMouseEnter;
 
-        this._mainButtonMouseLeave = this.mainButtonMouseLeave;
+        this._mainButtonMouseLeave = this.mainButtonMouseLeave.bind(this);
         this._Top_Button.addEventListener('mouseleave', this._mainButtonMouseLeave);
         this._eventList[this._eventCnt++] = this._mainButtonMouseLeave;
     }
 
     mainButtonClick(event) {
-        // event.preventDefault();
+        console.log("main click");
+        event.preventDefault();
         this._isRunning = false;
         this._socket.close();
         navigateTo("/main");
