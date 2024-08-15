@@ -85,20 +85,20 @@ export class PongGame {
 
         // keydown 이벤트 핸들러를 추가
         this._bindKeydown = this.keydown.bind(this);
-        window.addEventListener('keydown', this._bindKeydown);
+        document.addEventListener('keydown', this._bindKeydown);
         this._eventList[this._eventCnt++] = {
             function: this._bindKeydown,
             event: 'keydown',
-            ref: window,
+            ref: document,
         }
 
         // keyup 이벤트 핸들러를 추가
         this._bindKeyup = this.keyup.bind(this);
-        window.addEventListener('keyup', this._bindKeyup);
+        document.addEventListener('keyup', this._bindKeyup);
         this._eventList[this._eventCnt++] = {
             function: this._bindKeyup,
             event: 'keyup',
-            ref: window,
+            ref: document,
         }
 
         // main 버튼 이벤트 핸들러를 추가
@@ -106,11 +106,11 @@ export class PongGame {
 
         // 뒤로가기 앞으로가기 이벤트 핸들러를 추가
         this._bindgameRoute = this.gameRoute.bind(this);
-        window.addEventListener('popstate', this._bindgameRoute);
+        document.addEventListener('popstate', this._bindgameRoute);
         this._eventList[this._eventCnt++] = {
             function: this._bindgameRoute,
             event: 'popstate',
-            ref: window,
+            ref: document,
         }
 
         // socket에 들어온 입력에 대한 이벤트 등록
@@ -325,7 +325,7 @@ export class PongGame {
             }
 
             this._nextButtonEnter = this.nextButtonEnter.bind(this);
-            window.addEventListener("keydown", this._nextButtonEnter);
+            document.addEventListener("keydown", this._nextButtonEnter);
             this._eventList[this._eventCnt++] = {
                 function: this._nextButtonEnter,
                 event: 'keydown',
@@ -354,7 +354,7 @@ export class PongGame {
             }
 
             this._playAgainButtonEnter = this.playAgainButtonEnter.bind(this);
-            window.addEventListener("keydown", this._playAgainButtonEnter);
+            document.addEventListener("keydown", this._playAgainButtonEnter);
             this._eventList[this._eventCnt++] = {
                 function: this._playAgainButtonEnter,
                 event: 'keydown',
@@ -387,7 +387,7 @@ export class PongGame {
             }
 
             this._nextButtonEnter = this.nextButtonEnter.bind(this);
-            window.addEventListener("keydown", this._nextButtonEnter);
+            document.addEventListener("keydown", this._nextButtonEnter);
             this._eventList[this._eventCnt++] = {
                 function: this._nextButtonEnter,
                 event: 'keydown',
@@ -416,7 +416,7 @@ export class PongGame {
             }
 
             this._playAgainButtonEnter = this.playAgainButtonEnter.bind(this);
-            window.addEventListener("keydown", this._playAgainButtonEnter);
+            document.addEventListener("keydown", this._playAgainButtonEnter);
             this._eventList[this._eventCnt++] = {
                 function: this._playAgainButtonEnter,
                 event: 'keydown',
