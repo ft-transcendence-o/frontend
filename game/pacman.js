@@ -502,7 +502,7 @@ export class PongGame {
     }
 
     nextButtonEnter(event) {
-        if (event.code === 'Escape') {
+        if (event.code === 'Enter') {
             this._isRunning = false;
             document.querySelector("#next_button").removeEventListener("click", this._nextButtonClick);
             window.removeEventListener("keydown", this._nextButtonEnter);
@@ -522,12 +522,14 @@ export class PongGame {
     }
 
     playAgainButtonEnter(event) {
-        this._isRunning = false;
-        document.querySelector("#next_button").removeEventListener("click", this._playAgainButtonClick);
-        window.removeEventListener("keydown", this._playAgainButtonEnter);
-        console.log("paly Again Button Enter");
-        this.removeEventListener();
-        navigateTo("/normal_game");
+        if (event.code === 'Enter'){
+            this._isRunning = false;
+            document.querySelector("#next_button").removeEventListener("click", this._playAgainButtonClick);
+            window.removeEventListener("keydown", this._playAgainButtonEnter);
+            console.log("paly Again Button Enter");
+            this.removeEventListener();
+            navigateTo("/normal_game");
+        }
     }
 
     gameRoute() {
