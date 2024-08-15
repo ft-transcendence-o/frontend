@@ -165,13 +165,13 @@ export default class extends AbstractView {
             });
 
             if (!allFieldsFilled) {
-                invalidInputElement.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">NO EMPTY INPUT FIELD!</p>`;
+                invalidInputElement.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">${get_translated_value("nickname_err_empty")}</p>`;
                 return;
             }
 
             const hasDuplicates = new Set(nicknames).size !== nicknames.length;
             if (hasDuplicates) {
-                invalidInputElement.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">NICKNAME DUPLICATION NOT ALLOWED!</p>`;
+                invalidInputElement.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">${get_translated_value("nickname_err_duplication")}</p>`;
                 return;
             }
 
@@ -188,11 +188,11 @@ export default class extends AbstractView {
                     navigateTo('/match_schedules');
                 } else {
                     console.error("Failed to set nicknames. Response status:", response.status);
-                    invalidInputElement.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">FAILED TO SET NICKNAMES!</p>`;
+                    invalidInputElement.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">${get_translated_value("nickname_err_setfail")}</p>`;
                 }
             } catch (error) {
                 console.error("Error sending nicknames:", error);
-                invalidInputElement.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">ERROR OCCURRED WHILE SENDING NICKNAMES!</p>`;
+                invalidInputElement.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">${get_translated_value("nickname_err_fetchfail")}</p>`;
             }
         };
 
