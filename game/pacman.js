@@ -312,14 +312,14 @@ export class PongGame {
                 title: 'next_button_click',
             }
 
-            this._nextButtonEnter = this.nextButtonEnter.bind(this);
-            document.addEventListener("keydown", this._nextButtonEnter);
-            this._eventList[this._eventCnt++] = {
-                function: this._nextButtonEnter,
-                event: 'keydown',
-                ref: document.querySelector("#next_button"),
-                title: 'next_button_en',
-            }
+            // this._nextButtonEnter = this.nextButtonEnter.bind(this);
+            // document.addEventListener("keydown", this._nextButtonEnter);
+            // this._eventList[this._eventCnt++] = {
+            //     function: this._nextButtonEnter,
+            //     event: 'keydown',
+            //     ref: document.querySelector("#next_button"),
+            //     title: 'next_button_en',
+            // }
         }
         else { //1vs1
             document.querySelector("#winner1").innerHTML = `
@@ -343,14 +343,14 @@ export class PongGame {
                 title: 'next_button_click',
             }
 
-            this._playAgainButtonEnter = this.playAgainButtonEnter.bind(this);
-            document.addEventListener("keydown", this._playAgainButtonEnter);
-            this._eventList[this._eventCnt++] = {
-                function: this._playAgainButtonEnter,
-                event: 'keydown',
-                ref: document.querySelector("#next_button"),
-                title: 'next_button_enter',
-            }
+            // this._playAgainButtonEnter = this.playAgainButtonEnter.bind(this);
+            // document.addEventListener("keydown", this._playAgainButtonEnter);
+            // this._eventList[this._eventCnt++] = {
+            //     function: this._playAgainButtonEnter,
+            //     event: 'keydown',
+            //     ref: document.querySelector("#next_button"),
+            //     title: 'next_button_enter',
+            // }
         }
     }
 
@@ -378,14 +378,14 @@ export class PongGame {
                 title: 'next_button_click',
             }
 
-            this._nextButtonEnter = this.nextButtonEnter.bind(this);
-            document.addEventListener("keydown", this._nextButtonEnter);
-            this._eventList[this._eventCnt++] = {
-                function: this._nextButtonEnter,
-                event: 'keydown',
-                ref: document.querySelector("#next_button"),
-                title: 'next_button_enter',
-            }
+            // this._nextButtonEnter = this.nextButtonEnter.bind(this);
+            // document.addEventListener("keydown", this._nextButtonEnter);
+            // this._eventList[this._eventCnt++] = {
+            //     function: this._nextButtonEnter,
+            //     event: 'keydown',
+            //     ref: document.querySelector("#next_button"),
+            //     title: 'next_button_enter',
+            // }
         }
         else { // 1VS1의 경우
             document.querySelector("#winner2").innerHTML = `
@@ -409,14 +409,14 @@ export class PongGame {
                 title: 'next_button_click',
             }
 
-            this._playAgainButtonEnter = this.playAgainButtonEnter.bind(this);
-            document.addEventListener("keydown", this._playAgainButtonEnter);
-            this._eventList[this._eventCnt++] = {
-                function: this._playAgainButtonEnter,
-                event: 'keydown',
-                ref: document.querySelector("#next_button"),
-                title: 'next_button_enter',
-            }
+            // this._playAgainButtonEnter = this.playAgainButtonEnter.bind(this);
+            // document.addEventListener("keydown", this._playAgainButtonEnter);
+            // this._eventList[this._eventCnt++] = {
+            //     function: this._playAgainButtonEnter,
+            //     event: 'keydown',
+            //     ref: document.querySelector("#next_button"),
+            //     title: 'next_button_enter',
+            // }
         }
     }
 
@@ -459,7 +459,11 @@ export class PongGame {
         }
         else if (received.type === "game_end") {
             this._isRunning = false;
-            this._socket.close();
+            if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
+                this._socket.close();
+                this._socket = null;
+                console.log("WebSocket closed.");
+            }
             if (this._player1.Score > this._player2.Score) {
                 this.player1Win();
             }
@@ -487,7 +491,11 @@ export class PongGame {
             }
             event.preventDefault();
             this._isRunning = false;
-            this._socket.close();
+            if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
+                this._socket.close();
+                this._socket = null;
+                console.log("WebSocket closed.");
+            }
             this.removeEventListener();
             navigateTo("/main");
         }
@@ -574,7 +582,11 @@ export class PongGame {
         console.log("main click");
         event.preventDefault();
         this._isRunning = false;
-        this._socket.close();
+        if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
+            this._socket.close();
+            this._socket = null;
+            console.log("WebSocket closed.");
+        }
         this.removeEventListener();
         navigateTo("/main");
     }
@@ -593,7 +605,11 @@ export class PongGame {
 
     nextButtonClick(event) {
         this._isRunning = false;
-        // this._socket.close();
+        if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
+            this._socket.close();
+            this._socket = null;
+            console.log("WebSocket closed.");
+        }
         console.log("next Button Click");
         this.removeEventListener();
         navigateTo("/match_schedules");
@@ -602,7 +618,11 @@ export class PongGame {
     nextButtonEnter(event) {
         if (event.code === 'Enter') {
             this._isRunning = false;
-            // this._socket.close();
+            if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
+                this._socket.close();
+                this._socket = null;
+                console.log("WebSocket closed.");
+            }
             console.log("next Button Enter");
             this.removeEventListener();
             navigateTo("/match_schedules");
@@ -611,7 +631,11 @@ export class PongGame {
 
     playAgainButtonClick(event) {
         this._isRunning = false;
-        // this._socket.close();
+        if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
+            this._socket.close();
+            this._socket = null;
+            console.log("WebSocket closed.");
+        }
         console.log("paly Again Button Click");
         this.removeEventListener();
         navigateTo("/normal_game");
@@ -620,10 +644,14 @@ export class PongGame {
     playAgainButtonEnter(event) {
         if (event.code === 'Enter'){
             this._isRunning = false;
-            // this._socket.close();
+            if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
+                this._socket.close();
+                this._socket = null;
+                console.log("WebSocket closed.");
+            }
             console.log("play Again Button Enter");
             this.removeEventListener();
-            navigateTo("/normal_game");
+            navigateTo("/normal_game"); //여기로 이동할때 게임이 안꺼지고 나간다
         }
     }
 
