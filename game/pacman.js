@@ -130,10 +130,9 @@ export class PongGame {
         this._socket.onmessage = (event) => this.handleSocketMessage(event); //이벤트 등록
 
         // 게임시작시 카운트 다운
-        this.countdown();
         this._renderer1.render(this._scene, this._camera1);
         this._renderer2.render(this._scene, this._camera2);
-        setTimeout(() => {requestAnimationFrame(this.render.bind(this));}, 5000);
+        this.countdown();
     }
 
     // 카메라 설정
@@ -174,6 +173,12 @@ export class PongGame {
         //Mesh: pacman ball
         this._loader.load("./game/pac/scene.gltf", (gltf) => {
             this._ball = gltf.scene;
+            this._ball.position.x = 0;
+            this._ball.position.y = 0;
+            this._ball.position.z = 0;
+            this._ball.rotation.x = 0;
+            this._ball.rotation.y = 0;
+            this._ball.rotation.z = 0;
             this._scene.add(this._ball);
         });
 
@@ -201,6 +206,9 @@ export class PongGame {
             end = null;
             midPoint = null;
         }
+        this._perspectiveLineEdges.position.x = 0;
+        this._perspectiveLineEdges.position.y = 0;
+        this._perspectiveLineEdges.position.z = 0;
         this._scene.add(this._perspectiveLineEdges);
 
         //Mesh: 경기장
@@ -417,7 +425,7 @@ export class PongGame {
             this._perspectiveLineEdges.position.z = this._ball.position.z;
             this._ball.rotation.x += this._rotVec.x;
             this._ball.rotation.y += this._rotVec.y;
-            this._ball.rotation.x += this._rotVec.z;
+            this._ball.rotation.z += this._rotVec.z;
         }
     }
 
@@ -452,7 +460,6 @@ export class PongGame {
         else if (received.type === "game_end") {
             this._isRunning = false;
             this._socket.close();
-            this.removeEventListener();
             if (this._player1.Score > this._player2.Score) {
                 this.player1Win();
             }
@@ -501,6 +508,7 @@ export class PongGame {
             countdownElement.innerText =  --countdownValue;
     
             if (countdownValue === 0) {
+                requestAnimationFrame(this.render.bind(this))
                 countdownElement.innerText = "START";
             }
             else if (countdownValue === -1) {
@@ -611,7 +619,7 @@ export class PongGame {
 
     gameRoute() {
         this._isRunning = false;
-        // this._socket.close();
+        this._socket.close();
         console.log("gameRoute occured: isRunning = false, socket is closed");
 
         // 여기에서 모든 이벤트를 제거
