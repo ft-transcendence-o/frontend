@@ -25,7 +25,7 @@ export default class extends AbstractView {
                     <!-- nav menu buttons -->
                     <ul class="nav justify-content-end">
                         <li style="margin-right: 40px;">
-                            <a class="btn btn-primary transItem" href="/main" data-trans_id="main_button">>MAIN
+                            <a class="btn btn-primary transItem" id="main_button" href="/main" data-trans_id="main_button">>MAIN
                                 <p style="font-size: 20px; margin-top: -12px;">(ESC)</p>
                             </a>
                         </li>
@@ -177,43 +177,41 @@ export default class extends AbstractView {
             transItem.innerHTML = get_translated_value(transItem.dataset.trans_id);
         } )
 
-        const handleKeyDown = (event) => {
-            const Main_Button = document.querySelector("#top_item").querySelector("a");
-			if (event.key === "Escape") {
-				Main_Button.click();
-			}
-		};
-        document.addEventListener("keydown", handleKeyDown);
-
         // 클릭 가능한 요소들에 이벤트 리스너를 등록한다
-        const Top_Buttons = document.querySelector("#top_item").querySelectorAll("a");
+        const mainButtons = document.querySelectorAll("#main_button");
 
-        Top_Buttons.forEach((Button) => {
+        const handleMainButtonClick = (event) => {
+            event.preventDefault();
+            console.log(event.target.href);
+            navigateTo('/main');
+        };
 
-            Button.addEventListener("click", (event) => {
-                event.preventDefault();
-                console.log(event.currentTarget.href);
+        const handleMainMouseEnter = (event) => {
+            event.target.classList.remove("blue_outline");
+            event.target.classList.add("green_outline");
+            event.target.classList.add("white_stroke_2_5px");
+        };
 
-                // 라우팅 이벤트 추가
-                // 비동기 이슈?
-                const url = new URL(event.currentTarget.href);
-                const pathname = url.pathname;
+        const handleMainMouseLeave = (event) => {
+            event.target.classList.add("blue_outline");
+            event.target.classList.remove("green_outline");
+            event.target.classList.remove("white_stroke_2_5px");
+        };
 
-                navigateTo(pathname);
-            });
-
-            Button.addEventListener("mouseenter", (event) => {
-                Button.classList.remove("blue_outline");
-                Button.classList.add("green_outline");
-                Button.classList.add("white_stroke_2_5px");
-            });
-
-            Button.addEventListener("mouseleave", (event) => {
-                Button.classList.add("blue_outline");
-                Button.classList.remove("green_outline");
-                Button.classList.remove("white_stroke_2_5px");
-            });
+        mainButtons.forEach((button) => {
+            button.addEventListener("click", handleMainButtonClick);
+            button.addEventListener("mouseenter", handleMainMouseEnter);
+            button.addEventListener("mouseleave", handleMainMouseLeave);
         });
+
+        const handleKeyDown = (event) => {
+            if (event.key === "Escape") {
+                event.preventDefault();
+                mainButtons[0].click();
+            }
+        };
+
+        document.addEventListener("keydown", handleKeyDown);
 
         // 요청 할 페이지를 localStorage에서 관리하는식으로 시도
         // localStorage 변조에 대응하기 위해 미리 변수에 담아두고 리터럴 값을 이벤트 리스너로 넣어준다
@@ -331,8 +329,13 @@ export default class extends AbstractView {
         }
 
         this.cleanup = () => {
-			document.removeEventListener("keydown", handleKeyDown);
-		};
+            mainButtons.forEach((button) => {
+                button.removeEventListener("click", handleMainButtonClick);
+                button.removeEventListener("mouseenter", handleMainMouseEnter);
+                button.removeEventListener("mouseleave", handleMainMouseLeave);
+            });
+            document.removeEventListener("keydown", handleKeyDown);
+        };
     }
 
     destroy() {
