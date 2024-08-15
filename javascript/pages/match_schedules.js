@@ -201,7 +201,7 @@ export default class extends AbstractView {
         // match_count에 따라 match text의 색을 변경한다
         const match_textes = document.querySelectorAll(".match_text");
         // const match_count = localStorage.getItem("match_count");
-        const match_count = jsonResponse["game_round"];
+        const match_count = jsonResponse["current_match"];
 
         // nickname에서 넘어올때 game 기록 조작을 방지하기 위해 다 지워준다
         const game1 = JSON.parse(localStorage.getItem("game1"));
@@ -211,7 +211,7 @@ export default class extends AbstractView {
         let match1_winner;
         let match2_winner;
 
-        if (match_count > 1)
+        if (match_count > 0)
         {
             match_textes[0].style.color = "gray";
             match_textes[1].style.color = "#14FF00";
@@ -240,7 +240,7 @@ export default class extends AbstractView {
             line.style.stroke = "#14FF00";
         }
 
-        if (match_count > 2)
+        if (match_count > 1)
         {
             match_textes[1].style.color = "gray";
             match_textes[2].style.color = "#14FF00";
@@ -269,7 +269,7 @@ export default class extends AbstractView {
             line.style.stroke = "#14FF00";
         }
 
-        if (match_count > 3)
+        if (match_count > 2)
         {
             match_textes[2].style.color = "gray";
 
@@ -302,9 +302,17 @@ export default class extends AbstractView {
         // mainButton
         const mainButtons = document.querySelectorAll("#main_button");
 
-        const handleMainButtonClick = (event) => {
+        const handleMainButtonClick = async (event) => {
             event.preventDefault();
             console.log(event.target.href);
+            const response = await fetch(baseUrl + "/api/game-management/session", {
+                method: "DELETE",
+                credentials: 'include',
+                body: JSON.stringify({"mode": "tournament"}),
+            });
+            const jsonResponse = await response.json();
+            console.log("tournamet info:", jsonResponse);
+    
             navigateTo('/main');
         };
 
@@ -332,7 +340,7 @@ export default class extends AbstractView {
         const handleCenterButtonClick = (event) => {
             event.preventDefault();
             console.log(event.target.href);
-            if (match_count > 3)
+            if (match_count > 2)
                 navigateTo("/nickname");
             else
                 navigateTo("/tournament_game");
