@@ -1,5 +1,5 @@
 import AbstractView from "./AbstractView.js";
-import { navigateTo, baseUrl } from "../../router.js";
+import { navigateTo, baseUrl, router } from "../../router.js";
 import { get_translated_value } from "../../language.js"
 
 export default class extends AbstractView {
@@ -162,6 +162,20 @@ export default class extends AbstractView {
                 return ;
             }
         }
+
+        // URL에 직접 쳐서 들어온경우 기본값을 비교하여 메인으로 보내버린다
+        if (jsonResponse["players_name"][2] === jsonResponse["players_name"][3])
+        {
+            navigateTo("/main");
+        }
+
+        // 뒤로가기 시도시 메인으로 보내버린다
+        // 이벤트 리스너는 덮어쓰여지지 않고 계속해서 생성된다(?)
+        window.removeEventListener('popstate', router);
+        window.addEventListener('popstate', async (event) => {
+            navigateTo("/main");
+            return ;
+        });
 
         // translate 적용 테스트
         const transItems = document.querySelectorAll(".transItem");
