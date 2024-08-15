@@ -75,9 +75,8 @@ export class PongGame {
         renderer2.setSize(this._canvasWidth, this._canvasHeight);
         this._renderer2 = renderer2;
 
-        let scene = new THREE.Scene();
-        scene.background = new THREE.Color("black");
-        this._scene = scene;
+        this._scene = new THREE.Scene();
+        this._scene.background = new THREE.Color("black");
 
         this._setupCamera(); // 카메라 객체 설정
         this._setupLight(); // 광원을 설정
@@ -90,6 +89,7 @@ export class PongGame {
             function: this._bindKeydown,
             event: 'keydown',
             ref: document,
+            title: 'keydown',
         }
 
         // keyup 이벤트 핸들러를 추가
@@ -99,6 +99,7 @@ export class PongGame {
             function: this._bindKeyup,
             event: 'keyup',
             ref: document,
+            title: 'keyup',
         }
 
         // main 버튼 이벤트 핸들러를 추가
@@ -106,11 +107,12 @@ export class PongGame {
 
         // 뒤로가기 앞으로가기 이벤트 핸들러를 추가
         this._bindgameRoute = this.gameRoute.bind(this);
-        document.addEventListener('popstate', this._bindgameRoute);
+        window.addEventListener('popstate', this._bindgameRoute);
         this._eventList[this._eventCnt++] = {
             function: this._bindgameRoute,
             event: 'popstate',
-            ref: document,
+            ref: window,
+            title: 'popstate',
         }
 
         // socket에 들어온 입력에 대한 이벤트 등록
@@ -132,95 +134,78 @@ export class PongGame {
         this._renderer1.render(this._scene, this._camera1);
         this._renderer2.render(this._scene, this._camera2);
         setTimeout(() => {requestAnimationFrame(this.render.bind(this));}, 5000);
-
     }
 
     // 카메라 설정
     _setupCamera() {
         const width = this._canvasWidth;
         const height = this._canvasHeight;
-        const camera1 = new THREE.PerspectiveCamera(
+        this._camera1 = new THREE.PerspectiveCamera(
             45,
             width / height,
             0.1,
             1000
         );
-        camera1.position.set(0, 4, 80);
-        camera1.lookAt(0, 0, 0);
-        this._camera1 = camera1;
+        this._camera1.position.set(0, 4, 80);
+        this._camera1.lookAt(0, 0, 0);
 
-        const camera2 = new THREE.PerspectiveCamera(
+        this._camera2 = new THREE.PerspectiveCamera(
             45,
             width / height,
             0.1,
             1000
         );
-        camera2.position.set(0, 4, -80);
-        camera2.lookAt(0, 0, 0);
-        this._camera2 = camera2;
+        this._camera2.position.set(0, 4, -80);
+        this._camera2.lookAt(0, 0, 0);
     }
 
     // 조명 설정 | 전체조명사용하도록 수정예정
     _setupLight() {
-        const PLight = new THREE.PointLight();
-        const ALight = new THREE.AmbientLight();
-        this._PLight = PLight;
-        this._ALight = ALight;
-        PLight.position.set(50, 50, 0);
-        this._scene.add(PLight, ALight);
+        this._PLight = new THREE.PointLight();
+        this._ALight = new THREE.AmbientLight();
+        this._PLight.position.set(50, 50, 0);
+        this._scene.add(this._PLight, this._ALight);
     }
 
     // 렌더링할 Mesh들을 정의하고 생성하는 함수
     _setupModel() {
-        const loader = new GLTFLoader();
+        this._loader = new GLTFLoader();
 
         //Mesh: pacman ball
-        loader.load("./game/pac/scene.gltf", (gltf) => { //backend테스트시 이거사용
-        // loader.load("./pac/scene.gltf", (gltf) => {
+        this._loader.load("./game/pac/scene.gltf", (gltf) => {
             this._ball = gltf.scene;
             this._scene.add(this._ball);
-        
-            // Ball의 BoundingBox 설정 및 크기 계산
-            let box = new THREE.Box3().setFromObject(this._ball);
-            let size = new THREE.Vector3();
-            box.getSize(size);
-            this._radius = Math.max(size.x, size.y, size.z) / 2; // 반지름 계산 하면 대충 2쯤 나옴
-            this._ball.traverse((child) => {
-                if (child.isMesh) {
-                    child.geometry.computeBoundingBox();
-                    child.boundingBox = new THREE.Box3().setFromObject(child);
-                }
-            });
-            this._ballBoundingBox = new THREE.Box3().setFromObject(this._ball);
         });
 
         const edgeThickness = 0.1; // 선의 두께 설정
         //Mesh: 원근감을 위한 사각테두리라인
         const positions = [10, 10, 0, 10, -10, 0, -10, -10, 0, -10, 10, 0, 10, 10, 0];
-        const perspectiveLineEdgesMaterial = new THREE.MeshBasicMaterial({ color: 0x14ff00 });
-        const perspectiveLineEdges = new THREE.Group();
+        this._perspectiveLineEdgesMaterial = new THREE.MeshBasicMaterial({ color: 0x14ff00 });
+        this._perspectiveLineEdges = new THREE.Group();
         
         for (let i = 0; i < positions.length - 3; i += 3) {
-            const start = new THREE.Vector3(positions[i], positions[i + 1], positions[i + 2]);
-            const end = new THREE.Vector3(positions[i + 3], positions[i + 4], positions[i + 5]);
+            let start = new THREE.Vector3(positions[i], positions[i + 1], positions[i + 2]);
+            let end = new THREE.Vector3(positions[i + 3], positions[i + 4], positions[i + 5]);
         
             const cylinderGeometry = new THREE.CylinderGeometry(edgeThickness, edgeThickness, start.distanceTo(end), 8); // 8각형으로 원통 구성
-            const edge = new THREE.Mesh(cylinderGeometry, perspectiveLineEdgesMaterial);
+            const edge = new THREE.Mesh(cylinderGeometry, this._perspectiveLineEdgesMaterial);
         
-            const midPoint = new THREE.Vector3().addVectors(start, end).multiplyScalar(0.5);
+            let midPoint = new THREE.Vector3().addVectors(start, end).multiplyScalar(0.5);
             edge.position.copy(midPoint);
         
             edge.lookAt(end);
             edge.rotateX(Math.PI / 2);
         
-            perspectiveLineEdges.add(edge);
+            this._perspectiveLineEdges.add(edge);
+            start = null;
+            end = null;
+            midPoint = null;
         }
-        this._perspectiveLineEdges = perspectiveLineEdges;
         this._scene.add(this._perspectiveLineEdges);
 
         //Mesh: 경기장
-        const stadiumGeometry = new THREE.BoxGeometry(20, 20, 100);
-        const stadiumMaterial = new THREE.MeshBasicMaterial({
+        this._stadiumGeometry = new THREE.BoxGeometry(20, 20, 100);
+        this._stadiumMaterial = new THREE.MeshBasicMaterial({
             color: 0x00ff00,
             transparent: true,
             opacity: 0,
@@ -228,10 +213,9 @@ export class PongGame {
             polygonOffsetFactor: 1,
             polygonOffsetUnits: 1,
         });
-        const stadium = new THREE.Mesh(stadiumGeometry, stadiumMaterial);
+        this._stadium = new THREE.Mesh(this._stadiumGeometry, this._stadiumMaterial);
 
-        this._scene.add(stadium);
-        this._stadium = stadium;
+        this._scene.add(this._stadium);
 
         // BoxGeometry의 4개 면 정의
         this._planes = [
@@ -242,17 +226,17 @@ export class PongGame {
         ];
 
         //Mesh: 경기장 테두리
-        const stadiumEdges = new THREE.EdgesGeometry(stadiumGeometry);
-        const edgesMaterial = new THREE.MeshBasicMaterial({ color: 0x1e30f5 });
+        this._stadiumEdges = new THREE.EdgesGeometry(this._stadiumGeometry);
+        this._edgesMaterial = new THREE.MeshBasicMaterial({ color: 0x1e30f5 });
 
-        const stadiumPositions = stadiumEdges.attributes.position.array;
-        const edges = new THREE.Group();
+        const stadiumPositions = this._stadiumEdges.attributes.position.array;
+        this._stadiumEdges = new THREE.Group();
         for (let i = 0; i < stadiumPositions.length - 3; i += 6) {
             const start = new THREE.Vector3(stadiumPositions[i], stadiumPositions[i + 1], stadiumPositions[i + 2]);
             const end = new THREE.Vector3(stadiumPositions[i + 3], stadiumPositions[i + 4], stadiumPositions[i + 5]);
         
             const cylinderGeometry = new THREE.CylinderGeometry(edgeThickness, edgeThickness, start.distanceTo(end), 8); // 8각형으로 원통 구성
-            const edge = new THREE.Mesh(cylinderGeometry, edgesMaterial);
+            const edge = new THREE.Mesh(cylinderGeometry, this._edgesMaterial);
         
             const midPoint = new THREE.Vector3().addVectors(start, end).multiplyScalar(0.5);
             edge.position.copy(midPoint);
@@ -260,37 +244,33 @@ export class PongGame {
             edge.lookAt(end);
             edge.rotateX(Math.PI / 2);
         
-            edges.add(edge);
+            this._stadiumEdges.add(edge);
         }
-        this._scene.add(edges);
+        this._scene.add(this._stadiumEdges);
 
         //Mesh: 패널
-        const panelGeomtery = new THREE.PlaneGeometry(6, 6);
-        const panelMaterial = new THREE.MeshBasicMaterial({ 
+        this._panelGeomtery = new THREE.PlaneGeometry(6, 6);
+        this._panelMaterial = new THREE.MeshBasicMaterial({ 
             color: 0x1e30f5,
             transparent: true,
             opacity: 0.5
         });
-        const panel1 = new THREE.Mesh(panelGeomtery, panelMaterial);
-        panel1.position.set(0, 0, 50);
-        panel1.lookAt(0, 0, 100);
-        const panel1Plane = new THREE.Plane(new THREE.Vector3(0, 0, -1), this._stadium.geometry.parameters.depth / 2);
-        this._panel1Plane = panel1Plane;
-        this._panel1 = panel1;
-        this._scene.add(panel1);
+        this._panel1 = new THREE.Mesh(this._panelGeomtery, this._panelMaterial);
+        this._panel1.position.set(0, 0, 50);
+        this._panel1.lookAt(0, 0, 100);
+        this._panel1Plane = new THREE.Plane(new THREE.Vector3(0, 0, -1), this._stadium.geometry.parameters.depth / 2);
+        this._scene.add(this._panel1);
 
-        const panel2 = new THREE.Mesh(panelGeomtery, panelMaterial);
-        panel2.position.set(0, 0, -50);
-        panel2.lookAt(0, 0, -100);
-        const panel2Plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), this._stadium.geometry.parameters.depth / 2);
-        this._panel2Plane = panel2Plane;
-        this._panel2 = panel2;
-        this._scene.add(panel2);
+        this._panel2 = new THREE.Mesh(this._panelGeomtery, this._panelMaterial);
+        this._panel2.position.set(0, 0, -50);
+        this._panel2.lookAt(0, 0, -100);
+        this._panel2Plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), this._stadium.geometry.parameters.depth / 2);
+        this._scene.add(this._panel2);
     }
 
     // 렌더링함수
     render(time) { // 렌더링이 시작된 이후 경과된 밀리초를 받는다
-        if (!this._isRunning) {
+        if (this._isRunning === false) {
             console.log("rendering finish");
             return ;
         }
@@ -299,6 +279,7 @@ export class PongGame {
         this._renderer2.render(this._scene, this._camera2);
         this.update(time); // 시간에 따라 애니메이션 효과를 발생시킨다
         requestAnimationFrame(this.render.bind(this));
+        console.log("now rendering");
     }
 
     player1Win() {
@@ -322,6 +303,7 @@ export class PongGame {
                 function: this._nextButtonClick,
                 event: 'click',
                 ref: document.querySelector("#next_button"),
+                title: 'next_button_click',
             }
 
             this._nextButtonEnter = this.nextButtonEnter.bind(this);
@@ -330,6 +312,7 @@ export class PongGame {
                 function: this._nextButtonEnter,
                 event: 'keydown',
                 ref: document.querySelector("#next_button"),
+                title: 'next_button_en',
             }
         }
         else { //1vs1
@@ -351,6 +334,7 @@ export class PongGame {
                 function: this._playAgainButtonClick,
                 event: 'click',
                 ref: document.querySelector("#next_button"),
+                title: 'next_button_click',
             }
 
             this._playAgainButtonEnter = this.playAgainButtonEnter.bind(this);
@@ -359,6 +343,7 @@ export class PongGame {
                 function: this._playAgainButtonEnter,
                 event: 'keydown',
                 ref: document.querySelector("#next_button"),
+                title: 'next_button_enter',
             }
         }
     }
@@ -384,6 +369,7 @@ export class PongGame {
                 function: this._nextButtonClick,
                 event: 'click',
                 ref: document.querySelector("#next_button"),
+                title: 'next_button_click',
             }
 
             this._nextButtonEnter = this.nextButtonEnter.bind(this);
@@ -392,6 +378,7 @@ export class PongGame {
                 function: this._nextButtonEnter,
                 event: 'keydown',
                 ref: document.querySelector("#next_button"),
+                title: 'next_button_enter',
             }
         }
         else { // 1VS1의 경우
@@ -413,6 +400,7 @@ export class PongGame {
                 function: this._playAgainButtonClick,
                 event: 'click',
                 ref: document.querySelector("#next_button"),
+                title: 'next_button_click',
             }
 
             this._playAgainButtonEnter = this.playAgainButtonEnter.bind(this);
@@ -421,6 +409,7 @@ export class PongGame {
                 function: this._playAgainButtonEnter,
                 event: 'keydown',
                 ref: document.querySelector("#next_button"),
+                title: 'next_button_enter',
             }
         }
     }
@@ -517,15 +506,21 @@ export class PongGame {
             if (countdownValue === 0) {
                 countdownElement.innerText = "START";
             }
-            else if (countdownValue === -1 && this._socket.readyState === 1) {
-                clearInterval(countdownInterval);
-                countdownElement.innerText = "";
-                this._socket.send("start");
-                return ;
-            }
-            else if (countdownValue === -1){
-                this.removeEventListener();
-                navigateTo("main");
+            else if (countdownValue === -1) {
+                if (this._socket === null) {
+                    this.removeEventListener();
+                    navigateTo("main");
+                }
+                else if (this._socket.readyState === 1) {
+                    clearInterval(countdownInterval);
+                    countdownElement.innerText = "";
+                    this._socket.send("start");
+                    return ;
+                }
+                else {
+                    this.removeEventListener();
+                    navigateTo("main");
+                }
             }
         }, 1000);
     }
@@ -538,6 +533,7 @@ export class PongGame {
             function: this._mainButtonClick,
             event: 'click',
             ref: this._Top_Button,
+            title: 'main_click',
         }
 
         this._mainButtonMouseEnter = this.mainButtonMouseEnter.bind(this);
@@ -546,6 +542,7 @@ export class PongGame {
             function: this._mainButtonMouseEnter,
             event: 'mouseenter',
             ref: this._Top_Button,
+            title: 'main_mouse_enter',
         }
 
         this._mainButtonMouseLeave = this.mainButtonMouseLeave.bind(this);
@@ -554,6 +551,7 @@ export class PongGame {
             function: this._mainButtonMouseLeave,
             event: 'mouseleave',
             ref: this._Top_Button,
+            title: 'main mouse leave',
         }
     }
 
@@ -618,20 +616,177 @@ export class PongGame {
         this._isRunning = false;
         this._socket.close();
         console.log("gameRoute occured: isRunning = false, socket is closed");
+
+        // 여기에서 모든 이벤트를 제거
         this.removeEventListener();
+
+        // 페이지를 실제로 변경
         router();
     }
 
     //14개중에서 7개가 지워짐
     removeEventListener() {
+        console.log("Removing all event listeners...");
+        
         for (let i = 0; i < this._eventCnt; i++) {
             const eventInfo = this._eventList[i];
-            eventInfo.ref.removeEventListener(eventInfo.event, eventInfo.function);
-            console.log(`Removed listener for event: ${eventInfo.ref}`);
+            if (eventInfo.ref && eventInfo.ref.removeEventListener) {
+                eventInfo.ref.removeEventListener(eventInfo.event, eventInfo.function);
+                console.log(`Removed listener for event: ${eventInfo.title}`);
+            }
         }
+        
+        // 추가로 WebSocket이 열려있다면 닫기
+        if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
+            this._socket.close();
+            this._socket = null;
+            console.log("WebSocket closed.");
+        }
+    
+        // 필요시 타이머도 해제
+        if (this.countdownInterval) {
+            clearInterval(this.countdownInterval);
+            this.countdownInterval = null;
+            console.log("Countdown interval cleared.");
+        }
+        
         console.log("All event listeners removed.");
+        this.disposeThree();
     }
 
+    disposeThree() {
+        if (this._renderer1) { 
+            this._renderer1.dispose();
+            this._renderer1 = null;
+        }
+        if (this._renderer2) {
+            this._renderer2.dispose();
+            this._renderer2 = null;
+        }
+        if (this._socket)
+            this._socket = null;
+        if (this._scene) {
+            if (this._scene.background)
+                this._scene.background = null;
+            this._scene = null;
+        }
+        if (this._camera1)
+            this._camera1 = null;
+        if (this._camera2)
+            this._camera2 = null;
+        if (this._PLight) {
+            this._PLight.dispose();
+            this._PLight = null;
+        }
+        if (this._ALight) {
+            this._ALight.dispose();
+            this._ALight = null;
+        }
+        if (this._loader)
+            this._loader = null;
+        if (this._perspectiveLineEdgesMaterial) {
+            this._perspectiveLineEdgesMaterial.dispose();
+            this._perspectiveLineEdgesMaterial = null;
+        }
+        if (this._perspectiveLineEdges) {
+            this.disposePerpectiveEdges();
+            this._perspectiveLineEdges = null;
+        }
+        if (this._stadiumGeometry) {
+            this._stadiumGeometry.dispose();
+            this._stadiumGeometry = null;
+        }
+        if (this._stadiumMaterial) {
+            this._stadiumMaterial.dispose();
+            this._stadiumMaterial = null;
+        }
+        if (this._stadium)
+            this._stadium = null;
+        if (this._planes) 
+            this._planes = null;
+        if (this._stadiumEdges)
+            this._stadiumEdges = null;
+        if (this._edgesMaterial) {
+            this._edgesMaterial.dispose();
+            this._edgesMaterial = null;
+        }
+        if (this._stadiumEdges)
+            this.disposeStadiumEdges();
+        if (this._panel1)
+            this.disposePanel1();
+        if (this._panel2)
+            this.disposePanel2();
+    }
+
+    disposePanel2() {
+        if (this._panel2Plane)
+            this._panel2Plane = null;
+        this._panel2 = null;
+    }
+
+    disposePanel1() {
+        if (this._panelGeomtery) {
+            this._panelGeomtery.dispose();
+            this._panelGeomtery = null;
+        }
+        if (this._panelMaterial) {
+            this._panelMaterial.dispose();
+            this._panelMaterial = null;
+        }
+        if (this._panel1Plane)
+            this._panel1Plane = null;
+        this._panel1 = null;
+    }
+
+    disposeStadiumEdges() {
+        this._stadiumEdges.traverse((object) => {
+            // object가 Mesh인 경우에만 처리
+            if (object.isMesh) {
+                // 기하구조 해제
+                if (object.geometry) {
+                    object.geometry.dispose();
+                    object.geometry = null;
+                }
+                // 재질 해제
+                if (object.material) {
+                    // 재질이 배열인 경우 처리
+                    if (Array.isArray(object.material)) {
+                        object.material.forEach((material) => {
+                            if (material && material.dispose) {
+                                material.dispose();
+                                material = null;
+                            }
+                        });
+                    } else {
+                        // 단일 재질인 경우 처리
+                        if (object.material.dispose) {
+                            object.material.dispose();
+                            object.material = null;
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    disposePerpectiveEdges() {
+        this._perspectiveLineEdges.children.forEach(edge => {
+            // 기하구조 해제
+            if (edge.geometry) {
+                edge.geometry.dispose();
+                edge.geometry = null;
+            }
+            
+            // 재질이 따로 있다면 해제 (공유 재질이 아니면)
+            if (edge.material && edge.material.dispose) {
+                edge.material.dispose();
+                edge.material = null;
+            }
+        });
+    
+        // 모든 메쉬를 씬에서 제거
+        this._perspectiveLineEdges.clear();
+    }
 }
 
 
