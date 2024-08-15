@@ -9,7 +9,7 @@ export class PongGame {
         this._mode = mode;
         this._socket = new WebSocket("wss://127.0.0.1/api/pong-game/" + mode + sessionData.user_id);
         this._eventList = [];
-        const eventCnt = 0;
+        this._eventCnt = 0;
 
         const canvas1 = document.querySelector("#canvas1");
         const canvas2 = document.querySelector("#canvas2");
@@ -86,12 +86,12 @@ export class PongGame {
         // keydown 이벤트 핸들러를 추가
         this._bindKeydown = this.keydown.bind(this);
         window.addEventListener('keydown', this._bindKeydown);
-        this._eventList[eventCnt++] = this._bindKeydown;
+        this._eventList[this._eventCnt++] = this._bindKeydown;
 
         // keyup 이벤트 핸들러를 추가
         this._bindKeyup = this.keyup.bind(this);
         window.addEventListener('keyup', this._bindKeyup);
-        this._eventList[eventCnt++] = this._bindKeyup;
+        this._eventList[this._eventCnt++] = this._bindKeyup;
 
         // main 버튼 이벤트 핸들러를 추가
         this.mainButtonEvent();
@@ -470,33 +470,38 @@ export class PongGame {
     }
 
     mainButtonEvent() {
-        this._mainButtonClick = this.mainButtonClick();
-        this._eventList[eventCnt++] = this._mainButtonClick
-        this._mainButtonMouseEnter = this.mainButtonMouseEnter();
-        this._eventList[eventCnt++] = this._mainButtonMouseEnter;
-        this._mainButtonMouseLeave = this.mainButtonMouseLeave();
-        this._eventList[eventCnt++] = this._mainButtonMouseLeave;
+        this._Top_Button = document.querySelector("#top_item").querySelector("a");
+
+        this._mainButtonClick = this.mainButtonClick;
+        this._Top_Button.addEventListener('click', this._mainButtonClick);
+        this._eventList[this._eventCnt++] = this._mainButtonClick
+
+        this._mainButtonMouseEnter = this.mainButtonMouseEnter;
+        this._Top_Button.addEventListener('mouseenter', this._mainButtonMouseEnter);
+        this._eventList[this._eventCnt++] = this._mainButtonMouseEnter;
+
+        this._mainButtonMouseLeave = this.mainButtonMouseLeave;
+        this._Top_Button.addEventListener('mouseleave', this._mainButtonMouseLeave);
+        this._eventList[this._eventCnt++] = this._mainButtonMouseLeave;
     }
 
     mainButtonClick(event) {
-        this._Top_Buttons = document.querySelector("#top_item").querySelector("a");
-        event.preventDefault();
+        // event.preventDefault();
         this._isRunning = false;
         this._socket.close();
-        this.removeEventListener();
         navigateTo("/main");
     }
 
     mainButtonMouseEnter(event) {
-        Button.classList.remove("blue_outline");
-        Button.classList.add("green_outline");
-        Button.classList.add("white_stroke_2_5px");
+        this._Top_Button.classList.remove("blue_outline");
+        this._Top_Button.classList.add("green_outline");
+        this._Top_Button.classList.add("white_stroke_2_5px");
     }
 
     mainButtonMouseLeave(event) {
-        Button.classList.add("blue_outline");
-        Button.classList.remove("green_outline");
-        Button.classList.remove("white_stroke_2_5px");
+        this._Top_Button.classList.add("blue_outline");
+        this._Top_Button.classList.remove("green_outline");
+        this._Top_Button.classList.remove("white_stroke_2_5px");
     }
 
     nextButtonClick(event) {
