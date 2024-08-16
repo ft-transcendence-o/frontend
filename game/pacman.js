@@ -178,6 +178,8 @@ export class PongGame {
             this._ball.rotation.x = 0;
             this._ball.rotation.y = 0;
             this._ball.rotation.z = 0;
+            if (this._isRunning === false) 
+                return ;
             this._scene.add(this._ball);
         });
 
@@ -508,6 +510,8 @@ export class PongGame {
                 this._socket = null;
                 console.log("WebSocket closed.");
             }
+            window.removeEventListener("keydown", this._bindKeydown);
+            window.removeEventListener("keyup", this._bindKeyup);
             if (this._player1.Score > this._player2.Score) {
                 this.player1Win();
             }
