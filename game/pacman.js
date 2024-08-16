@@ -397,7 +397,7 @@ export class PongGame {
             this._ButtonBlur = this.ButtonBlur.bind(this);
             document.querySelector("#next_button").addEventListener('blur', this.ButtonBlur);
             this._eventList[this._eventCnt++] = {
-                function: this.this._ButtonBlur,
+                function: this._ButtonBlur,
                 event: 'blur',
                 ref: document.querySelector("#next_button"),
                 title: 'next_button_blur',
@@ -431,7 +431,7 @@ export class PongGame {
             this._ButtonBlur = this.ButtonBlur.bind(this);
             document.querySelector("#next_button").addEventListener('blur', this.ButtonBlur);
             this._eventList[this._eventCnt++] = {
-                function: this.this._ButtonBlur,
+                function: this._ButtonBlur,
                 event: 'blur',
                 ref: document.querySelector("#next_button"),
                 title: 'next_button_blur',
