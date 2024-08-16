@@ -449,21 +449,11 @@ export class PongGame {
             this._player2.Score = received.right_score;
             document.querySelector("#player1_score").innerHTML = this._player1.Score;
             document.querySelector("#player2_score").innerHTML = this._player2.Score;
-            // this._socket.send("pause");
-            // let countdownValue = 4;
-        
-            // let countdownInterval = setInterval(() => {
-            //     countdownValue--;
-            //     if (countdownValue === 0) {
-            //         clearInterval(countdownInterval);
-            //         this._socket.send("resume");
-            //         console.log("send resume");
-            //         return ;
-            //     }
-            // })
         }
         else if (received.type === "game_end") {
             this._isRunning = false;
+            window.removeEventListener('keydown', this._bindKeydown);
+            window.removeEventListener('keyup', this._bindKeyup);
             if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
                 this._socket.close();
                 this._socket = null;
@@ -476,14 +466,6 @@ export class PongGame {
                 this.player2Win();
             }
         }
-    }
-
-    // 게임 일시정지
-    pauseGame(duration) {
-        this._isPaused = true;
-        setTimeout(() => {
-            this._isPaused = false;
-        }, duration);
     }
 
     keydown(event) {
@@ -515,7 +497,7 @@ export class PongGame {
 
     countdown() {
         let countdownElement = document.querySelector("#countDown");
-        let countdownValue = 4;
+        let countdownValue = 40;
     
         let countdownInterval = setInterval(() => {
             countdownElement.innerText =  --countdownValue;
@@ -550,7 +532,7 @@ export class PongGame {
                     return ;
                 }
             }
-        }, 1000);
+        }, 100);
     }
 
     mainButtonEvent() {
