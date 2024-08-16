@@ -5,7 +5,6 @@ import { get_translated_value } from "../../language.js"
 
 export class PongGame {
     constructor(sessionData, mode) {
-        console.log("wss://127.0.0.1/api/pong-game/" + mode + sessionData.user_id)
         this._mode = mode;
         this._socket = new WebSocket("wss://127.0.0.1/api/pong-game/" + mode + sessionData.user_id);
         this._eventList = [];
@@ -32,7 +31,6 @@ export class PongGame {
         };
 
         // game_status_var
-        console.log("Session Data:", sessionData);
         this._gameVar = document.querySelector("#game_var");
         this._player1 = {
             Score : sessionData.left_score, //
@@ -291,7 +289,6 @@ export class PongGame {
     // 렌더링함수
     render(time) { // 렌더링이 시작된 이후 경과된 밀리초를 받는다
         if (this._isRunning === false) {
-            console.log("rendering finish");
             return ;
         }
         // 렌더러가 scenen을 카메라의 시점을 기준으로 렌더링하는작업을 한다
@@ -472,7 +469,6 @@ export class PongGame {
             if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
                 this._socket.close();
                 this._socket = null;
-                console.log("WebSocket closed.");
             }
             document.removeEventListener("keydown", this._bindKeydown);
             document.removeEventListener("keyup", this._bindKeyup);
@@ -509,7 +505,6 @@ export class PongGame {
             if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
                 this._socket.close();
                 this._socket = null;
-                console.log("WebSocket closed.");
             }
             this.removeEventListener();
             navigateTo("/main");
@@ -597,13 +592,11 @@ export class PongGame {
     }
 
     mainButtonClick(event) {
-        console.log("main click");
         event.preventDefault();
         this._isRunning = false;
         if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
             this._socket.close();
             this._socket = null;
-            console.log("WebSocket closed.");
         }
         this.removeEventListener();
         navigateTo("/main");
@@ -626,9 +619,7 @@ export class PongGame {
         if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
             this._socket.close();
             this._socket = null;
-            console.log("WebSocket closed.");
         }
-        console.log("next Button Click");
         this.removeEventListener();
         navigateTo("/match_schedules");
     }
@@ -639,9 +630,7 @@ export class PongGame {
             if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
                 this._socket.close();
                 this._socket = null;
-                console.log("WebSocket closed.");
             }
-            console.log("next Button Enter");
             this.removeEventListener();
             navigateTo("/match_schedules");
         }
@@ -652,9 +641,7 @@ export class PongGame {
         if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
             this._socket.close();
             this._socket = null;
-            console.log("WebSocket closed.");
         }
-        console.log("paly Again Button Click");
         this.removeEventListener();
         navigateTo("/normal_game");
     }
@@ -665,9 +652,7 @@ export class PongGame {
             if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
                 this._socket.close();
                 this._socket = null;
-                console.log("WebSocket closed.");
             }
-            console.log("play Again Button Enter");
             this.removeEventListener();
             navigateTo("/normal_game"); //여기로 이동할때 게임이 안꺼지고 나간다
         }
@@ -678,7 +663,6 @@ export class PongGame {
         const nextButton = document.querySelector("#next_button");
         if (nextButton)// next_button이 존재하는지 확인
             nextButton.focus(); // 포커스가 벗어났다면 다시 포커스를 설정
-        console.log('blur');
     }
 
     gameRoute() {
@@ -686,9 +670,7 @@ export class PongGame {
         if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
             this._socket.close();
             this._socket = null;
-            console.log("WebSocket closed.");
         }
-        console.log("gameRoute occured: isRunning = false, socket is closed");
 
         // 여기에서 모든 이벤트를 제거
         this.removeEventListener();
@@ -698,13 +680,12 @@ export class PongGame {
 
     //14개중에서 7개가 지워짐
     removeEventListener() {
-        console.log("Removing all event listeners...");
         
         for (let i = 0; i < this._eventCnt; i++) {
             const eventInfo = this._eventList[i];
             if (eventInfo.ref && eventInfo.ref.removeEventListener) {
                 eventInfo.ref.removeEventListener(eventInfo.event, eventInfo.function);
-                console.log(`Removed listener for event: ${eventInfo.title}`);
+                // console.log(`Removed listener for event: ${eventInfo.title}`);
             }
         }
         
@@ -712,23 +693,19 @@ export class PongGame {
         if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
             this._socket.close();
             this._socket = null;
-            console.log("WebSocket closed.");
         }
     
         // 필요시 타이머도 해제
         if (this.countdownInterval) {
             clearInterval(this.countdownInterval);
             this.countdownInterval = null;
-            console.log("Countdown interval cleared.");
         }
         
-        console.log("All event listeners removed.");
 
         this.disposeThree();
 
         if (document.querySelector("#next_button") !== null) {
             document.querySelector("#next_button").blur();
-            console.log("blur처리 됨");
         }
     }
 
