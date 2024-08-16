@@ -554,10 +554,13 @@ export class PongGame {
 
     countdown() {
         let countdownElement = document.querySelector("#countDown");
-        let countdownValue = 4;
+        let countdownValue = 40;
     
         let countdownInterval = setInterval(() => {
-            countdownElement.innerText =  --countdownValue;
+            --countdownValue;
+            if (countdownValue % 10 === 0) {
+                countdownElement.innerText = countdownValue / 10;
+            }
             if (this._isRunning === false) {
                 clearInterval(countdownInterval);
                 this.removeEventListener();
@@ -589,7 +592,7 @@ export class PongGame {
                     return ;
                 }
             }
-        }, 1000);
+        }, 100);
     }
 
     mainButtonEvent() {
