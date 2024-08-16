@@ -123,11 +123,11 @@ export default class extends AbstractView {
                     </div>
 
                     <!-- center button -->
-                    <div class="PS2P_font center_button blue_outline" style="position: absolute; width: 300px; height: 133.88px; max-width: 328px; max-height: 161.88px; top: 420px; left: 550px; display: flex; flex-direction: column; justify-content: center; cursor: pointer;">
+                    <button class="PS2P_font center_button blue_outline" style="background: black; position: absolute; width: 300px; height: 133.88px; max-width: 328px; max-height: 161.88px; top: 420px; left: 550px; display: flex; flex-direction: column; justify-content: center; cursor: pointer;">
                         <!-- 세로로 가운데 정렬 -->
-                        <p class="transItem" style="font-size: 30px; margin-bottom: 0px; text-align: center; line-height: 34px;" data-trans_id="match_schedules_start">START!</p>
-                        <p style="font-size: 20px; margin-bottom: 0px; text-align: center;">(ENTER)</p>
-                    </div>
+                        <p class="transItem" style=" width: 300px;font-size: 30px; margin-bottom: 0px; text-align: center; line-height: 34px;" data-trans_id="match_schedules_start">START!</p>
+                        <p style="width: 300px; font-size: 20px; margin-bottom: 0px; text-align: center;">(ENTER)</p>
+                    </button>
 
                     <!-- Champion -->
                     <!-- 모든 경기가 끝났을때만 조건부로 표시한다 -->
@@ -151,10 +151,15 @@ export default class extends AbstractView {
 
     handleKeyDown(event) {
         const centerButtons = document.querySelectorAll(".center_button");
-        if (event.key === "Enter") {
-            event.preventDefault();
-            centerButtons[0].click();
-        } else if (event.key === "Escape") {
+        const mainButtons = document.querySelectorAll("#main_button");
+        // if (event.key === "Enter") {
+        //     event.preventDefault();
+        //     centerButtons[0].click();
+        // } else if (event.key === "Escape") {
+        //     event.preventDefault();
+        //     mainButtons[0].click();
+        // }
+        if (event.key === "Escape") {
             event.preventDefault();
             mainButtons[0].click();
         }
@@ -396,6 +401,9 @@ export default class extends AbstractView {
         });
 
         document.addEventListener("keydown", this.bind_keydown);
+        const d = document.querySelector(".center_button");
+        console.log("d:", d);
+        d.focus();
 
         this.cleanup = () => {
             mainButtons.forEach((button) => {
