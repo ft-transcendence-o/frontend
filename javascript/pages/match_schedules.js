@@ -329,6 +329,12 @@ export default class extends AbstractView {
 
             document.querySelector("#champion_text").style.display = "block";
             document.querySelector(".center_button").querySelector("p").innerHTML = get_translated_value("again_TOURNAMENT");
+
+            const response = await fetch(baseUrl + "/api/game-management/session", {
+                method: "DELETE",
+                credentials: 'include',
+                body: JSON.stringify({'mode': "tournament"}),
+            });
         }
 
         // 클릭 가능한 요소들에 이벤트 리스너를 등록한다
