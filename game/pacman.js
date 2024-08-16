@@ -514,6 +514,7 @@ export class PongGame {
                 return ;
             }
             else if (countdownValue === 0) {
+                countdownElement.innerText = "START";
                 // keydown 이벤트 핸들러를 추가
                 this._bindKeydown = this.keydown.bind(this);
                 document.addEventListener('keydown', this._bindKeydown);
@@ -534,10 +535,9 @@ export class PongGame {
                     title: 'keyup',
                 }
                 requestAnimationFrame(this.render.bind(this))
-                countdownElement.innerText = "START";
                 return ;
             }
-            else if (countdownValue === -1) {
+            else if (countdownValue === -6) {
                 if (this._socket === null) {
                     clearInterval(countdownInterval);
                     this.removeEventListener();
@@ -550,7 +550,7 @@ export class PongGame {
                     this._socket.send("start");
                     return ;
                 }
-                else { //순수하게 카운트가 -1인 경우
+                else { //순수하게 카운트가 -10인 경우
                     clearInterval(countdownInterval);
                     this.removeEventListener();
                     navigateTo("main");
@@ -705,7 +705,6 @@ export class PongGame {
 
         if (document.querySelector("#next_button") !== null) {
             document.querySelector("#next_button").blur();
-            console.log('blur');
         }
     }
 
