@@ -325,7 +325,7 @@ export class PongGame {
             document.querySelector("#next_button").focus();
 
             this._ButtonBlur = this.ButtonBlur.bind(this);
-            document.querySelector("#next_button").addEventListener('blur', this.ButtonBlur);
+            document.querySelector("#next_button").addEventListener('blur', this._ButtonBlur);
             this._eventList[this._eventCnt++] = {
                 function: this._ButtonBlur,
                 event: 'blur',
@@ -358,7 +358,7 @@ export class PongGame {
             document.querySelector("#next_button").focus();
 
             this._ButtonBlur = this.ButtonBlur.bind(this);
-            document.querySelector("#next_button").addEventListener('blur', this.ButtonBlur);
+            document.querySelector("#next_button").addEventListener('blur', this._ButtonBlur);
             this._eventList[this._eventCnt++] = {
                 function: this._ButtonBlur,
                 event: 'blur',
@@ -395,7 +395,7 @@ export class PongGame {
             document.querySelector("#next_button").focus();
 
             this._ButtonBlur = this.ButtonBlur.bind(this);
-            document.querySelector("#next_button").addEventListener('blur', this.ButtonBlur);
+            document.querySelector("#next_button").addEventListener('blur', this._ButtonBlur);
             this._eventList[this._eventCnt++] = {
                 function: this._ButtonBlur,
                 event: 'blur',
@@ -429,7 +429,7 @@ export class PongGame {
             document.querySelector("#next_button").focus();
 
             this._ButtonBlur = this.ButtonBlur.bind(this);
-            document.querySelector("#next_button").addEventListener('blur', this.ButtonBlur);
+            document.querySelector("#next_button").addEventListener('blur', this._ButtonBlur);
             this._eventList[this._eventCnt++] = {
                 function: this._ButtonBlur,
                 event: 'blur',
@@ -706,6 +706,7 @@ export class PongGame {
 
         if (document.querySelector("#next_button") !== null) {
             document.querySelector("#next_button").blur();
+            console.log('blur');
         }
     }
 
