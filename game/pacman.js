@@ -54,7 +54,6 @@ export class PongGame {
         document.querySelector("#player2_score").innerHTML = this._player2.Score;
         document.querySelector("#player1_nick").innerHTML = this._player1.Nick;
         document.querySelector("#player2_nick").innerHTML = this._player2.Nick;
-        
 
         //게임에 사용할 변수들
         this._isPaused = false;
@@ -312,15 +311,16 @@ export class PongGame {
                 title: 'next_button_click',
             }
 
-            this._nextButtonEnter = this.nextButtonEnter.bind(this);
-            document.querySelector("#next_button").addEventListener("keydown", this._nextButtonEnter);
             document.querySelector("#next_button").focus();
-            this._eventList[this._eventCnt++] = {
-                function: this._nextButtonEnter,
-                event: 'keydown',
-                ref: document.querySelector("#next_button"),
-                title: 'next_button_en',
-            }
+            // this._nextButtonEnter = this.nextButtonEnter.bind(this);
+            // document.querySelector("#next_button").addEventListener("keydown", this._nextButtonEnter);
+            // document.querySelector("#next_button").focus();
+            // this._eventList[this._eventCnt++] = {
+            //     function: this._nextButtonEnter,
+            //     event: 'keydown',
+            //     ref: document.querySelector("#next_button"),
+            //     title: 'next_button_en',
+            // }
 
             this._ButtonBlur = this.ButtonBlur.bind(this);
             document.querySelector("#next_button").addEventListener('blur', this.ButtonBlur);
@@ -353,15 +353,16 @@ export class PongGame {
                 title: 'next_button_click',
             }
 
-            this._playAgainButtonEnter = this.playAgainButtonEnter.bind(this);
-            document.querySelector("#next_button").addEventListener("keydown", this._playAgainButtonEnter);
             document.querySelector("#next_button").focus();
-            this._eventList[this._eventCnt++] = {
-                function: this._playAgainButtonEnter,
-                event: 'keydown',
-                ref: document.querySelector("#next_button"),
-                title: 'next_button_enter',
-            }
+            // this._playAgainButtonEnter = this.playAgainButtonEnter.bind(this);
+            // document.querySelector("#next_button").addEventListener("keydown", this._playAgainButtonEnter);
+            // document.querySelector("#next_button").focus();
+            // this._eventList[this._eventCnt++] = {
+            //     function: this._playAgainButtonEnter,
+            //     event: 'keydown',
+            //     ref: document.querySelector("#next_button"),
+            //     title: 'next_button_enter',
+            // }
 
             this._ButtonBlur = this.ButtonBlur.bind(this);
             document.querySelector("#next_button").addEventListener('blur', this.ButtonBlur);
@@ -398,15 +399,16 @@ export class PongGame {
                 title: 'next_button_click',
             }
 
-            this._nextButtonEnter = this.nextButtonEnter.bind(this);
-            document.querySelector("#next_button").addEventListener("keydown", this._nextButtonEnter);
             document.querySelector("#next_button").focus();
-            this._eventList[this._eventCnt++] = {
-                function: this._nextButtonEnter,
-                event: 'keydown',
-                ref: document.querySelector("#next_button"),
-                title: 'next_button_enter',
-            }
+            // this._nextButtonEnter = this.nextButtonEnter.bind(this);
+            // document.querySelector("#next_button").addEventListener("keydown", this._nextButtonEnter);
+            // document.querySelector("#next_button").focus();
+            // this._eventList[this._eventCnt++] = {
+            //     function: this._nextButtonEnter,
+            //     event: 'keydown',
+            //     ref: document.querySelector("#next_button"),
+            //     title: 'next_button_enter',
+            // }
 
             this._ButtonBlur = this.ButtonBlur.bind(this);
             document.querySelector("#next_button").addEventListener('blur', this.ButtonBlur);
@@ -440,15 +442,16 @@ export class PongGame {
                 title: 'next_button_click',
             }
 
-            this._playAgainButtonEnter = this.playAgainButtonEnter.bind(this);
-            document.querySelector("#next_button").addEventListener("keydown", this._playAgainButtonEnter);
             document.querySelector("#next_button").focus();
-            this._eventList[this._eventCnt++] = {
-                function: this._playAgainButtonEnter,
-                event: 'keydown',
-                ref: document.querySelector("#next_button"),
-                title: 'next_button_enter',
-            }
+            // this._playAgainButtonEnter = this.playAgainButtonEnter.bind(this);
+            // document.querySelector("#next_button").addEventListener("keydown", this._playAgainButtonEnter);
+            // document.querySelector("#next_button").focus();
+            // this._eventList[this._eventCnt++] = {
+            //     function: this._playAgainButtonEnter,
+            //     event: 'keydown',
+            //     ref: document.querySelector("#next_button"),
+            //     title: 'next_button_enter',
+            // }
 
             this._ButtonBlur = this.ButtonBlur.bind(this);
             document.querySelector("#next_button").addEventListener('blur', this.ButtonBlur);
