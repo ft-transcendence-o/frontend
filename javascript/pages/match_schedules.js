@@ -7,6 +7,7 @@ export default class extends AbstractView {
         super();
         this.setTitle("Match Schedules");
         this.bind_popstate = this.match_schedules_popstate.bind(this);
+        this.bind_keydown = this.handleKeyDown.bind(this);
     }
 
     /**
@@ -147,6 +148,17 @@ export default class extends AbstractView {
     match_schedules_popstate() {
         navigateTo("/main");
     }
+
+    handleKeyDown(event) {
+        const centerButtons = document.querySelectorAll(".center_button");
+        if (event.key === "Enter") {
+            event.preventDefault();
+            centerButtons[0].click();
+        } else if (event.key === "Escape") {
+            event.preventDefault();
+            mainButtons[0].click();
+        }
+    };
 
     async init() {
 
@@ -383,17 +395,7 @@ export default class extends AbstractView {
             button.addEventListener("mouseleave", handleCenterMouseLeave);
         });
 
-        const handleKeyDown = (event) => {
-            if (event.key === "Enter") {
-                event.preventDefault();
-                centerButtons[0].click();
-            } else if (event.key === "Escape") {
-                event.preventDefault();
-                mainButtons[0].click();
-            }
-        };
-
-        document.addEventListener("keydown", handleKeyDown);
+        document.addEventListener("keydown", this.bind_keydown);
 
         this.cleanup = () => {
             mainButtons.forEach((button) => {
@@ -406,7 +408,7 @@ export default class extends AbstractView {
                 button.removeEventListener("mouseenter", handleCenterMouseEnter);
                 button.removeEventListener("mouseleave", handleCenterMouseLeave);
             });
-            document.removeEventListener("keydown", handleKeyDown);
+            document.removeEventListener("keydown", this.bind_keydown);
             window.removeEventListener('popstate', this.bind_popstate);
             window.addEventListener('popstate', router);
         };
