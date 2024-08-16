@@ -137,16 +137,16 @@ export default class extends AbstractView {
     `;
     }
 
-    async init() {
-        // logout 모달의 backdrop 처리
-        window.addEventListener('popstate', () => {
-            const existingBackdrop = document.querySelector('.modal-backdrop.fade.show');
-            if (existingBackdrop) {
-                existingBackdrop.remove();
-            }
-            window.addEventListener('popstate', router);
-        });
+    // async main_popstate() {
+    //     window.removeEventListener('popstate', router);
+    //     const existingBackdrop = document.querySelector('.modal-backdrop.fade.show');
+    //         if (existingBackdrop) {
+    //             existingBackdrop.remove();
+    //         }
+    //     window.addEventListener('popstate', router);
+    // }
 
+    async init() {
         // translate 적용 테스트
         const transItems = document.querySelectorAll(".transItem");
         transItems.forEach( (transItem) => {
@@ -286,5 +286,20 @@ export default class extends AbstractView {
         // 언어별 font 마다 사이즈가 다르다............
         // 미리 텍스트를 써놓고 display를 변경하기...?
         // 언어를 모두 가지고있는 dictionary 변수를 가진 js를 export한다?
+
+        this.cleanup = () => {
+            // logout 모달의 backdrop 처리
+            const existingBackdrop = document.querySelector('.modal-backdrop.fade.show');
+            if (existingBackdrop) {
+                existingBackdrop.remove();
+            }
+            window.addEventListener('popstate', router);
+        };
     }
+
+    destroy() {
+		if (this.cleanup) {
+			this.cleanup();
+		}
+	}
 }
