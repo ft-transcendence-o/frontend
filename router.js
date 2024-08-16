@@ -22,6 +22,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     window.addEventListener('popstate', router);
+
+    if (window.location.pathname === '/match_schedules' || window.location.pathname === '/tournament_game')
+    {
+        navigateTo("/");
+        return ;
+    }
     
     router();
 })
