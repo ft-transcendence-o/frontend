@@ -84,28 +84,12 @@ export default class extends AbstractView {
 				credentials: 'include',
 			});
 			if (response.ok) {
-				const sessionData = await response.json()
+				const sessionData = await response.json();
 				if (sessionData.players_name[2] === sessionData.players_name[3]){
 					navigateTo("main");
 				}
 				else {
-					const hgu = new PongGame(sessionData, "tournament/");
-					window.addEventListener('beforeunload', () => {
-						if (this.hgu) {
-							this.hgu.removeEventListener(); // 이벤트 리스너 제거
-							this.hgu.disposeThree();        // Three.js 리소스 정리
-							this.hgu = null;                // 객체를 null로 설정
-							console.log("PongGame instance has been cleaned up.");
-						}
-					});
-					window.addEventListener('popstate', () => {
-						if (this.hgu) {
-							this.hgu.removeEventListener(); // 이벤트 리스너 제거
-							this.hgu.disposeThree();        // Three.js 리소스 정리
-							this.hgu = null;                // 객체를 null로 설정
-							console.log("PongGame instance has been cleaned up.");
-						}
-					});
+					new PongGame(sessionData, "tournament/")
 				}
 			} else if (response.status === 401) { // 401)(unauthorized)클라이언트가 인증되지 않았거나, 유효한 인증 정보가 부족하여 요청이 거부되었음을 의미하는 상태값 -> token이 없는사람 (사용자가 로그아웃을 한 경우 백엔드에서는 cookie를 삭제한다. 따라서 api를 쏘면 백엔드는 해당 사용자에 대한 인증 정보가 부족하다며 거부하는 의미로 status를 401로 응답한다.)
 				navigateTo("/");
@@ -123,35 +107,5 @@ export default class extends AbstractView {
         transItems.forEach( (transItem) => {
             transItem.innerHTML = get_translated_value(transItem.dataset.trans_id);
         } )
-
-		// 클릭 가능한 요소들에 이벤트 리스너를 등록한다
-        const Top_Buttons = document.querySelector("#top_item").querySelectorAll("a");
-
-        Top_Buttons.forEach((Button) => {
-
-            Button.addEventListener("click", (event) => {
-                event.preventDefault();
-                console.log(event.currentTarget.href);
-
-                // 라우팅 이벤트 추가
-                // 비동기 이슈?
-                const url = new URL(event.currentTarget.href);
-                const pathname = url.pathname;
-
-                navigateTo(pathname);
-            });
-
-            Button.addEventListener("mouseenter", (event) => {
-                Button.classList.remove("blue_outline");
-                Button.classList.add("green_outline");
-                Button.classList.add("white_stroke_2_5px");
-            });
-
-            Button.addEventListener("mouseleave", (event) => {
-                Button.classList.add("blue_outline");
-                Button.classList.remove("green_outline");
-                Button.classList.remove("white_stroke_2_5px");
-            });
-        });
     }
 }

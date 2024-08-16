@@ -10,6 +10,7 @@ export class PongGame {
         this._socket = new WebSocket("wss://127.0.0.1/api/pong-game/" + mode + sessionData.user_id);
         this._eventList = [];
         this._eventCnt = 0;
+        this._nextButtonState = false;
 
         const canvas1 = document.querySelector("#canvas1");
         const canvas2 = document.querySelector("#canvas2");
@@ -301,6 +302,7 @@ export class PongGame {
     }
 
     player1Win() {
+        this._nextButtonState = true;
         if (this._mode === "tournament/") {
             document.querySelector("#winner1").innerHTML = `
             <div style="font-size: 100px; line-height: 100px; color: white;">${get_translated_value("game_win")}!</div>
@@ -328,7 +330,7 @@ export class PongGame {
             this._ButtonBlur = this.ButtonBlur.bind(this);
             document.querySelector("#next_button").addEventListener('blur', this.ButtonBlur);
             this._eventList[this._eventCnt++] = {
-                function: this._nextButtonEnter,
+                function: this._ButtonBlur,
                 event: 'blur',
                 ref: document.querySelector("#next_button"),
                 title: 'next_button_blur',
@@ -361,7 +363,7 @@ export class PongGame {
             this._ButtonBlur = this.ButtonBlur.bind(this);
             document.querySelector("#next_button").addEventListener('blur', this.ButtonBlur);
             this._eventList[this._eventCnt++] = {
-                function: this._nextButtonEnter,
+                function: this._ButtonBlur,
                 event: 'blur',
                 ref: document.querySelector("#next_button"),
                 title: 'next_button_blur',
@@ -370,7 +372,7 @@ export class PongGame {
     }
 
     player2Win() {
-        // document.querySelector("#player2_score").innerHTML = this._player2.Score;
+        this._nextButtonState = true;
         if (this._mode === "tournament/") { // 토너먼트
             document.querySelector("#winner2").innerHTML = `
             <div style="font-size: 100px; line-height: 100px; color: white;">${get_translated_value("game_win")}!</div>
@@ -398,7 +400,7 @@ export class PongGame {
             this._ButtonBlur = this.ButtonBlur.bind(this);
             document.querySelector("#next_button").addEventListener('blur', this.ButtonBlur);
             this._eventList[this._eventCnt++] = {
-                function: this._nextButtonEnter,
+                function: this.this._ButtonBlur,
                 event: 'blur',
                 ref: document.querySelector("#next_button"),
                 title: 'next_button_blur',
@@ -432,7 +434,7 @@ export class PongGame {
             this._ButtonBlur = this.ButtonBlur.bind(this);
             document.querySelector("#next_button").addEventListener('blur', this.ButtonBlur);
             this._eventList[this._eventCnt++] = {
-                function: this._nextButtonEnter,
+                function: this.this._ButtonBlur,
                 event: 'blur',
                 ref: document.querySelector("#next_button"),
                 title: 'next_button_blur',
@@ -691,8 +693,7 @@ export class PongGame {
         // 여기에서 모든 이벤트를 제거
         this.removeEventListener();
         document.querySelector('#app').innerHTML = '';
-        // 페이지를 실제로 변경
-        router();
+        navigateTo('main');
     }
 
     //14개중에서 7개가 지워짐
@@ -722,7 +723,13 @@ export class PongGame {
         }
         
         console.log("All event listeners removed.");
+
         this.disposeThree();
+
+        if (document.querySelector("#next_button") !== null) {
+            document.querySelector("#next_button").blur();
+            console.log("blur처리 됨");
+        }
     }
 
     disposeThree() {
