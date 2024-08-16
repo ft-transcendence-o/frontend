@@ -510,8 +510,8 @@ export class PongGame {
                 this._socket = null;
                 console.log("WebSocket closed.");
             }
-            window.removeEventListener("keydown", this._bindKeydown);
-            window.removeEventListener("keyup", this._bindKeyup);
+            document.removeEventListener("keydown", this._bindKeydown);
+            document.removeEventListener("keyup", this._bindKeyup);
             if (this._player1.Score > this._player2.Score) {
                 this.player1Win();
             }
