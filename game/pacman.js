@@ -1,6 +1,6 @@
 import * as THREE from '../build/three.module.js';
 import { GLTFLoader } from '../build/GLTFLoader.js';
-import { navigateTo, baseUrl, router} from "../../router.js";
+import { navigateTo, baseUrl, router } from "../../router.js";
 import { get_translated_value } from "../../language.js"
 
 export class PongGame {
@@ -632,16 +632,22 @@ export class PongGame {
             nextButton.focus(); // 포커스가 벗어났다면 다시 포커스를 설정
     }
 
-    gameRoute() {
+    async gameRoute() {
         this._isRunning = false;
         if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
             this._socket.close();
             this._socket = null;
         }
+        const response = await fetch(baseUrl + "/api/game-management/session", {
+            method: "DELETE",
+            credentials: 'include',
+            body: JSON.stringify({'mode': "tournament"}),
+        });
 
         // 여기에서 모든 이벤트를 제거
         this.removeEventListener();
-        document.querySelector('#app').innerHTML = '';
+        window.addEventListener('popstate', router);
+        document.querySelector('#app').innerHTML = ''
         navigateTo('main');
     }
 

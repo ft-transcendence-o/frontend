@@ -1,5 +1,5 @@
 import AbstractView from "./AbstractView.js";
-import { navigateTo, baseUrl } from "../../router.js";
+import { navigateTo, baseUrl, router } from "../../router.js";
 import { PongGame } from "../../game/pacman.js";
 import { get_translated_value } from "../../language.js"
 
@@ -84,6 +84,7 @@ export default class extends AbstractView {
 				credentials: 'include',
 			});
 			if (response.ok) {
+				window.removeEventListener('popstate', router);
 				const sessionData = await response.json();
 				if (sessionData.players_name[2] === sessionData.players_name[3]){
 					navigateTo("main");
