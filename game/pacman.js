@@ -90,26 +90,6 @@ export class PongGame {
             title: 'EscapeKey',
         }
 
-        // keydown 이벤트 핸들러를 추가
-        this._bindKeydown = this.keydown.bind(this);
-        document.addEventListener('keydown', this._bindKeydown);
-        this._eventList[this._eventCnt++] = {
-            function: this._bindKeydown,
-            event: 'keydown',
-            ref: document,
-            title: 'keydown',
-        }
-
-        // keyup 이벤트 핸들러를 추가
-        this._bindKeyup = this.keyup.bind(this);
-        document.addEventListener('keyup', this._bindKeyup);
-        this._eventList[this._eventCnt++] = {
-            function: this._bindKeyup,
-            event: 'keyup',
-            ref: document,
-            title: 'keyup',
-        }
-
         // main 버튼 이벤트 핸들러를 추가
         this.mainButtonEvent();
 
@@ -534,6 +514,25 @@ export class PongGame {
                 return ;
             }
             else if (countdownValue === 0) {
+                // keydown 이벤트 핸들러를 추가
+                this._bindKeydown = this.keydown.bind(this);
+                document.addEventListener('keydown', this._bindKeydown);
+                this._eventList[this._eventCnt++] = {
+                    function: this._bindKeydown,
+                    event: 'keydown',
+                    ref: document,
+                    title: 'keydown',
+                }
+
+                // keyup 이벤트 핸들러를 추가
+                this._bindKeyup = this.keyup.bind(this);
+                document.addEventListener('keyup', this._bindKeyup);
+                this._eventList[this._eventCnt++] = {
+                    function: this._bindKeyup,
+                    event: 'keyup',
+                    ref: document,
+                    title: 'keyup',
+                }
                 requestAnimationFrame(this.render.bind(this))
                 countdownElement.innerText = "START";
                 return ;
