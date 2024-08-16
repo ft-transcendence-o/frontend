@@ -54,7 +54,6 @@ export class PongGame {
         document.querySelector("#player2_score").innerHTML = this._player2.Score;
         document.querySelector("#player1_nick").innerHTML = this._player1.Nick;
         document.querySelector("#player2_nick").innerHTML = this._player2.Nick;
-        
 
         //게임에 사용할 변수들
         this._isPaused = false;
@@ -179,6 +178,8 @@ export class PongGame {
             this._ball.rotation.x = 0;
             this._ball.rotation.y = 0;
             this._ball.rotation.z = 0;
+            if (this._isRunning === false) 
+                return ;
             this._scene.add(this._ball);
         });
 
@@ -312,15 +313,7 @@ export class PongGame {
                 title: 'next_button_click',
             }
 
-            this._nextButtonEnter = this.nextButtonEnter.bind(this);
-            document.querySelector("#next_button").addEventListener("keydown", this._nextButtonEnter);
             document.querySelector("#next_button").focus();
-            this._eventList[this._eventCnt++] = {
-                function: this._nextButtonEnter,
-                event: 'keydown',
-                ref: document.querySelector("#next_button"),
-                title: 'next_button_en',
-            }
 
             this._ButtonBlur = this.ButtonBlur.bind(this);
             document.querySelector("#next_button").addEventListener('blur', this.ButtonBlur);
@@ -353,15 +346,7 @@ export class PongGame {
                 title: 'next_button_click',
             }
 
-            this._playAgainButtonEnter = this.playAgainButtonEnter.bind(this);
-            document.querySelector("#next_button").addEventListener("keydown", this._playAgainButtonEnter);
             document.querySelector("#next_button").focus();
-            this._eventList[this._eventCnt++] = {
-                function: this._playAgainButtonEnter,
-                event: 'keydown',
-                ref: document.querySelector("#next_button"),
-                title: 'next_button_enter',
-            }
 
             this._ButtonBlur = this.ButtonBlur.bind(this);
             document.querySelector("#next_button").addEventListener('blur', this.ButtonBlur);
@@ -398,15 +383,7 @@ export class PongGame {
                 title: 'next_button_click',
             }
 
-            this._nextButtonEnter = this.nextButtonEnter.bind(this);
-            document.querySelector("#next_button").addEventListener("keydown", this._nextButtonEnter);
             document.querySelector("#next_button").focus();
-            this._eventList[this._eventCnt++] = {
-                function: this._nextButtonEnter,
-                event: 'keydown',
-                ref: document.querySelector("#next_button"),
-                title: 'next_button_enter',
-            }
 
             this._ButtonBlur = this.ButtonBlur.bind(this);
             document.querySelector("#next_button").addEventListener('blur', this.ButtonBlur);
@@ -440,15 +417,7 @@ export class PongGame {
                 title: 'next_button_click',
             }
 
-            this._playAgainButtonEnter = this.playAgainButtonEnter.bind(this);
-            document.querySelector("#next_button").addEventListener("keydown", this._playAgainButtonEnter);
             document.querySelector("#next_button").focus();
-            this._eventList[this._eventCnt++] = {
-                function: this._playAgainButtonEnter,
-                event: 'keydown',
-                ref: document.querySelector("#next_button"),
-                title: 'next_button_enter',
-            }
 
             this._ButtonBlur = this.ButtonBlur.bind(this);
             document.querySelector("#next_button").addEventListener('blur', this.ButtonBlur);
@@ -485,18 +454,6 @@ export class PongGame {
             this._player2.Score = received.right_score;
             document.querySelector("#player1_score").innerHTML = this._player1.Score;
             document.querySelector("#player2_score").innerHTML = this._player2.Score;
-            // this._socket.send("pause");
-            // let countdownValue = 4;
-        
-            // let countdownInterval = setInterval(() => {
-            //     countdownValue--;
-            //     if (countdownValue === 0) {
-            //         clearInterval(countdownInterval);
-            //         this._socket.send("resume");
-            //         console.log("send resume");
-            //         return ;
-            //     }
-            // })
         }
         else if (received.type === "game_end") {
             this._isRunning = false;
@@ -505,6 +462,8 @@ export class PongGame {
                 this._socket = null;
                 console.log("WebSocket closed.");
             }
+            document.removeEventListener("keydown", this._bindKeydown);
+            document.removeEventListener("keyup", this._bindKeyup);
             if (this._player1.Score > this._player2.Score) {
                 this.player1Win();
             }
@@ -551,10 +510,13 @@ export class PongGame {
 
     countdown() {
         let countdownElement = document.querySelector("#countDown");
-        let countdownValue = 4;
+        let countdownValue = 40;
     
         let countdownInterval = setInterval(() => {
-            countdownElement.innerText =  --countdownValue;
+            --countdownValue;
+            if (countdownValue % 10 === 0) {
+                countdownElement.innerText = countdownValue / 10;
+            }
             if (this._isRunning === false) {
                 clearInterval(countdownInterval);
                 this.removeEventListener();
@@ -586,7 +548,7 @@ export class PongGame {
                     return ;
                 }
             }
-        }, 1000);
+        }, 100);
     }
 
     mainButtonEvent() {
