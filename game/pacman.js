@@ -5,11 +5,11 @@ import { get_translated_value } from "../../language.js"
 
 export class PongGame {
     constructor(sessionData, mode) {
-        console.log("wss://127.0.0.1/api/pong-game/" + mode + sessionData.user_id)
         this._mode = mode;
         this._socket = new WebSocket("wss://127.0.0.1/api/pong-game/" + mode + sessionData.user_id);
         this._eventList = [];
         this._eventCnt = 0;
+        this._nextButtonState = false;
 
         const canvas1 = document.querySelector("#canvas1");
         const canvas2 = document.querySelector("#canvas2");
@@ -31,7 +31,6 @@ export class PongGame {
         };
 
         // game_status_var
-        console.log("Session Data:", sessionData);
         this._gameVar = document.querySelector("#game_var");
         this._player1 = {
             Score : sessionData.left_score, //
@@ -80,6 +79,16 @@ export class PongGame {
         this._setupCamera(); // 카메라 객체 설정
         this._setupLight(); // 광원을 설정
         this._setupModel(); // 3차원 모델을 설정
+
+        //escape event 핸들러 추가
+        this._bindEscapeKey = this.escapeKey.bind(this);
+        document.addEventListener('keydown', this._bindEscapeKey);
+        this._eventList[this._eventCnt++] = {
+            function: this._bindEscapeKey,
+            event: 'keydown',
+            ref: document,
+            title: 'EscapeKey',
+        }
 
         // keydown 이벤트 핸들러를 추가
         this._bindKeydown = this.keydown.bind(this);
@@ -280,7 +289,6 @@ export class PongGame {
     // 렌더링함수
     render(time) { // 렌더링이 시작된 이후 경과된 밀리초를 받는다
         if (this._isRunning === false) {
-            console.log("rendering finish");
             return ;
         }
         // 렌더러가 scenen을 카메라의 시점을 기준으로 렌더링하는작업을 한다
@@ -291,6 +299,7 @@ export class PongGame {
     }
 
     player1Win() {
+        this._nextButtonState = true;
         if (this._mode === "tournament/") {
             document.querySelector("#winner1").innerHTML = `
             <div style="font-size: 100px; line-height: 100px; color: white;">${get_translated_value("game_win")}!</div>
@@ -316,9 +325,9 @@ export class PongGame {
             document.querySelector("#next_button").focus();
 
             this._ButtonBlur = this.ButtonBlur.bind(this);
-            document.querySelector("#next_button").addEventListener('blur', this.ButtonBlur);
+            document.querySelector("#next_button").addEventListener('blur', this._ButtonBlur);
             this._eventList[this._eventCnt++] = {
-                function: this._nextButtonEnter,
+                function: this._ButtonBlur,
                 event: 'blur',
                 ref: document.querySelector("#next_button"),
                 title: 'next_button_blur',
@@ -349,9 +358,9 @@ export class PongGame {
             document.querySelector("#next_button").focus();
 
             this._ButtonBlur = this.ButtonBlur.bind(this);
-            document.querySelector("#next_button").addEventListener('blur', this.ButtonBlur);
+            document.querySelector("#next_button").addEventListener('blur', this._ButtonBlur);
             this._eventList[this._eventCnt++] = {
-                function: this._nextButtonEnter,
+                function: this._ButtonBlur,
                 event: 'blur',
                 ref: document.querySelector("#next_button"),
                 title: 'next_button_blur',
@@ -360,7 +369,7 @@ export class PongGame {
     }
 
     player2Win() {
-        // document.querySelector("#player2_score").innerHTML = this._player2.Score;
+        this._nextButtonState = true;
         if (this._mode === "tournament/") { // 토너먼트
             document.querySelector("#winner2").innerHTML = `
             <div style="font-size: 100px; line-height: 100px; color: white;">${get_translated_value("game_win")}!</div>
@@ -386,9 +395,9 @@ export class PongGame {
             document.querySelector("#next_button").focus();
 
             this._ButtonBlur = this.ButtonBlur.bind(this);
-            document.querySelector("#next_button").addEventListener('blur', this.ButtonBlur);
+            document.querySelector("#next_button").addEventListener('blur', this._ButtonBlur);
             this._eventList[this._eventCnt++] = {
-                function: this._nextButtonEnter,
+                function: this._ButtonBlur,
                 event: 'blur',
                 ref: document.querySelector("#next_button"),
                 title: 'next_button_blur',
@@ -420,9 +429,9 @@ export class PongGame {
             document.querySelector("#next_button").focus();
 
             this._ButtonBlur = this.ButtonBlur.bind(this);
-            document.querySelector("#next_button").addEventListener('blur', this.ButtonBlur);
+            document.querySelector("#next_button").addEventListener('blur', this._ButtonBlur);
             this._eventList[this._eventCnt++] = {
-                function: this._nextButtonEnter,
+                function: this._ButtonBlur,
                 event: 'blur',
                 ref: document.querySelector("#next_button"),
                 title: 'next_button_blur',
@@ -460,7 +469,6 @@ export class PongGame {
             if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
                 this._socket.close();
                 this._socket = null;
-                console.log("WebSocket closed.");
             }
             document.removeEventListener("keydown", this._bindKeydown);
             document.removeEventListener("keyup", this._bindKeyup);
@@ -486,7 +494,10 @@ export class PongGame {
             this._keyState[event.code] = true;
             this._socket.send(JSON.stringify(this._keyState));
         }
-        else if (event.code === 'Escape'){
+    }
+
+    escapeKey(event) {
+        if (event.code === 'Escape'){
             if (this._isRunning === false) {
             }
             event.preventDefault();
@@ -494,7 +505,6 @@ export class PongGame {
             if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
                 this._socket.close();
                 this._socket = null;
-                console.log("WebSocket closed.");
             }
             this.removeEventListener();
             navigateTo("/main");
@@ -582,13 +592,11 @@ export class PongGame {
     }
 
     mainButtonClick(event) {
-        console.log("main click");
         event.preventDefault();
         this._isRunning = false;
         if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
             this._socket.close();
             this._socket = null;
-            console.log("WebSocket closed.");
         }
         this.removeEventListener();
         navigateTo("/main");
@@ -611,9 +619,7 @@ export class PongGame {
         if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
             this._socket.close();
             this._socket = null;
-            console.log("WebSocket closed.");
         }
-        console.log("next Button Click");
         this.removeEventListener();
         navigateTo("/match_schedules");
     }
@@ -624,9 +630,7 @@ export class PongGame {
             if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
                 this._socket.close();
                 this._socket = null;
-                console.log("WebSocket closed.");
             }
-            console.log("next Button Enter");
             this.removeEventListener();
             navigateTo("/match_schedules");
         }
@@ -637,9 +641,7 @@ export class PongGame {
         if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
             this._socket.close();
             this._socket = null;
-            console.log("WebSocket closed.");
         }
-        console.log("paly Again Button Click");
         this.removeEventListener();
         navigateTo("/normal_game");
     }
@@ -650,9 +652,7 @@ export class PongGame {
             if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
                 this._socket.close();
                 this._socket = null;
-                console.log("WebSocket closed.");
             }
-            console.log("play Again Button Enter");
             this.removeEventListener();
             navigateTo("/normal_game"); //여기로 이동할때 게임이 안꺼지고 나간다
         }
@@ -663,7 +663,6 @@ export class PongGame {
         const nextButton = document.querySelector("#next_button");
         if (nextButton)// next_button이 존재하는지 확인
             nextButton.focus(); // 포커스가 벗어났다면 다시 포커스를 설정
-        console.log('blur');
     }
 
     gameRoute() {
@@ -671,26 +670,22 @@ export class PongGame {
         if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
             this._socket.close();
             this._socket = null;
-            console.log("WebSocket closed.");
         }
-        console.log("gameRoute occured: isRunning = false, socket is closed");
 
         // 여기에서 모든 이벤트를 제거
         this.removeEventListener();
         document.querySelector('#app').innerHTML = '';
-        // 페이지를 실제로 변경
-        router();
+        navigateTo('main');
     }
 
     //14개중에서 7개가 지워짐
     removeEventListener() {
-        console.log("Removing all event listeners...");
         
         for (let i = 0; i < this._eventCnt; i++) {
             const eventInfo = this._eventList[i];
             if (eventInfo.ref && eventInfo.ref.removeEventListener) {
                 eventInfo.ref.removeEventListener(eventInfo.event, eventInfo.function);
-                console.log(`Removed listener for event: ${eventInfo.title}`);
+                // console.log(`Removed listener for event: ${eventInfo.title}`);
             }
         }
         
@@ -698,18 +693,21 @@ export class PongGame {
         if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
             this._socket.close();
             this._socket = null;
-            console.log("WebSocket closed.");
         }
     
         // 필요시 타이머도 해제
         if (this.countdownInterval) {
             clearInterval(this.countdownInterval);
             this.countdownInterval = null;
-            console.log("Countdown interval cleared.");
         }
         
-        console.log("All event listeners removed.");
+
         this.disposeThree();
+
+        if (document.querySelector("#next_button") !== null) {
+            document.querySelector("#next_button").blur();
+            console.log('blur');
+        }
     }
 
     disposeThree() {
