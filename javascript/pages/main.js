@@ -2,18 +2,6 @@ import { navigateTo, baseUrl, router } from "../../router.js";
 import AbstractView from "./AbstractView.js";
 import { get_translated_value } from "../../language.js"
 
-function getCookie(name) {
-    let matches = document.cookie.match(new RegExp(
-        "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
-    ));
-    return matches ? decodeURIComponent(matches[1]) : undefined;
-}
-
-// Utility function to delete a cookie by name
-function deleteCookie(name) {
-    document.cookie = name + '=; Max-Age=-99999999;';
-}
-
 // 소독 Sanitize input
 function sanitizeInput(input) {
     const element = document.createElement('div');
@@ -161,7 +149,6 @@ export default class extends AbstractView {
 
             Button.addEventListener("click", (event) => {
                 event.preventDefault();
-                console.log(Button.dataset.href);
                 // 라우팅 이벤트 추가
 
                 if (Button.dataset.href === "/TOURNAMENT")
@@ -196,8 +183,6 @@ export default class extends AbstractView {
 
                 const url = new URL(event.currentTarget.href);
                 const pathname = url.pathname;
-
-                console.log("pathname:", pathname);
 
                 if (pathname === "/match_record")
                 {
@@ -257,8 +242,6 @@ export default class extends AbstractView {
                     navigateTo('/');
                 } else {
                     const jsonResponse = await response.json();
-                    console.log(jsonResponse);
-                    console.log("error");
                 }
             } catch (error) {
                 console.log("Fetch error:", error);

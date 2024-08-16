@@ -182,7 +182,6 @@ export default class extends AbstractView {
 
         const handleMainButtonClick = (event) => {
             event.preventDefault();
-            console.log(event.target.href);
             navigateTo('/main');
         };
 
@@ -226,11 +225,6 @@ export default class extends AbstractView {
             const page = jsonResponse['page'];
             const button_idx_start = Math.floor((page['current'] - 1) / 5) * 5 + 1;
             const button_idx_end = button_idx_start + 4;
-            console.log("success");
-            console.log(response);
-            console.log(jsonResponse);
-            console.log("Games:", games.length, games)
-            console.log("Page:", page)
 
             // 렌더링 요소들 함수화
             this.create_record_table_itmes(games);
@@ -243,7 +237,6 @@ export default class extends AbstractView {
                 event.preventDefault();
                 const page_num = button_idx_start - 5;
                 localStorage.setItem("record_page", page_num);
-                console.log("page_num", page_num);
                 navigateTo("/match_record");
             })
             // record 페이지 앞으로가기 버튼
@@ -251,19 +244,15 @@ export default class extends AbstractView {
                 event.preventDefault();
                 const page_num = button_idx_start + 5;
                 localStorage.setItem("record_page", page_num);
-                console.log("page_num", page_num);
                 navigateTo("/match_record");
             })
 
             const Page_Buttons = document.querySelectorAll(".page-link-button");
 
-            console.log(Page_Buttons);
-
             Page_Buttons.forEach((Button) => {
 
                 Button.addEventListener("click", (event) => {
                     event.preventDefault();
-                    console.log(event.target.href);
 
                     // 라우팅 이벤트 추가
 

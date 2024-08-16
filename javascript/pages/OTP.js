@@ -79,23 +79,17 @@ export default class extends AbstractView {
                 credentials: 'include',
             });
             if (response.ok) {  // status === 200이고 이곳에서 response.json()을 까보고 분기
-                console.log("api confirm");
                 const jsonResponse = await response.json();
-                console.log(jsonResponse);
                 if (jsonResponse.otp_authenticated)
                 {
                     navigateTo('/main');
                     return;
                 }
             } else if (response.status === 401) { // 401)(unauthorized)클라이언트가 인증되지 않았거나, 유효한 인증 정보가 부족하여 요청이 거부되었음을 의미하는 상태값 -> token이 없는사람
-                console.log("response is 401!");
                 const jsonResponse = await response.json();
-                console.log(jsonResponse);
                 navigateTo('/');
             } else {
                 const jsonResponse = await response.json();
-                console.log(jsonResponse);
-                console.log("error");
             }
         } catch (error) {
             console.log("Fetch error:", error);
@@ -184,7 +178,6 @@ export default class extends AbstractView {
                                 invalid_input.innerHTML = `<p class="PS2P_font transItem" style="color: red; font-size: 30px; z-index:4" data-trans_id="OTP_lock">Account is locked for 15 minutes.<br>try later</p>`;
                                 invalid_input.querySelector("p").innerHTML = get_translated_value(invalid_input.querySelector("p").dataset.trans_id);
                             } else {
-                                // localStorage.removeItem('jwt');
                                 navigateTo('/');
                             }
 

@@ -1,6 +1,4 @@
 import home from "./javascript/pages/home.js"
-import example1 from "./javascript/pages/example1.js"
-import example2 from "./javascript/pages/example2.js"
 import QRcode from "./javascript/pages/QRcode.js"
 import OTP from "./javascript/pages/OTP.js"
 import main from "./javascript/pages/main.js"
@@ -34,13 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 export const baseUrl = "https://127.0.0.1";
 
-export function getCookie(name) {
-    let matches = document.cookie.match(new RegExp(
-        "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
-    ));
-    return matches ? decodeURIComponent(matches[1]) : undefined;
-}
-
 export const navigateTo = (url) => {
     history.pushState(null, null, url);
     router();
@@ -49,8 +40,6 @@ export const navigateTo = (url) => {
 export const router = async () => {
     const routes = [
         { path: "/", view: home },
-        { path: "/example1", view: example1 },
-        { path: "/example2", view: example2 },
         { path: "/QRcode", view: QRcode },
         { path: "/OTP" , view: OTP },
         { path: "/main", view: main },

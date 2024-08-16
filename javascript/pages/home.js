@@ -94,22 +94,16 @@ export default class extends AbstractView {
                 credentials: 'include',
             });
             if (response.ok) {  // status === 200이고 이곳에서 response.json()을 까보고 분기
-                console.log("api confirm");
                 const jsonResponse = await response.json();
-                console.log(jsonResponse);
                 if (jsonResponse.otp_authenticated)
                 {
                     navigateTo('/main');
                     return;
                 }
             } else if (response.status === 401) { // 401)(unauthorized)클라이언트가 인증되지 않았거나, 유효한 인증 정보가 부족하여 요청이 거부되었음을 의미하는 상태값 -> token이 없는사람 (사용자가 로그아웃을 한 경우 백엔드에서는 cookie를 삭제한다. 따라서 api를 쏘면 백엔드는 해당 사용자에 대한 인증 정보가 부족하다며 거부하는 의미로 status를 401로 응답한다.)
-                console.log("response is 401! but it's okay at home cause it doesn't have cookies");
                 const jsonResponse = await response.json();
-                console.log(jsonResponse);
             } else {
                 const jsonResponse = await response.json();
-                console.log(jsonResponse);
-                console.log("error");
             }
         } catch (error) {
             console.log("Fetch error:", error);
@@ -131,7 +125,7 @@ export default class extends AbstractView {
 
         function login_click(event) {
             event.preventDefault();
-            spinner.style.display = "flex"; // 뺑글이 시작
+            spinner.style.display = "flex"; // 뺑글이 시작
             window.location.href = `${baseUrl}/api/user-management/login`;
         }
             
@@ -145,20 +139,17 @@ export default class extends AbstractView {
             login_text.classList.add("green_hover");
             login_text.classList.add("white_stroke_5px");
             login_arrow.classList.add("red_hover");
-            console.log("hovering");
         });
         login_button.addEventListener("mouseleave", (event) => {
             login_text.classList.remove("green_hover");
             login_text.classList.remove("white_stroke_5px");
             login_arrow.classList.remove("red_hover");
-            console.log("hover out");
         });
 
         // URL에서 코드 파라미터 확인
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get("code");
         if (code) {
-            console.log("Received authorization code:", code);
             // spinner.style.display = "flex"; 
             // 여기서 백엔드로 코드를 보내 액세스 토큰을 얻는 로직을 구현할 수 있습니다.
             // authorization code를 백엔드에 전송하고 백엔드로부터 응답 받기
@@ -179,7 +170,6 @@ export default class extends AbstractView {
                     }
                 } else {
                     console.log(response.json());
-                    console.log("error");
                 }
             } catch (error) {
                 console.log("Fetch error:", error);

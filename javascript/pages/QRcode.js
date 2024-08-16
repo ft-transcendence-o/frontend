@@ -64,7 +64,6 @@ export default class extends AbstractView {
 
 		const handleNextButtonClick = (event) => {
 			event.preventDefault();
-			console.log("next button clicked!");
 			navigateTo('/OTP');
 		};
 
@@ -101,7 +100,6 @@ export default class extends AbstractView {
 				colorLight: "#000000", // QR 코드의 배경색
 				correctLevel: QRCode.CorrectLevel.H // 오류 수정 수준
 			});
-			console.log("generated");
 		};
 
         try {
@@ -112,11 +110,9 @@ export default class extends AbstractView {
 
             if (response.ok) {
                 const jsonResponse = await response.json();
-                console.log("success", jsonResponse);
                 generateQRcode(jsonResponse['otpauth_uri']);
             } else {
                 const jsonResponse = await response.json();
-                console.log("Fail", jsonResponse);
 				if (response.status === 400) { // 400(Bad request) 문법상 오류가 있어서 서버가 요청사항을 이해하지 못하는 경우로 잘못 입력한 url인 경우가 대부분! -> token은 유효 OTP를 이전에 한 번 통과한 사람이 bad request를 한 경우
                     navigateTo('/OTP');
 				}

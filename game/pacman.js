@@ -461,14 +461,6 @@ export class PongGame {
         }
     }
 
-    // 게임 일시정지
-    pauseGame(duration) {
-        this._isPaused = true;
-        setTimeout(() => {
-            this._isPaused = false;
-        }, duration);
-    }
-
     keydown(event) {
         if (event.code in this._keyState){
             this._keyState[event.code] = true;
@@ -623,18 +615,6 @@ export class PongGame {
         navigateTo("/match_schedules");
     }
 
-    nextButtonEnter(event) {
-        if (event.code === 'Enter') {
-            this._isRunning = false;
-            if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
-                this._socket.close();
-                this._socket = null;
-            }
-            this.removeEventListener();
-            navigateTo("/match_schedules");
-        }
-    }
-
     playAgainButtonClick(event) {
         this._isRunning = false;
         if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
@@ -645,18 +625,6 @@ export class PongGame {
         navigateTo("/normal_game");
     }
 
-    playAgainButtonEnter(event) {
-        if (event.code === 'Enter'){
-            this._isRunning = false;
-            if (this._socket && this._socket.readyState !== WebSocket.CLOSED) {
-                this._socket.close();
-                this._socket = null;
-            }
-            this.removeEventListener();
-            navigateTo("/normal_game"); //여기로 이동할때 게임이 안꺼지고 나간다
-        }
-    }
-    
     ButtonBlur(event) {
         event.preventDefault();
         const nextButton = document.querySelector("#next_button");
@@ -684,7 +652,6 @@ export class PongGame {
             const eventInfo = this._eventList[i];
             if (eventInfo.ref && eventInfo.ref.removeEventListener) {
                 eventInfo.ref.removeEventListener(eventInfo.event, eventInfo.function);
-                // console.log(`Removed listener for event: ${eventInfo.title}`);
             }
         }
         

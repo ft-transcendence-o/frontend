@@ -93,23 +93,17 @@ export default class extends AbstractView {
                 credentials: 'include',
             });
             if (response.ok) {  // status === 200이고 이곳에서 response.json()을 까보고 분기
-                console.log("api confirm");
                 const jsonResponse = await response.json();
-                console.log(jsonResponse);
                 if (!(jsonResponse.otp_authenticated)) {
                     navigateTo('/');
                     return;
                 }
             } else if (response.status === 401) {
-                console.log("response is 401!");
                 const jsonResponse = await response.json();
-                console.log(jsonResponse);
                 navigateTo('/');
                 return;
             } else {
                 const jsonResponse = await response.json();
-                console.log(jsonResponse);
-                console.log("error");
             }
         } catch (error) {
             console.log("Fetch error:", error);
@@ -126,7 +120,6 @@ export default class extends AbstractView {
 
         const handleMainButtonClick = (event) => {
             event.preventDefault();
-            console.log(event.target.href);
             navigateTo('/main');
         };
 
@@ -144,7 +137,6 @@ export default class extends AbstractView {
 
         const handleReadyButtonClick = async (event) => {
             event.preventDefault();
-            console.log("ready button clicked!");
 
             const invalidInputElement = document.getElementById("invalid_input");
             invalidInputElement.innerHTML = "";
@@ -184,10 +176,8 @@ export default class extends AbstractView {
 
                 if (response.ok) {
                     const jsonResponse = await response.json();
-                    console.log(jsonResponse.message);
                     navigateTo('/match_schedules');
                 } else {
-                    console.error("Failed to set nicknames. Response status:", response.status);
                     invalidInputElement.innerHTML = `<p class="PS2P_font" style="color: red; font-size: 30px; z-index:4">${get_translated_value("nickname_err_setfail")}</p>`;
                 }
             } catch (error) {
@@ -240,9 +230,7 @@ export default class extends AbstractView {
 
                     if (nextInput) {
                         nextInput.focus();
-                        console.log("goes next input filed!");
                     } else {
-                        console.log("focus ready button!");
                         readyButton.focus();
                     }
                 } else if (currentInput === readyButton) {
