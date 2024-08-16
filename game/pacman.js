@@ -81,6 +81,16 @@ export class PongGame {
         this._setupLight(); // 광원을 설정
         this._setupModel(); // 3차원 모델을 설정
 
+        //escape event 핸들러 추가
+        this._bindEscapeKey = this.escapeKey.bind(this);
+        document.addEventListener('keydown', this._bindEscapeKey);
+        this._eventList[this._eventCnt++] = {
+            function: this._bindEscapeKey,
+            event: 'keydown',
+            ref: document,
+            title: 'EscapeKey',
+        }
+
         // keydown 이벤트 핸들러를 추가
         this._bindKeydown = this.keydown.bind(this);
         document.addEventListener('keydown', this._bindKeydown);
@@ -486,7 +496,10 @@ export class PongGame {
             this._keyState[event.code] = true;
             this._socket.send(JSON.stringify(this._keyState));
         }
-        else if (event.code === 'Escape'){
+    }
+
+    escapeKey(event) {
+        if (event.code === 'Escape'){
             if (this._isRunning === false) {
             }
             event.preventDefault();
