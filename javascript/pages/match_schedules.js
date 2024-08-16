@@ -6,6 +6,7 @@ export default class extends AbstractView {
     constructor() {
         super();
         this.setTitle("Match Schedules");
+        this.bind_popstate = this.match_schedules_popstate.bind(this);
     }
 
     /**
@@ -143,6 +144,10 @@ export default class extends AbstractView {
         `;
     }
 
+    match_schedules_popstate() {
+        navigateTo("/main");
+    }
+
     async init() {
 
         const response = await fetch(baseUrl + "/api/game-management/session?mode=tournament", {
@@ -172,10 +177,7 @@ export default class extends AbstractView {
         // 뒤로가기 시도시 메인으로 보내버린다
         // 이벤트 리스너는 덮어쓰여지지 않고 계속해서 생성된다(?)
         window.removeEventListener('popstate', router);
-        window.addEventListener('popstate', async (event) => {
-            navigateTo("/main");
-            return ;
-        });
+        window.addEventListener('popstate', this.bind_popstate);
 
         // translate 적용 테스트
         const transItems = document.querySelectorAll(".transItem");
@@ -405,6 +407,8 @@ export default class extends AbstractView {
                 button.removeEventListener("mouseleave", handleCenterMouseLeave);
             });
             document.removeEventListener("keydown", handleKeyDown);
+            window.removeEventListener('popstate', this.bind_popstate);
+            window.addEventListener('popstate', router);
         };
     }
 
